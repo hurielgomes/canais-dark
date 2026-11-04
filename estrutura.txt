@@ -1,0 +1,90 @@
+Listagem de caminhos de pasta
+O n£mero de s‚rie do volume ‚ 8A82-3372
+C:.
+|   .env
+|   .gitignore
+|   app.py
+|   config.json
+|   criar-video.bat
+|   criar_video.py
+|   editorial_rules.py
+|   engine_interface.py
+|   engine_registry.py
+|   estrutura.txt
+|   full_page_screenshot.png
+|   ideias.bat
+|   iniciar.bat
+|   instalar-dependencias.bat
+|   INSTRUCOES_PATCH.txt
+|   job_store.py
+|   LEIA-ANTES-BROADCAST-NEWS.txt
+|   LEIA-ANTES.txt
+|   LEIA-MOTOR-BROADCAST-NEWS.txt
+|   lote.bat
+|   MIGRACAO_BACKEND_V1.md
+|   montar_video.py
+|   PATCH-1.4.0-INSTALACAO.txt
+|   README.md
+|   requirements.txt
+|   VERSION
+|   
++---canais
+|   \---exemplo
+|       |   canal.json
+|       |   temas.txt
+|       |   
+|       \---musicas
+|               leberch-cinematic-suspense-252651.mp3
+|               leberch-suspense-cinematic-248035.mp3
+|               leberch-trailer-soundtrack-580862.mp3
+|               nastelbom-soundtrack-443631.mp3
+|               nastelbom-suspense-501709.mp3
+|               nastelbom-suspense-suspense-music-623762.mp3
+|               
++---data
+|       .gitkeep
+|       fabrica.sqlite3
+|       
++---docs
+|       ARQUITETURA_BACKEND.md
+|       BROADCAST_NEWS.md
+|       SEGREDOS_E_CONFIG.md
+|       
++---exemplos
+|       video_project.sample.json
+|       
++---modelos
+|       .gitkeep
+|       
++---motores
+|   |   broadcast_news.py
+|   |   catalogo.json
+|   |   categorias.json
+|   |   thumbnail_templates.json
+|   |   
+|   \---adapters
+|           broadcast_news.py
+|           classic.py
+|           __init__.py
+|           
++---projetos
+|   |   .gitkeep
+|   |   
+|   +---exemplo
+|   \---_planejamento
++---schemas
+|       video_project.schema.json
+|       
++---tests
+|       test_backend.py
+|       test_gemini_fallback.py
+|       
++---ui
+|       index.html
+|       
+\---__pycache__
+        criar_video.cpython-315.pyc
+        editorial_rules.cpython-315.pyc
+        engine_registry.cpython-315.pyc
+        job_store.cpython-315.pyc
+        

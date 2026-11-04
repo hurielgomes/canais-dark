@@ -1,0 +1,190 @@
+{
+  "version": 1,
+  "description": "Catalogo de motores visuais. 'active' significa integrado ao pipeline atual; 'planned' representa contrato definido, ainda sem renderizador implementado.",
+  "engines": [
+    {
+      "id": "classico",
+      "name": "Classico — imagens e videos de apoio",
+      "status": "active",
+      "entrypoint": "criar_video.py",
+      "description": "Pipeline atual de roteiro, Kokoro, imagens/videos de apoio, legendas e FFmpeg. Mantido sem quebrar a producao existente.",
+      "recommended_categories": [
+        "curiosidades",
+        "historia",
+        "esportes",
+        "celebridades",
+        "documentario"
+      ],
+      "formats": [
+        "16x9",
+        "9x16"
+      ],
+      "features": [
+        "image_stock",
+        "video_stock",
+        "kokoro_tts",
+        "ffmpeg",
+        "thumbnail_legacy",
+        "independent_scripts_per_format",
+        "channel_branding",
+        "category_editorial_profiles",
+        "comment_engagement_cta"
+      ],
+      "limitations": [],
+      "adapter": "motores.adapters.classic:ClassicEngine",
+      "supports_independent_deliverables": true,
+      "icon": "🎞️"
+    },
+    {
+      "id": "broadcast_news",
+      "name": "Broadcast News",
+      "status": "active",
+      "entrypoint": "motores/broadcast_news.py",
+      "description": "Explicadores jornalisticos sobre fatos consolidados, sem exigir Google Search; informacoes atuais e mutaveis precisam de conferencia manual.",
+      "recommended_categories": [
+        "noticias",
+        "economia",
+        "politica_institucional",
+        "documentario"
+      ],
+      "formats": [
+        "16x9",
+        "9x16"
+      ],
+      "features": [
+        "headlines",
+        "data_cards",
+        "timelines",
+        "flows",
+        "comparisons",
+        "charts",
+        "kokoro_tts",
+        "pillow_graphics",
+        "ffmpeg_local_render",
+        "independent_scripts_per_format",
+        "channel_branding",
+        "category_editorial_profiles",
+        "comment_engagement_cta",
+        "consolidated_facts_no_search"
+      ],
+      "limitations": [
+        "Nao consulta a web automaticamente; conferir manualmente leis, aliquotas, calendarios, cargos e dados atuais antes de publicar."
+      ],
+      "adapter": "motores.adapters.broadcast_news:BroadcastNewsEngine",
+      "supports_independent_deliverables": true,
+      "icon": "📰"
+    },
+    {
+      "id": "isometric",
+      "name": "Isometric",
+      "status": "planned",
+      "entrypoint": null,
+      "description": "Ambientes isometricos e processos visuais; o protagonista e o sistema, cidade, objeto ou processo, nao um apresentador.",
+      "recommended_categories": [
+        "como_funciona",
+        "educacao",
+        "tecnologia",
+        "cidades",
+        "ciencia"
+      ],
+      "formats": [
+        "16x9",
+        "9x16"
+      ],
+      "features": [
+        "isometric_scenes",
+        "object_animation",
+        "process_visualization",
+        "camera_paths"
+      ],
+      "limitations": [
+        "Motor visual ainda nao implementado."
+      ],
+      "icon": "🏙️"
+    },
+    {
+      "id": "blueprint",
+      "name": "Blueprint",
+      "status": "planned",
+      "entrypoint": null,
+      "description": "Desenhos tecnicos animados, cortes, componentes explodidos e explicacoes de engenharia e funcionamento.",
+      "recommended_categories": [
+        "engenharia",
+        "mecanica",
+        "construcao",
+        "tecnologia",
+        "como_funciona"
+      ],
+      "formats": [
+        "16x9",
+        "9x16"
+      ],
+      "features": [
+        "technical_lines",
+        "exploded_views",
+        "labels",
+        "component_highlights"
+      ],
+      "limitations": [
+        "Motor visual ainda nao implementado."
+      ],
+      "icon": "📐"
+    },
+    {
+      "id": "stickman",
+      "name": "Stickman",
+      "status": "planned",
+      "entrypoint": null,
+      "description": "Personagem palito expressivo, com silhuetas e movimentos organicos; sem engrenagens aparentes nas articulacoes.",
+      "recommended_categories": [
+        "what_if",
+        "humor",
+        "experimentos",
+        "historias"
+      ],
+      "formats": [
+        "16x9",
+        "9x16"
+      ],
+      "features": [
+        "character_poses",
+        "expressions",
+        "actions",
+        "word_timed_captions"
+      ],
+      "limitations": [
+        "Motor visual ainda nao implementado."
+      ],
+      "icon": "🧍"
+    },
+    {
+      "id": "character_2_5d",
+      "name": "Personagem ilustrado 2.5D",
+      "status": "planned",
+      "entrypoint": null,
+      "description": "Personagens ilustrados com contorno e expressoes, integrados a cenarios com profundidade 2.5D. O personagem aparece quando a narrativa pede, sem dominar todos os videos.",
+      "recommended_categories": [
+        "historias",
+        "what_if",
+        "humor",
+        "educacao",
+        "curiosidades"
+      ],
+      "formats": [
+        "16x9",
+        "9x16"
+      ],
+      "features": [
+        "character_library",
+        "expressions",
+        "reusable_poses",
+        "2_5d_environments",
+        "parallax"
+      ],
+      "limitations": [
+        "Motor visual ainda nao implementado; personagem e assets serao aprovados separadamente."
+      ],
+      "icon": "🎭"
+    }
+  ]
+}

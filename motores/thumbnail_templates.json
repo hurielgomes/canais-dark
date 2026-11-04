@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "templates": [
+    {
+      "id": "thumbnail_colorful_v1",
+      "name": "Thumbnail colorida de alto impacto",
+      "status": "specification_ready",
+      "renderer": null,
+      "description": "Estrutura aprovada: chamada curta grande, palavra-chave destacada, personagem reativo quando fizer sentido, imagem complementar em destaque, circulo/contorno, seta e assinatura/logo do canal.",
+      "formats": {
+        "16:9": {
+          "width": 1280,
+          "height": 720,
+          "composition": "horizontal"
+        },
+        "9:16": {
+          "width": 1080,
+          "height": 1920,
+          "composition": "vertical_recomposed"
+        }
+      },
+      "layers": [
+        {
+          "id": "background",
+          "required": true,
+          "description": "Fundo/cenario relacionado ao assunto, claro e com cores vivas."
+        },
+        {
+          "id": "headline",
+          "required": true,
+          "description": "Chamada curta, grande, legivel em celular."
+        },
+        {
+          "id": "highlight_word",
+          "required": true,
+          "description": "Uma palavra central destacada por cor, faixa ou pincelada contrastante."
+        },
+        {
+          "id": "reaction_character",
+          "required": false,
+          "description": "Personagem com expressao coerente com a historia; opcional quando o assunto pede foco total em objeto/dados."
+        },
+        {
+          "id": "subject_inset",
+          "required": true,
+          "description": "Objeto, lugar, descoberta ou imagem que antecipe visualmente a promessa do titulo."
+        },
+        {
+          "id": "visual_pointer",
+          "required": false,
+          "description": "Seta, circulo ou contorno direcionando o olhar para o detalhe importante."
+        },
+        {
+          "id": "channel_brand",
+          "required": true,
+          "description": "Logo/assinatura do canal em area reservada e consistente."
+        }
+      ],
+      "rules": [
+        "Gerar composicoes independentes para 16:9 e 9:16; nunca apenas cortar a horizontal.",
+        "Preservar a palavra-chave em destaque e o assunto visual principal nos dois formatos.",
+        "Nao inserir um personagem automaticamente quando a historia nao precisar dele.",
+        "A logo deve vir do perfil do canal, nao ser inventada pelo gerador.",
+        "Evitar excesso de frases pequenas, elementos decorativos e textos que nao sejam essenciais.",
+        "A marca/logo vem do campo identidade.logo_arquivo do canal selecionado.",
+        "O nome e a assinatura do canal sao definidos no perfil canais/<canal>/canal.json, nao pela categoria editorial."
+      ]
+    }
+  ]
+}

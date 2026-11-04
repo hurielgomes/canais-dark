@@ -1,0 +1,33 @@
+# Segredos locais
+.env
+.env.*
+!.env.example
+config.local.json
+
+# Estado e producao gerada
+/data/*.sqlite3
+/data/*.sqlite3-shm
+/data/*.sqlite3-wal
+/projetos/**
+!/projetos/.gitkeep
+/modelos/**
+!/modelos/.gitkeep
+/canais/*/musicas/**
+
+# Python e ferramentas
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Temporarios e logs
+*.log
+*.part
+*.parcial.mp4
+.DS_Store
+Thumbs.db
+
+# Ambiente adicional e configuracao local
+.venv312/
+/config.json

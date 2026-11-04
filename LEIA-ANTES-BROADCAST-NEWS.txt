@@ -1,0 +1,31 @@
+ATUALIZACAO INCREMENTAL — BACKEND 1.4.0 (SEIS MELHORIAS)
+
+APLICAR SOBRE A FABRICA COM BACKEND 1.3.1 + BROADCAST NEWS
+A pasta de destino e a que contem app.py, criar_video.py, iniciar.bat e a pasta ui.
+
+PASSOS
+1. Feche a fabrica pressionando Ctrl+C na janela do terminal.
+2. Faca uma copia de seguranca da pasta inteira.
+3. Extraia este ZIP diretamente na raiz de canais-darks, preservando as pastas.
+4. Autorize substituir os arquivos listados no patch.
+5. NAO substitua config.json, .env, iniciar.bat, data/fabrica.sqlite3, canais/<seu-canal>/canal.json, projetos/, modelos/ ou arquivos de saida.
+6. As dependencias novas/necessarias continuam sendo Pillow e google-genai. Se o Broadcast News ja funcionava, nao reinstale tudo.
+7. Mantenha seu iniciar.bat com a linha `py app.py` se essa foi a correcao que funcionou no seu Windows.
+8. Abra a fabrica e pressione Ctrl+F5 no navegador.
+
+AS SEIS MELHORIAS
+1. Broadcast News nao exige Google Search, token ou cota de grounding. O Gemini trabalha com fatos consolidados; assuntos atuais/mutaveis devem ser conferidos manualmente antes de publicar.
+2. Perfil do canal controla nome exibido, logo/marca d'agua, intro opcional e uso da logo na thumbnail. Coloque a logo em canais/<slug>/identidade/logo.png. A intro opcional fica em canais/<slug>/identidade/intro.mp4.
+3. Cada categoria possui perfil editorial proprio: objetivo, tom, estrutura, politica factual, itens a evitar, direcao visual e pergunta final.
+4. Seletor de motores fica recolhido e apresenta icones.
+5. 16:9 e 9:16 viram tarefas separadas, com duracoes e roteiros independentes: YouTube 5–10 min; Short 1–2 min.
+6. O roteiro termina com pergunta de comentario adaptada a categoria e ao tom do canal.
+
+IDENTIDADE DE CADA CANAL
+O sistema aplica a marca d'agua quando a logo existir e a opcao estiver ativa. Para editar a identidade, acrescente/ajuste o objeto `identidade` no canal.json. As opcoes sao: nome_exibicao, logo_arquivo, marca_dagua (ativa, opacidade, posicao, largura_percentual), intro (ativa, arquivo) e thumbnail (incluir_logo, largura_percentual).
+
+LIMITES EDITORIAIS
+Este modo nao pesquisa a web automaticamente. Nao use roteiros gerados sem conferência para publicar como noticias de ultima hora, aliquotas vigentes, calendarios, resultados recentes, cargos atuais ou alteracoes legais. O Gemini deve limitar esses casos ao funcionamento geral e sinalizar conferencia manual.
+
+SEGURANCA
+O patch nao substitui credenciais nem banco de dados. Mantenha segredos no .env local. Se chaves foram compartilhadas em arquivo de texto claro anteriormente, revogue e gere novas.

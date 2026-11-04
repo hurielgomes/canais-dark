@@ -1,0 +1,16 @@
+PATCH BACKEND v1.2 - INTERFACE INTEGRADA
+
+Este ZIP e uma atualizacao incremental para a pasta do projeto que ja contem app.py.
+
+PASSOS:
+1. Feche a janela do servidor da Fabrica.
+2. Faca uma copia de seguranca da pasta atual.
+3. Extraia o conteudo deste ZIP DIRETAMENTE dentro da pasta `canais-darks` onde estao app.py, criar_video.py e iniciar.bat.
+4. Autorize substituir os arquivos quando o Windows perguntar.
+5. O patch NAO inclui config.json, canais/, projetos/, modelos/ ou banco SQLite; suas configuracoes e dados locais sao preservados.
+6. Abra iniciar.bat. Ele usa `py app.py` quando o Python Launcher existe.
+7. Acesse http://127.0.0.1:8765/ e pressione Ctrl+F5.
+8. Confirme no topo o selo `Backend 1.2.0-ui-integrada`.
+
+Arquivos atualizados: app.py, criar_video.py, iniciar.bat, VERSION, README.md,
+MIGRACAO_BACKEND_V1.md, ui/index.html, tests/test_backend.py e docs/ARQUITETURA_BACKEND.md.

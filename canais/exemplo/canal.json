@@ -1,0 +1,40 @@
+{
+  "nome": "Nome do Canal",
+  "idioma": "português do Brasil",
+  "nicho": "curiosidades históricas bem documentadas",
+  "publico": "adultos curiosos, 18 a 45 anos, que assistem à noite",
+  "tom": "narrador intrigante e direto, com energia, sem sensacionalismo falso",
+  "estrutura": [
+    "Gancho: o fato mais surpreendente do tema, sem contexto",
+    "Pergunta central: o que o vídeo vai responder",
+    "Origem do problema: o contexto que explica tudo",
+    "Desenvolvimento em 2 ou 3 viradas, cada uma com um novo detalhe",
+    "Re-gancho: algo ainda mais estranho vem pela frente",
+    "Clímax e resposta à pergunta central",
+    "Fechamento curto que retoma o início"
+  ],
+  "regras": [
+    "Se o assunto for saúde, direito ou finanças, não dê conselhos; apenas informe e deixe claro que é informação geral."
+  ],
+  "estilo_visual": "vibrant saturated colors, dramatic cinematic lighting, high contrast, ultra detailed, sharp focus, epic composition",
+  "duracao_alvo_segundos": 60,
+  "segundos_por_imagem": 6,
+  "duracao_plano": 2.8,
+  "gancho_segundos": 2.6,
+  "voz": "pf_dora",
+  "idioma_tts": "pt-br",
+  "velocidade": 1.08,
+  "pausa_entre_cenas": 0.2,
+  "legenda_fonte": "Arial Black",
+  "legenda_maiusculas": true,
+  "legenda_palavras": 4,
+  "saturacao": 1.25,
+  "contraste": 1.08,
+  "nitidez": 0.7,
+  "vinheta": true,
+  "escala_interna": 1.5,
+  "musica": "",
+  "usar_video_stock": true,
+  "proporcao_video": 0.5,
+  "duracao_plano_video": 4.0
+}

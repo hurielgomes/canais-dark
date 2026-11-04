@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.fabrica/video-project.schema.json",
+  "title": "Fabrica de Videos - Projeto intermediario",
+  "description": "Contrato entre diretor editorial, motores visuais, narracao e renderizadores. Ainda nao implica que todos os motores do catalogo estejam implementados.",
+  "type": "object",
+  "required": ["schema_version", "project_id", "title", "channel", "category", "engine_id", "deliverables"],
+  "properties": {
+    "schema_version": {"type": "string", "const": "1.0"},
+    "project_id": {"type": "string"},
+    "title": {"type": "string", "minLength": 1},
+    "channel": {"type": "string", "pattern": "^[a-zA-Z0-9_-]{1,60}$"},
+    "category": {"type": "string"},
+    "engine_id": {"type": "string"},
+    "language": {"type": "string", "default": "pt-BR"},
+    "status": {"type": "string", "enum": ["draft", "approved", "rendering", "complete", "failed"]},
+    "research": {
+      "type": "object",
+      "properties": {
+        "summary": {"type": "string"},
+        "sources": {"type": "array", "items": {"type": "object", "required": ["url"], "properties": {"url": {"type": "string", "format": "uri"}, "title": {"type": "string"}, "publisher": {"type": "string"}, "published_at": {"type": "string"}, "accessed_at": {"type": "string"}, "supports": {"type": "array", "items": {"type": "string"}}}}}
+      }
+    },
+    "voice": {
+      "type": "object",
+      "properties": {
+        "engine": {"type": "string", "enum": ["kokoro", "voicebox", "external", "recorded"]},
+        "voice_id": {"type": "string"},
+        "speed": {"type": "number", "minimum": 0.5, "maximum": 2.0},
+        "emotion": {"type": "string"}
+      }
+    },
+    "deliverables": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["aspect_ratio"],
+        "properties": {
+          "aspect_ratio": {"type": "string", "enum": ["16:9", "9:16", "1:1"]},
+          "target_duration_seconds": {"type": "integer", "minimum": 1},
+          "script": {"type": "string"},
+          "hook": {"type": "string"},
+          "scenes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["scene_id", "narration"],
+              "properties": {
+                "scene_id": {"type": "string"},
+                "narration": {"type": "string"},
+                "duration_seconds": {"type": "number", "minimum": 0.1},
+                "visual_type": {"type": "string"},
+                "background_id": {"type": "string"},
+                "character_id": {"type": ["string", "null"]},
+                "action": {"type": "string"},
+                "emotion": {"type": "string"},
+                "objects": {"type": "array", "items": {"type": "string"}},
+                "camera": {"type": "object"},
+                "captions": {"type": "array", "items": {"type": "object"}},
+                "source_ids": {"type": "array", "items": {"type": "string"}}
+              }
+            }
+          }
+        }
+      }
+    },
+    "thumbnail": {
+      "type": "object",
+      "properties": {
+        "template_id": {"type": "string", "default": "thumbnail_colorful_v1"},
+        "headline": {"type": "string"},
+        "highlight_word": {"type": "string"},
+        "subject_asset": {"type": "string"},
+        "reaction": {"type": "string"},
+        "callout_asset": {"type": "string"},
+        "logo_path": {"type": "string"},
+        "formats": {"type": "array", "items": {"type": "string", "enum": ["16:9", "9:16"]}}
+      }
+    },
+    "created_at": {"type": "string"},
+    "updated_at": {"type": "string"}
+  }
+}

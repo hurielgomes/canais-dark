@@ -1,0 +1,7 @@
+# Dependencias opcionais do pipeline atual.
+# app.py, SQLite, catalogo de motores e persistencia usam apenas a biblioteca padrao.
+google-genai>=1.0.0
+kokoro-onnx>=0.4.9
+numpy>=1.26
+soundfile>=0.12.1
+Pillow>=10.0

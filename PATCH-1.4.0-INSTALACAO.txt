@@ -1,0 +1,45 @@
+FABRICA DE VIDEOS — PATCH 1.4.0 (SEIS MELHORIAS)
+Base: Backend 1.3.1 + UI integrada + Broadcast News + Gemini fallback 1.3.1.
+
+INSTALACAO
+1. Feche a fabrica na janela do terminal com Ctrl+C.
+2. Faça uma cópia de segurança da pasta inteira.
+3. Extraia este ZIP diretamente na raiz da pasta canais-darks — a pasta que contém app.py, criar_video.py, iniciar.bat e ui/.
+4. Autorize substituir os arquivos que estão dentro do ZIP.
+5. Não substitua nem apague: config.json, .env, iniciar.bat, data/fabrica.sqlite3, canais/<seu-canal>/canal.json, canais/<seu-canal>/identidade/, projetos/, modelos/, musicas ou saídas.
+6. Mantenha seu iniciar.bat com `py app.py`, caso essa seja a linha que já funciona no seu Windows. Este patch não inclui iniciar.bat.
+7. Abra a fábrica e pressione Ctrl+F5 no navegador.
+8. Confira a versão em /api/saude; deve retornar 1.4.0-seis-melhorias.
+
+AS SEIS ALTERACOES
+1. Broadcast News e sugestões de temas para esse motor não exigem Google Search, grounding, token ou cota de pesquisa. O Gemini deve usar fatos consolidados e conceitos estáveis. Leis, taxas, calendários, cargos, resultados e fatos recentes devem ser verificados manualmente antes da publicação.
+2. O canal passa a controlar identidade: nome_exibicao, logo/marca d'água no vídeo, intro opcional e aplicação da logo às miniaturas geradas pelo pipeline Clássico. Os padrões são adicionados em memória por compatibilidade; o canal.json existente não é sobrescrito.
+3. Cada categoria tem perfil editorial próprio em motores/categorias.json: objetivo, tom, estrutura, política factual, o que evitar, direção visual e pergunta final.
+4. O seletor de motores fica recolhido em um menu compacto, com ícones e indicação de disponibilidade.
+5. Cada formato selecionado cria uma tarefa independente: 16:9 com 5–10 minutos e 9:16 com 1–2 minutos. Roteiro, voz, pasta do projeto e montagem são próprios de cada entrega.
+6. O roteiro começa com gancho separado e termina com pergunta de comentário coerente com categoria e tom. Quando a IA já cria uma pergunta final específica acompanhada de convite para comentar, essa pergunta é preservada.
+
+IDENTIDADE DO CANAL
+Para usar logo, coloque um arquivo PNG transparente em:
+  canais/<slug-do-canal>/identidade/logo.png
+
+Para adicionar uma intro opcional:
+  canais/<slug-do-canal>/identidade/intro.mp4
+
+O objeto `identidade` em canal.json pode ser configurado assim:
+{
+  "identidade": {
+    "nome_exibicao": "Nome do canal",
+    "logo_arquivo": "identidade/logo.png",
+    "marca_dagua": {"ativa": true, "opacidade": 0.22, "posicao": "inferior_direita", "largura_percentual": 10},
+    "intro": {"ativa": false, "arquivo": "identidade/intro.mp4"},
+    "thumbnail": {"incluir_logo": true, "largura_percentual": 10}
+  }
+}
+
+OBSERVACOES
+- Os motores Clássico e Broadcast News estão ativos. Stickman, Isometric, Blueprint e Personagem 2.5D continuam cadastrados como motores em desenvolvimento; este patch não cria seus renderizadores.
+- O Broadcast News usa motion graphics locais. Esta versão não faz pesquisa web automática e não garante que informações mutáveis estejam atualizadas.
+- A aplicação da logo em miniaturas já produzidas pelo pipeline Clássico está disponível. O renderizador dedicado para a thumbnail colorida aprovada ainda será implementado.
+- O patch não contém config.json, .env, banco SQLite, canal.json de exemplo, assets, arquivos pessoais ou iniciar.bat.
+- Recomendado: mantenha segredos em .env local. Se as credenciais anteriormente compartilhadas em texto aberto ainda estiverem ativas, revogue-as e gere novas.

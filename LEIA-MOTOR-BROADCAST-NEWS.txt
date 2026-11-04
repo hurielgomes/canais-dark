@@ -1,0 +1,12 @@
+MOTOR BROADCAST NEWS — BACKEND 1.4
+
+- Usa Gemini para criar temas e roteiros com fatos consolidados, sem Google Search, grounding ou cota de pesquisa web.
+- Nao inventa URLs nem registra fontes como se tivessem sido consultadas.
+- Para leis, aliquotas, calendarios, cargos, resultados e acontecimentos que mudam, o roteiro deve explicar o mecanismo geral e solicitar conferencia manual antes de publicar.
+- Os cartoes jornalisticos sao desenhados localmente com Pillow e renderizados com FFmpeg.
+- A narracao utiliza o Kokoro local.
+- A identidade do canal pode incluir logo/marca d'agua e intro opcional via canais/<slug>/canal.json.
+- Os formatos 16:9 e 9:16 sao tarefas separadas, com duracoes e roteiros independentes.
+- A ultima cena deve terminar com pergunta de comentario contextual, conforme categoria e tom.
+
+Teste sugerido: selecione categoria Economia, motor Broadcast News, tema "O que e Split Payment?", formato 16:9 e modo de revisao. Leia o roteiro antes de renderizar. Como nao ha pesquisa web automatica, confira detalhes atuais de legislacao, cronogramas e regras antes de publicar.

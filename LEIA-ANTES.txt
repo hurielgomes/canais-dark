@@ -1,0 +1,17 @@
+FABRICA DE VIDEOS — BACKEND 1.4.0
+
+Esta e uma atualizacao incremental para a instalacao que ja usa Backend 1.3.1, UI integrada e motor Broadcast News.
+
+APLICACAO
+1. Feche a fabrica com Ctrl+C.
+2. Faça backup da pasta.
+3. Extraia o ZIP na raiz de canais-darks e aceite substituir os arquivos do patch.
+4. Preserve config.json, .env, iniciar.bat, data/fabrica.sqlite3, canais/<seu-canal>/canal.json, projetos, modelos e saidas.
+5. Inicie com seu iniciar.bat (a linha `py app.py` e compativel com o ajuste que funcionou no Windows do usuario).
+6. Abra http://127.0.0.1:8765 e pressione Ctrl+F5.
+
+O patch atualiza categorias, prompts, branding do canal, Broadcast News sem Google Search, fila de entregas independentes 16:9/9:16 e perguntas finais de engajamento.
+
+Para usar logo e intro, coloque os arquivos em canais/<slug>/identidade/ e configure o objeto identidade no canal.json. A ausencia desses arquivos nao impede a producao.
+
+As novas tarefas continuam usando Gemini/Kokoro e fontes de imagem ja configuradas na sua instalacao. O modo sem Google Search nao garante atualidade; revise leis, taxas, numeros e acontecimentos recentes antes de publicar.

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "project_id": "draft-example",
+  "title": "Como funciona uma cidade sustentavel?",
+  "channel": "exemplo",
+  "category": "como_funciona",
+  "engine_id": "isometric",
+  "language": "pt-BR",
+  "status": "draft",
+  "research": {"summary": "Exemplo estrutural; preencher com pesquisa e fontes verificadas.", "sources": []},
+  "voice": {"engine": "kokoro", "voice_id": "pf_dora", "speed": 1.0, "emotion": "curioso"},
+  "deliverables": {
+    "youtube_long": {
+      "aspect_ratio": "16:9",
+      "target_duration_seconds": 420,
+      "hook": "O que faz uma cidade ser realmente sustentavel?",
+      "script": "",
+      "scenes": [
+        {"scene_id": "s01", "narration": "O que faz uma cidade ser realmente sustentavel?", "duration_seconds": 5, "visual_type": "isometric_city_wide", "background_id": "smart_city_day", "character_id": null, "action": "camera_establishing", "emotion": "", "objects": ["solar_roofs", "green_roofs", "electric_bus"], "camera": {"move": "slow_orbit", "focus": "city"}, "captions": [], "source_ids": []}
+      ]
+    },
+    "short_vertical": {
+      "aspect_ratio": "9:16",
+      "target_duration_seconds": 90,
+      "hook": "Uma cidade pode produzir boa parte da energia que consome?",
+      "script": "",
+      "scenes": []
+    }
+  },
+  "thumbnail": {"template_id": "thumbnail_colorful_v1", "headline": "A CIDADE DO FUTURO?", "highlight_word": "FUTURO", "subject_asset": "smart_city_day", "reaction": "curioso", "callout_asset": "solar_roof_detail", "logo_path": "", "formats": ["16:9", "9:16"]}
+}

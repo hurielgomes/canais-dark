@@ -1,0 +1,358 @@
+{
+  "version": 2,
+  "categories": [
+    {
+      "id": "curiosidades",
+      "name": "Curiosidades",
+      "icon": "💡",
+      "recommended_engines": [
+        "classico",
+        "character_2_5d",
+        "stickman"
+      ],
+      "description": "Fatos surpreendentes, perguntas específicas e descobertas verificáveis sobre o mundo.",
+      "editorial_profile": {
+        "objective": "Transformar fatos pouco conhecidos em histórias fáceis de entender e compartilhar.",
+        "tone": "intrigante, ágil, acessível e sem sensacionalismo falso",
+        "structure": [
+          "pergunta ou afirmação intrigante",
+          "contexto mínimo",
+          "fato principal",
+          "duas ou três descobertas complementares",
+          "conclusão que muda a percepção inicial"
+        ],
+        "fact_policy": "Priorizar fatos bem documentados e consensuais; não inventar datas, números ou explicações.",
+        "avoid": "Curiosidades falsas, listas genéricas, afirmações sem contexto.",
+        "visual_guidance": "Objetos em close, comparações visuais, mapas simples, cenas coloridas e detalhes surpreendentes.",
+        "closing_question": "E você, já conhecia esse fato? O que mais te surpreendeu? Conta nos comentários."
+      }
+    },
+    {
+      "id": "historia",
+      "name": "História e curiosidades antigas",
+      "icon": "🏺",
+      "recommended_engines": [
+        "classico",
+        "character_2_5d"
+      ],
+      "description": "Histórias antigas, civilizações, descobertas arqueológicas, personagens históricos e acontecimentos documentados.",
+      "editorial_profile": {
+        "objective": "Contar episódios históricos com contexto, cronologia e explicação do que é comprovado.",
+        "tone": "narrativo, intrigante, respeitoso e documental",
+        "structure": [
+          "pergunta inicial",
+          "época e local",
+          "personagens e contexto",
+          "acontecimento em sequência",
+          "consequências e legado"
+        ],
+        "fact_policy": "Distinguir evidência arqueológica, registro histórico, hipótese acadêmica e lenda. Datas e atribuições devem ser tratadas com cautela.",
+        "avoid": "Lendas como fatos, anacronismos, diálogos inventados apresentados como reais.",
+        "visual_guidance": "Mapas antigos, gravuras, artefatos, reconstruções de época identificadas como ilustração e paleta histórica clara.",
+        "closing_question": "Você já conhecia essa história? Que parte dela mais chamou sua atenção? Conta nos comentários."
+      }
+    },
+    {
+      "id": "esportes",
+      "name": "Esportes",
+      "icon": "⚽",
+      "recommended_engines": [
+        "classico"
+      ],
+      "description": "Regras, táticas, recordes, histórias, partidas e curiosidades esportivas.",
+      "editorial_profile": {
+        "objective": "Explicar acontecimentos e conceitos esportivos com ritmo, contexto e dados verificáveis.",
+        "tone": "energético, claro, competitivo sem hostilidade",
+        "structure": [
+          "lance ou pergunta forte",
+          "contexto da partida/regra",
+          "explicação tática ou histórica",
+          "consequência e comparação",
+          "pergunta para a comunidade"
+        ],
+        "fact_policy": "Verificar placares, temporadas, recordes, regras e datas; separar opinião de estatística.",
+        "avoid": "Rumores sobre atletas, estatísticas sem fonte, rivalidade ofensiva.",
+        "visual_guidance": "Campo, quadra, diagramas táticos, trajetórias, placares e linhas do tempo.",
+        "closing_question": "Na sua opinião, qual foi o momento mais decisivo dessa história? Conta aqui nos comentários."
+      }
+    },
+    {
+      "id": "celebridades",
+      "name": "Famosos e cultura pop",
+      "icon": "⭐",
+      "recommended_engines": [
+        "classico",
+        "character_2_5d"
+      ],
+      "description": "Carreiras, obras, marcos culturais e fatos públicos verificáveis sobre pessoas conhecidas.",
+      "editorial_profile": {
+        "objective": "Contextualizar trajetórias e fenômenos culturais sem boatos ou invasão de privacidade.",
+        "tone": "curioso, respeitoso, leve e informativo",
+        "structure": [
+          "pergunta sobre obra ou marco público",
+          "contexto da carreira",
+          "fato documentado",
+          "impacto cultural",
+          "pergunta sobre a obra ou fenômeno"
+        ],
+        "fact_policy": "Usar somente fatos públicos verificáveis; distinguir declaração, notícia e especulação. Não inferir vida privada.",
+        "avoid": "Boatos, acusações não confirmadas, difamação, detalhes privados e falsos escândalos.",
+        "visual_guidance": "Capas de obras, linhas do tempo, objetos culturais e ilustrações genéricas; evitar retrato sintético identificável de pessoa real.",
+        "closing_question": "Qual obra ou momento dessa trajetória mais marcou você? Conta nos comentários."
+      }
+    },
+    {
+      "id": "what_if",
+      "name": "E se...?",
+      "icon": "🧪",
+      "recommended_engines": [
+        "stickman",
+        "character_2_5d"
+      ],
+      "description": "Cenários hipotéticos, experiências mentais e consequências progressivas apoiadas em ciência quando aplicável.",
+      "editorial_profile": {
+        "objective": "Explorar uma hipótese por etapas, mostrando consequências plausíveis, limites e surpresas.",
+        "tone": "imaginativo, divertido, crescente e cientificamente honesto",
+        "structure": [
+          "hipótese direta",
+          "primeira consequência",
+          "efeito acumulado",
+          "complicação ou limite inesperado",
+          "resultado final e escolha do espectador"
+        ],
+        "fact_policy": "Separar ciência estabelecida, extrapolação plausível e ficção. Não apresentar previsão especulativa como certeza.",
+        "avoid": "Falsa precisão, números inventados, promessas científicas impossíveis.",
+        "visual_guidance": "Personagem reativo, escala progressiva, comparações antes/depois, situações coloridas e ação visual.",
+        "closing_question": "E você, o que faria se isso acontecesse com você? Conta sua escolha nos comentários."
+      }
+    },
+    {
+      "id": "como_funciona",
+      "name": "Como funciona...?",
+      "icon": "⚙️",
+      "recommended_engines": [
+        "isometric",
+        "blueprint",
+        "classico"
+      ],
+      "description": "Explicações passo a passo sobre objetos, serviços, sistemas e processos do cotidiano.",
+      "editorial_profile": {
+        "objective": "Tornar visível um mecanismo ou processo que normalmente fica escondido.",
+        "tone": "didático, curioso, direto e visual",
+        "structure": [
+          "pergunta sobre o funcionamento",
+          "visão geral do sistema",
+          "componentes principais",
+          "passo a passo do processo",
+          "resumo do princípio"
+        ],
+        "fact_policy": "Explicar mecanismo real; apontar diferenças entre modelos e sistemas quando existirem.",
+        "avoid": "Jargão sem explicação, detalhes técnicos irrelevantes, analogias que distorcem o funcionamento.",
+        "visual_guidance": "Cortes internos, fluxo de etapas, objetos explodidos, diagramas e ambientes isométricos.",
+        "closing_question": "Qual outro objeto ou sistema você gostaria de ver explicado por dentro? Conta aqui."
+      }
+    },
+    {
+      "id": "educacao",
+      "name": "Educação e ciência",
+      "icon": "🔬",
+      "recommended_engines": [
+        "isometric",
+        "classico",
+        "character_2_5d"
+      ],
+      "description": "Conceitos científicos e educacionais explicados com exemplos, analogias e demonstrações.",
+      "editorial_profile": {
+        "objective": "Ensinar um conceito com clareza, exemplos e progressão lógica.",
+        "tone": "didático, acessível, curioso e preciso",
+        "structure": [
+          "pergunta que revela uma dúvida comum",
+          "conceito central",
+          "exemplo concreto",
+          "aplicação ou consequência",
+          "síntese"
+        ],
+        "fact_policy": "Usar conceitos aceitos e distinguir consenso científico de hipótese em pesquisa.",
+        "avoid": "Simplificações enganosas, causalidade falsa, pseudociência.",
+        "visual_guidance": "Diagramas, experiências visuais, modelos, comparações e ilustrações de apoio.",
+        "closing_question": "Esse exemplo ajudou a entender o conceito? Que parte você gostaria de aprofundar?"
+      }
+    },
+    {
+      "id": "noticias",
+      "name": "Notícias e atualidades",
+      "icon": "📰",
+      "recommended_engines": [
+        "broadcast_news",
+        "classico"
+      ],
+      "description": "Explicadores sobre acontecimentos públicos e assuntos recentes, com datas e ressalvas sobre informações que mudam.",
+      "editorial_profile": {
+        "objective": "Explicar o que aconteceu, o contexto e por que o assunto importa.",
+        "tone": "jornalístico, claro, equilibrado e sem dramatização artificial",
+        "structure": [
+          "pergunta sobre o fato",
+          "o que está confirmado",
+          "contexto e cronologia",
+          "impactos e atores envolvidos",
+          "o que observar a seguir"
+        ],
+        "fact_policy": "Sem pesquisa web nesta versão, limitar-se a fatos consolidados e conhecimento estável; não afirmar estado atual, números recentes ou desdobramentos posteriores sem fonte fornecida pelo usuário.",
+        "avoid": "Breaking news sem verificação, manchetes alarmistas, acusações, previsões como fatos.",
+        "visual_guidance": "Manchetes explicativas, cronologias, mapas, cartões de dados e fluxogramas; sem apresentador obrigatório.",
+        "closing_question": "Qual aspecto desse assunto você considera mais importante para acompanhar? Comente sua opinião."
+      }
+    },
+    {
+      "id": "economia",
+      "name": "Economia e negócios",
+      "icon": "📊",
+      "recommended_engines": [
+        "broadcast_news",
+        "classico"
+      ],
+      "description": "Conceitos econômicos, tributos, negócios, meios de pagamento e impactos na vida cotidiana.",
+      "editorial_profile": {
+        "objective": "Explicar mecanismos econômicos e seus possíveis efeitos sem recomendar decisões financeiras.",
+        "tone": "analítico, acessível, neutro e prático",
+        "structure": [
+          "pergunta sobre o mecanismo",
+          "definição simples",
+          "como funciona passo a passo",
+          "quem participa e quem pode ser afetado",
+          "limites, cenários e síntese"
+        ],
+        "fact_policy": "Não inventar taxas, valores ou regras. Sem fontes atuais, explicar conceitos consolidados e marcar legislação, cronogramas e números recentes para conferência antes de publicar.",
+        "avoid": "Recomendação de investimento, previsões categóricas, aconselhamento financeiro ou tributário.",
+        "visual_guidance": "Fluxos de dinheiro, cartões de comparação, calendários, tabelas e gráficos apenas com dados fornecidos/confirmados.",
+        "closing_question": "Como você acha que esse mecanismo pode afetar empresas e consumidores? Conta sua opinião."
+      }
+    },
+    {
+      "id": "politica_institucional",
+      "name": "Política institucional e funcionamento do Estado",
+      "icon": "🏛️",
+      "recommended_engines": [
+        "broadcast_news",
+        "classico"
+      ],
+      "description": "Instituições, regras constitucionais, eleições internas, processos legislativos e funcionamento do poder público.",
+      "editorial_profile": {
+        "objective": "Explicar procedimentos e competências institucionais com neutralidade e contexto.",
+        "tone": "neutro, didático, institucional e apartidário",
+        "structure": [
+          "pergunta sobre a regra",
+          "instituição e competência",
+          "processo em etapas",
+          "cenários permitidos pela regra",
+          "síntese e implicações institucionais"
+        ],
+        "fact_policy": "Distinguir regra vigente, proposta, interpretação e opinião. Sem fontes atuais, abordar o funcionamento geral e pedir conferência de regimentos e datas antes da publicação.",
+        "avoid": "Propaganda partidária, manipulação de polarização, alegações não comprovadas sobre agentes públicos.",
+        "visual_guidance": "Fluxogramas institucionais, organogramas, cronologias, documentos e cartões de regras.",
+        "closing_question": "Você considera esse mecanismo institucional claro e adequado? Por quê? Comente."
+      }
+    },
+    {
+      "id": "documentario",
+      "name": "Documentários e explicadores",
+      "icon": "🎥",
+      "recommended_engines": [
+        "broadcast_news",
+        "classico"
+      ],
+      "description": "Narrativas documentais sobre processos, lugares, acontecimentos e temas de relevância pública.",
+      "editorial_profile": {
+        "objective": "Construir uma narrativa factual com contexto, evidências, personagens públicos ou processos e consequências.",
+        "tone": "documental, envolvente, sóbrio e humano",
+        "structure": [
+          "abertura intrigante",
+          "contexto e cenário",
+          "desenvolvimento cronológico ou causal",
+          "virada ou descoberta",
+          "conclusão e legado"
+        ],
+        "fact_policy": "Não dramatizar evidências, não inventar cenas factuais e indicar quando uma imagem é reconstituição ilustrativa.",
+        "avoid": "Fatos sem sustentação, diálogos inventados como reais, sensacionalismo.",
+        "visual_guidance": "Mapas, cronologias, fotos/arquivos licenciados, dados e cartões editoriais.",
+        "closing_question": "Qual detalhe desse caso merece ser investigado com mais profundidade? Conta nos comentários."
+      }
+    },
+    {
+      "id": "engenharia",
+      "name": "Engenharia e construção",
+      "icon": "📐",
+      "recommended_engines": [
+        "blueprint",
+        "isometric"
+      ],
+      "description": "Estruturas, máquinas, obras, materiais, projetos e princípios de engenharia.",
+      "editorial_profile": {
+        "objective": "Mostrar como algo é projetado, dimensionado, construído ou funciona.",
+        "tone": "técnico acessível, demonstrativo e preciso",
+        "structure": [
+          "pergunta técnica",
+          "visão geral",
+          "componentes e materiais",
+          "etapas ou funcionamento",
+          "limitações e conclusão"
+        ],
+        "fact_policy": "Não inventar especificações, capacidades ou medidas. Diferenciar exemplo ilustrativo de projeto real.",
+        "avoid": "Instruções perigosas, alegações de segurança sem base, medidas arbitrárias.",
+        "visual_guidance": "Blueprint, cortes técnicos, vistas explodidas, cotas visuais e modelos isométricos.",
+        "closing_question": "Qual componente ou estrutura você gostaria de ver desmontado e explicado?"
+      }
+    },
+    {
+      "id": "humor",
+      "name": "Humor e histórias",
+      "icon": "😂",
+      "recommended_engines": [
+        "stickman",
+        "character_2_5d"
+      ],
+      "description": "Histórias engraçadas, situações cotidianas, ironias e narrativas leves.",
+      "editorial_profile": {
+        "objective": "Criar uma situação clara, escalada cômica, surpresa e fechamento com personalidade.",
+        "tone": "leve, espontâneo, bem-humorado e respeitoso",
+        "structure": [
+          "situação absurda ou familiar",
+          "expectativa",
+          "escalada de complicações",
+          "virada cômica",
+          "pergunta divertida ao público"
+        ],
+        "fact_policy": "Identificar ficção, sátira e situações inventadas; não atribuir histórias falsas a pessoas reais.",
+        "avoid": "Humilhação, crueldade, preconceito, desinformação apresentada como notícia.",
+        "visual_guidance": "Personagens expressivos, poses exageradas, cores vivas, timing cômico e reações visuais.",
+        "closing_question": "E você, já passou por uma situação tão absurda quanto essa ou consegue superar? Conta aí."
+      }
+    },
+    {
+      "id": "tecnologia",
+      "name": "Tecnologia",
+      "icon": "💻",
+      "recommended_engines": [
+        "blueprint",
+        "isometric",
+        "broadcast_news"
+      ],
+      "description": "Produtos, sistemas digitais, infraestrutura, inteligência artificial e tendências tecnológicas.",
+      "editorial_profile": {
+        "objective": "Explicar o que a tecnologia faz, como funciona e quais são suas limitações e impactos.",
+        "tone": "curioso, analítico, claro e sem hype exagerado",
+        "structure": [
+          "pergunta ou mudança",
+          "conceito e contexto",
+          "como funciona",
+          "aplicações e limites",
+          "impactos e síntese"
+        ],
+        "fact_policy": "Não inventar benchmarks, capacidades ou datas de lançamento. Sem fontes atuais, evitar afirmar especificações recentes.",
+        "avoid": "Hype, promessas exageradas, comparações sem metodologia.",
+        "visual_guidance": "Diagramas, interfaces ilustrativas, fluxos de dados, componentes e cenários técnicos.",
+        "closing_question": "Qual aplicação dessa tecnologia você gostaria de ver testada na prática?"
+      }
+    }
+  ]
+}
