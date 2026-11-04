@@ -1,0 +1,204 @@
+{
+  "titulo": "Como Richard Nixon mudou a economia global",
+  "descricao": "Entenda o momento histórico em que o presidente Richard Nixon suspendeu a conversibilidade do dólar em ouro, alterando para sempre o sistema financeiro internacional.",
+  "tags": [
+    "economia",
+    "historia",
+    "padrao ouro",
+    "richard nixon",
+    "dolar",
+    "sistema financeiro",
+    "financas",
+    "geopolitica",
+    "anos 70"
+  ],
+  "gancho_texto": "O dia em que o dinheiro do mundo perdeu o lastro em ouro.",
+  "texto_miniatura": "O dia em que o dinheiro do mundo perdeu o lastro em ouro.",
+  "resumo_pesquisa": "Uso de fatos históricos consolidados sobre o Choque Nixon de 1971 e o fim do padrão ouro. Conferir atualização antes de publicar.",
+  "cenas": [
+    {
+      "narracao": "Por que o dinheiro no seu bolso deixou de valer ouro?",
+      "visual": {
+        "type": "headline",
+        "midia_tipo": "conceito",
+        "busca_wikimedia": "Gold standard",
+        "prompt_midia_ia": "Conceptual illustration of a gold bar melting into digital currency, minimalist style",
+        "kicker": "ECONOMIA / HISTÓRIA",
+        "headline": "O Fim do Padrão Ouro",
+        "subheadline": "O que aconteceu em 1971?",
+        "items": [],
+        "steps": [],
+        "events": [],
+        "left": {},
+        "right": {},
+        "chart": {}
+      },
+      "source_ids": [
+        "S1"
+      ]
+    },
+    {
+      "narracao": "Em agosto de 1971, o presidente americano Richard Nixon tomou uma decisão drástica.",
+      "visual": {
+        "type": "headline",
+        "midia_tipo": "pessoa",
+        "busca_wikimedia": "Richard Nixon",
+        "prompt_midia_ia": "Historical style illustration of Richard Nixon speaking at a podium",
+        "kicker": "CRONOLOGIA",
+        "headline": "Agosto de 1971",
+        "subheadline": "O anúncio que chocou o mundo",
+        "items": [],
+        "steps": [],
+        "events": [],
+        "left": {},
+        "right": {},
+        "chart": {}
+      },
+      "source_ids": [
+        "S1"
+      ]
+    },
+    {
+      "narracao": "Ele suspendeu temporariamente a conversibilidade do dólar em ouro.",
+      "visual": {
+        "type": "definition",
+        "midia_tipo": "conceito",
+        "busca_wikimedia": "US Dollar",
+        "prompt_midia_ia": "Conceptual illustration representing currency exchange and precious metals",
+        "kicker": "MECANISMO",
+        "headline": "Fim da Conversibilidade",
+        "subheadline": "O dólar desvinculado do metal",
+        "items": [],
+        "steps": [],
+        "events": [],
+        "left": {},
+        "right": {},
+        "chart": {}
+      },
+      "source_ids": [
+        "S1"
+      ]
+    },
+    {
+      "narracao": "Até então, o sistema de Bretton Woods garantia que outras moedas estivessem atreladas ao dólar, que por sua vez era trocado por ouro.",
+      "visual": {
+        "type": "flow",
+        "midia_tipo": "conceito",
+        "busca_wikimedia": "Bretton Woods system",
+        "prompt_midia_ia": "Diagram style illustration of financial connection between currency and gold",
+        "kicker": "CONTEXTO",
+        "headline": "Acordo de Bretton Woods",
+        "subheadline": "A base do pós-guerra",
+        "items": [],
+        "steps": [],
+        "events": [],
+        "left": {},
+        "right": {},
+        "chart": {}
+      },
+      "source_ids": [
+        "S1"
+      ]
+    },
+    {
+      "narracao": "Mas os gastos excessivos dos Estados Unidos geraram uma corrida pelas reservas de ouro americanas.",
+      "visual": {
+        "type": "bullets",
+        "midia_tipo": "conceito",
+        "busca_wikimedia": "Gold reserve",
+        "prompt_midia_ia": "Minimalist graphic showing economic pressure and reserves",
+        "kicker": "IMPACTO",
+        "headline": "Pressão nas Reservas",
+        "subheadline": "A ameaça ao tesouro americano",
+        "items": [
+          {
+            "title": "Gastos",
+            "body": "Financiamento de guerras e programas internos"
+          },
+          {
+            "title": "Reserva",
+            "body": "Queda drástica dos estoques de ouro nos EUA"
+          }
+        ],
+        "steps": [],
+        "events": [],
+        "left": {},
+        "right": {},
+        "chart": {}
+      },
+      "source_ids": [
+        "S1"
+      ]
+    },
+    {
+      "narracao": "A medida de Nixon, que seria provisória, tornou-se permanente e inaugurou a era das moedas fiduciárias globais.",
+      "visual": {
+        "type": "headline",
+        "midia_tipo": "conceito",
+        "busca_wikimedia": "Fiat money",
+        "prompt_midia_ia": "Abstract illustration of global financial markets",
+        "kicker": "MUDANÇA GLOBAL",
+        "headline": "Moeda Fiduciária",
+        "subheadline": "O valor baseado na confiança estatal",
+        "items": [],
+        "steps": [],
+        "events": [],
+        "left": {},
+        "right": {},
+        "chart": {}
+      },
+      "source_ids": [
+        "S1"
+      ]
+    },
+    {
+      "narracao": "Desde então, o valor do dinheiro passou a depender da confiança nos governos e bancos centrais, e não mais de um metal precioso.",
+      "visual": {
+        "type": "headline",
+        "midia_tipo": "conceito",
+        "busca_wikimedia": "Central bank",
+        "prompt_midia_ia": "Symbolic image representing trust in modern monetary systems",
+        "kicker": "LEGADO",
+        "headline": "Confiança e Economia",
+        "subheadline": "O sistema financeiro moderno",
+        "items": [],
+        "steps": [],
+        "events": [],
+        "left": {},
+        "right": {},
+        "chart": {}
+      },
+      "source_ids": [
+        "S1"
+      ]
+    },
+    {
+      "narracao": "Afinal, por que o dinheiro deixou de valer ouro? Qual aspecto desse assunto econômico você considera mais importante para acompanhar? Comente sua opinião.",
+      "visual": {
+        "type": "headline",
+        "midia_tipo": "conceito",
+        "busca_wikimedia": "Economy",
+        "prompt_midia_ia": "Question mark glowing over abstract financial data background",
+        "kicker": "CONCLUSÃO",
+        "headline": "O Futuro do Dinheiro",
+        "subheadline": "Qual sua opinião sobre o tema?",
+        "items": [],
+        "steps": [],
+        "events": [],
+        "left": {},
+        "right": {},
+        "chart": {}
+      },
+      "source_ids": [
+        "S1"
+      ]
+    }
+  ],
+  "fontes": [],
+  "fontes_sugeridas": [
+    "Documentos oficiais do governo dos Estados Unidos de 1971",
+    "Anais do acordo de Bretton Woods",
+    "Manuais de história econômica contemporânea"
+  ],
+  "pergunta_final": "Qual aspecto desse assunto econômico você considera mais importante para acompanhar?"
+}

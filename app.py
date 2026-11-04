@@ -461,10 +461,16 @@ class Handler(BaseHTTPRequestHandler):
         if url.path in ("/", "/index.html"):
             return self._arquivo(RAIZ / "ui" / "index.html", "text/html; charset=utf-8")
         if url.path == "/api/estado":
-            with LOCK:
-                fila = [dict(j, log=j.get("log", [])[-40:]) for j in FILA]
-            return self._json(200, {"versao": "1.4.0-seis-melhorias", "canais": lista_canais(), "chaves": estado_chaves(), "fila": fila,
-                                   "motores": engines_health()})
+            try:
+                with LOCK:
+                    fila = [dict(j, log=j.get("log", [])[-40:]) for j in FILA]
+                return self._json(200, {"versao": "1.4.0-seis-melhorias", "canais": lista_canais(),
+                                        "chaves": estado_chaves(), "fila": fila,
+                                        "motores": engines_health()})
+            except BaseException as e:  # noqa  (pega tambem o sys.exit do erro())
+                import traceback
+                traceback.print_exc()
+                return self._json(500, {"erro": f"{type(e).__name__}: {e}"})
         if url.path == "/api/motores":
             return self._json(200, {"motores": list_engines()})
         if url.path == "/api/categorias":
@@ -514,8 +520,7 @@ class Handler(BaseHTTPRequestHandler):
             motor = get_engine(str(d.get("motor") or "classico"))
             if motor is None:
                 return self._json(400, {"erro": "motor nao encontrado no catalogo"})
-            perfil = cv.carregar_canal(canal_nome)
-            perfil = dict(perfil)
+            perfil = dict(cv.aplicar_modo_tema(cv.carregar_canal(canal_nome), categoria_id))
             perfil["nicho"] = (str(perfil.get("nicho", "")) + "\nCategoria editorial selecionada: " + categoria.get("name", categoria_id)
                                + ". Direcao visual: " + motor.get("name", "Classico") + ".")
             ok, r = capturar(lambda: cv.sugerir_ideias(perfil, canal_nome, n, cv.carregar_config(), categoria=categoria, motor=str(d.get("motor") or "classico")))
@@ -612,7 +617,7 @@ class Handler(BaseHTTPRequestHandler):
             job = next((j for j in FILA if j.get("pasta") == rel_pasta), None)
             cenas = roteiro.get("cenas", []) if isinstance(roteiro, dict) else []
             possui_visual_broadcast = bool(cenas) and isinstance(cenas[0], dict) and isinstance(cenas[0].get("visual"), dict)
-            is_broadcast = (job and job.get("motor") == "broadcast_news") or possui_visual_broadcast
+            is_broadcast = (job and job.get("motor") in ("broadcast_news", "broadcast_motion")) or possui_visual_broadcast
             validator = validar_roteiro_broadcast if is_broadcast else cv.validar_roteiro
             ok, r = capturar(validator, roteiro)
             if not ok:

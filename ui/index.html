@@ -292,7 +292,7 @@ function opcoes(){
   const longa=Math.round(Number($('#duracao-16x9').value||7)*60),curta=Math.round(Number($('#duracao-9x16').value||1.5)*60);
   return{canal,motor:motorSelecionado,categoria:categoriaSelecionada,formatos:f.join(',')||'16x9',duracao_longa:longa,duracao_curta:curta,revisar:$('#revisar').checked,simular:$('#simular').checked};
 }
-const ICONES_MOTOR={classico:'🎞️',broadcast_news:'📰',isometric:'🏙️',blueprint:'📐',stickman:'🧍',character_2_5d:'🎭'};
+const ICONES_MOTOR={classico:'🎞️',broadcast_news:'📰',broadcast_motion:'📊',isometric:'🏙️',blueprint:'📐',stickman:'🧍',character_2_5d:'🎭'};
 function motorAtual(){return motores.find(x=>x.id===motorSelecionado)||motores.find(x=>x.id==='classico')||null}
 function renderMotores(){
   const grid=$('#motores-grid');if(!grid)return;
@@ -313,7 +313,7 @@ function renderMotores(){
   const alerta=$('#motor-alerta');
   if(disponivel){
     alerta.className='motor-alerta';
-    alerta.textContent=atual.id==='broadcast_news'
+    alerta.textContent=atual.id.startsWith('broadcast')
       ? 'Broadcast News ativo: Gemini cria explicadores com fatos consolidados sem exigir Google Search. Temas com dados, leis ou acontecimentos recentes precisam de conferência manual antes da publicação. Cartões jornalísticos renderizados localmente por FFmpeg.'
       : (atual.id==='classico' ? 'Motor Classico disponivel: imagens/videos de apoio, Kokoro e FFmpeg. Cada formato selecionado gera projeto, roteiro e narracao independentes.' : `${atual.name} disponivel para producao.`);
     $('#btn-rascunho').hidden=true;

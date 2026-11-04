@@ -1,5 +1,5 @@
 {
-  "nome": "Nome do Canal",
+  "nome": "Curiosidades Antigas",
   "idioma": "português do Brasil",
   "nicho": "curiosidades históricas bem documentadas",
   "publico": "adultos curiosos, 18 a 45 anos, que assistem à noite",
@@ -13,6 +13,7 @@
     "Clímax e resposta à pergunta central",
     "Fechamento curto que retoma o início"
   ],
+"publico_livre": "adultos curiosos, público geral",
   "regras": [
     "Se o assunto for saúde, direito ou finanças, não dê conselhos; apenas informe e deixe claro que é informação geral."
   ],
@@ -23,7 +24,7 @@
   "gancho_segundos": 2.6,
   "voz": "pf_dora",
   "idioma_tts": "pt-br",
-  "velocidade": 1.08,
+  "velocidade": 1.25,
   "pausa_entre_cenas": 0.2,
   "legenda_fonte": "Arial Black",
   "legenda_maiusculas": true,

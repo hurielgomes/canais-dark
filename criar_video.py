@@ -290,6 +290,22 @@ def carregar_canal(nome):
 
 # ------------------------------------------------------------------- roteiro
 
+def aplicar_modo_tema(canal, categoria="curiosidades"):
+    """modo_tema 'livre': tema, tom e estrutura vêm da categoria, não do canal.
+    modo_tema 'livre' (padrão): mantém o comportamento atual."""
+    if str(canal.get("modo_tema", "livre")).strip().lower() != "livre":
+        return canal
+    cat = get_category(categoria) or {}
+    ep = cat.get("editorial_profile", {})
+    c = dict(canal)
+    c["nicho"] = f"{cat.get('name', categoria)}: {cat.get('description', '')}"
+    c["publico"] = canal.get("publico_livre") or "adultos curiosos, público geral"
+    c["tom"] = ep.get("tone", "")
+    c["estrutura"] = list(ep.get("structure", []))
+    c["regras"] = list(canal.get("regras_globais", []))
+    return c
+
+
 def titulos_anteriores(canal_nome, atual):
     base = RAIZ / "projetos" / canal_nome
     titulos = []
@@ -305,6 +321,7 @@ def titulos_anteriores(canal_nome, atual):
 
 
 def montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria="curiosidades"):
+    canal = aplicar_modo_tema(canal, categoria)
     palavras_total = int(duracao * PALAVRAS_POR_SEGUNDO)
     palavras_cena = int(canal["segundos_por_imagem"] * PALAVRAS_POR_SEGUNDO)
     n_cenas = max(3, round(duracao / canal["segundos_por_imagem"]))
@@ -492,7 +509,8 @@ def gerar_voz(roteiro, pasta, canal, simular):
         vel = float(canal["velocidade"]) * (float(canal["velocidade_gancho"]) if i == 1 else 1.0)
         amostras, taxa = kokoro.create(c["narracao"], voice=canal["voz"], speed=vel, lang=canal["idioma_tts"])
         pad = np.zeros(int(taxa * (PAUSA_GANCHO if i == 1 else PAUSA_CENA)), dtype=amostras.dtype)
-        sf.write(str(wav), np.concatenate([amostras, pad]), taxa)
+        pad_ini = np.zeros(int(taxa * 0.15), dtype=amostras.dtype)
+        sf.write(str(wav), np.concatenate([pad_ini, amostras, pad]), taxa)
     narracao = pasta / "narracao.wav"
     if not narracao.exists():
         (pasta_audio / "lista.txt").write_text("\n".join(f"file '{w.name}'" for w in wavs), encoding="utf-8")

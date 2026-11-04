@@ -56,7 +56,7 @@ def make_research_prompt(channel: dict, topic: str, duration: int, category: str
     profile = get_category(category).get("editorial_profile", {})
     category_rules = "\n".join([f"Objetivo: {profile.get('objective', '')}", f"Tom: {profile.get('tone', '')}", "Estrutura: " + "; ".join(profile.get("structure", [])), f"Regra factual: {profile.get('fact_policy', '')}", f"Evitar: {profile.get('avoid', '')}", f"Direcao visual: {profile.get('visual_guidance', '')}"])
     closing = profile.get("closing_question", "Qual aspecto desse assunto mais chamou sua atencao? Comente.")
-    return f"""Voce e editor-chefe e roteirista de um canal brasileiro de jornalismo explicativo e documentarios factuais.
+        return f"""Voce e roteirista de videos curtos virais (TikTok/Reels/Shorts) para o publico brasileiro geral, nao especialista.
 
 CANAL: {channel_name}
 PUBLICO: {audience}
@@ -79,16 +79,23 @@ FATOS E PRECISAO (SEM PESQUISA WEB):
 
 NARRATIVA:
 - Gere cerca de {words} palavras, divididas em aproximadamente {scene_count} cenas.
-- A primeira cena deve ser apenas uma pergunta ou afirmacao intrigante, sem resposta nem contexto.
+- A primeira cena e o GANCHO: pergunta curiosa + frase de retencao ("Aposto que voce nao sabia dessa", "O ultimo ponto vai te surpreender"). Sem resposta ainda.
+- Frases curtas, linguagem do dia a dia, exemplos do cotidiano do brasileiro.
+- Termine retomando o gancho e com uma pergunta final que a pessoa QUEIRA responder: opiniao polarizada ("E voce, e a favor ou contra...?") ou experiencia pessoal ("Ja aconteceu com voce? Me conta aqui"). Proibido pergunta generica ou academica.
 - A explicacao comeca na segunda cena.
 - Use frases faladas, claras, sem jargao desnecessario.
 - A cada 2 ou 3 cenas, introduza uma nova informacao ou virada.
-- Termine com uma conclusao que retoma a pergunta inicial e uma pergunta final contextual que convide o espectador a comentar.
 - Pergunta final sugerida para a categoria: {closing}
 - Ajuste a pergunta ao tom real do canal e ao tema; humor pede pergunta descontraida, assunto serio pede pergunta seria.
 - Nao inclua saudacoes, "neste video" ou pedidos genericos de inscricao.
 
 DIRECAO VISUAL — BROADCAST NEWS:
+- Para cada cena, informe os campos de midia dentro de visual.
+- midia_tipo: pessoa, local, evento ou conceito.
+- busca_wikimedia: nome especifico para busca no Wikimedia Commons.
+- Para pessoa, escreva nome e sobrenome. Nao use nomes vagos.
+- prompt_midia_ia: ilustracao conceitual em ingles, sem texto.
+- Nunca apresente ilustracao gerada como registro historico real.
 - Nao use apresentador fixo nem bancada de jornal como protagonista.
 - O protagonista e o fato, o mecanismo, os dados ou o acontecimento.
 - Cada cena deve ter um cartao visual que esclareca a narracao.
@@ -109,8 +116,11 @@ RESPONDA SOMENTE COM JSON VALIDO, neste formato:
     {{
       "narracao": "texto exato a ser narrado nesta cena",
       "visual": {{
-        "type": "headline|stat|flow|timeline|comparison|chart|bullets|quote|definition",
-        "kicker": "EDITORIA / EXPLICADOR",
+        "type": "headline|stat|flow|timeline|comparison|chart|bullets|quote|definition|impacto",
+        "midia_tipo": "pessoa|local|evento|conceito",
+        "busca_wikimedia": "nome especifico para busca",
+        "prompt_midia_ia": "conceptual illustration prompt in English",
+        "kicker": "PALAVRA-CHAVE CURTA DO TEMA",
         "headline": "titulo visual curto",
         "subheadline": "complemento curto",
         "value": "valor principal somente se confirmado",
@@ -405,7 +415,7 @@ def draw_visual(draw: ImageDraw.ImageDraw, visual: dict, x: int, y: int, width: 
 
     if kind == "quote":
         quote = str(visual.get("quote") or visual.get("subheadline") or visual.get("headline") or "")
-        attribution = str(visual.get("attribution") or "Documento consultado")
+        attribution = str(visual.get("attribution") or "Atribuicao nao informada")
         draw_round(draw, (x, y, x + width, y + height), (7, 30, 56), (28, 132, 181), radius=28, width=3)
         draw.text((x + pad, y + pad - 8), "“", font=get_font(100, True), fill=(255, 201, 63))
         draw_wrapped(draw, (x + pad + 35, y + 110), quote, get_font(37 if not vertical else 32, True), (247, 250, 253), width - 2 * pad - 35, max_lines=5)
@@ -542,7 +552,11 @@ def create_scene_card(scene: dict[str, Any], index: int, total: int, channel_nam
     draw.rectangle((0, footer_y, width, height), fill=(3, 12, 27))
     draw.rectangle((0, footer_y, width, footer_y + 7), fill=accent_red)
     source_names = [s.get("title", "Fonte") for s in sources[:3]]
-    source_line = "FONTES: " + (" · ".join(source_names) if source_names else "ROTEIRO DEMONSTRATIVO")
+    source_line = (
+        "FONTES: " + " · ".join(source_names)
+        if source_names
+        else "SEM FONTES CONSULTADAS AUTOMATICAMENTE - CONFIRA ANTES DE PUBLICAR"
+    )
     source_font = get_font(17 if not vertical else 18, True)
     draw_wrapped(draw, (margin, footer_y + 25), source_line[:190], source_font, (163, 198, 221), width - 2 * margin, max_lines=2)
     ticker_y = height - 57
@@ -573,6 +587,494 @@ def render_scene_clip(image_path: Path, duration: float, width: int, height: int
         raise BroadcastError("FFmpeg falhou ao renderizar um cartao: " + (result.stderr or "")[-900:])
 
 
+# ---------------------------------------------------------------------------
+# Midia de apoio fornecida pelo usuario
+# ---------------------------------------------------------------------------
+
+def find_scene_media(project_dir: Path, index: int) -> Path | None:
+    """Procura uma midia manual em imagens/01.mp4, imagens/01.png etc."""
+    folder = project_dir / "imagens"
+
+    for extension in (".mp4", ".mov", ".webm", ".mkv", ".png", ".jpg", ".jpeg", ".webp"):
+        candidate = folder / f"{index:02d}{extension}"
+        if candidate.is_file():
+            return candidate
+
+    return None
+
+
+def create_media_overlay(
+    scene: dict[str, Any],
+    index: int,
+    total: int,
+    channel_name: str,
+    category: str,
+    fmt: str,
+    destination: Path,
+) -> None:
+    """Cria uma tarja transparente para usar sobre foto ou video."""
+    width, height = WIDTHS[fmt]
+    vertical = fmt == "9x16"
+
+    image = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(image)
+
+    margin = int(width * 0.055)
+    header_h = 92 if not vertical else 110
+    footer_h = 220 if not vertical else 300
+    footer_y = height - footer_h
+
+    draw.rectangle((0, 0, width, header_h), fill=(5, 5, 5, 225))
+    draw.rectangle((0, header_h - 5, width, header_h), fill=(255, 204, 48, 255))
+
+    brand = str(channel_name or "CANAL").upper()[:28]
+    draw_wrapped(
+        draw,
+        (margin, 25),
+        brand,
+        get_font(25 if not vertical else 27, True),
+        (240, 248, 255, 255),
+        int(width * 0.65),
+        max_lines=1,
+    )
+
+    counter = f"{index:02d}/{total:02d}"
+    counter_font = get_font(23, True)
+    counter_box = draw.textbbox((0, 0), counter, font=counter_font)
+    draw.text(
+        (width - margin - (counter_box[2] - counter_box[0]), 27),
+        counter,
+        font=counter_font,
+        fill=(255, 204, 48, 255),
+    )
+
+    draw.rectangle((0, footer_y, width, height), fill=(5, 5, 5, 235))
+    draw.rectangle((0, footer_y, width, footer_y + 6), fill=(255, 204, 48, 255))
+
+    visual = scene.get("visual") if isinstance(scene.get("visual"), dict) else {}
+    kicker = str(visual.get("kicker") or category or "EXPLICADOR").upper()[:45]
+    title = str(visual.get("headline") or "").strip()
+
+    if not title:
+        title = str(scene.get("narracao") or "Entenda o assunto").split(".")[0]
+
+    draw_wrapped(
+        draw,
+        (margin, footer_y + 21),
+        kicker,
+        get_font(20 if not vertical else 22, True),
+        (255, 204, 48, 255),
+        width - 2 * margin,
+        max_lines=1,
+    )
+
+    draw_wrapped(
+        draw,
+        (margin, footer_y + 61),
+        title,
+        get_font(45 if not vertical else 43, True),
+        (250, 252, 255, 255),
+        width - 2 * margin,
+        line_gap=8,
+        max_lines=2 if not vertical else 3,
+    )
+
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    image.save(destination, format="PNG")
+
+
+def render_media_clip(
+    media_path: Path,
+    overlay_path: Path,
+    duration: float,
+    width: int,
+    height: int,
+    destination: Path,
+) -> None:
+    """Renderiza imagem ou video com a tarja jornalistica sobreposta."""
+    frames = max(1, round(duration * FPS))
+    is_video = media_path.suffix.lower() in cv.EXT_VIDEO
+
+    command = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y"]
+
+    if is_video:
+        command += ["-stream_loop", "-1", "-i", str(media_path.resolve())]
+    else:
+        command += [
+            "-loop", "1",
+            "-framerate", str(FPS),
+            "-i", str(media_path.resolve()),
+        ]
+
+    command += [
+        "-loop", "1",
+        "-framerate", str(FPS),
+        "-i", str(overlay_path.resolve()),
+    ]
+
+    filters = (
+        f"[0:v]scale={width}:{height}:"
+        f"force_original_aspect_ratio=increase,"
+        f"crop={width}:{height},"
+        f"fps={FPS},setsar=1[background];"
+        f"[1:v]format=rgba,fade=t=in:st=0:d=0.45:alpha=1[overlay];"
+        f"[background][overlay]overlay=0:0:format=auto,"
+        f"format=yuv420p[video]"
+    )
+
+    command += [
+        "-filter_complex", filters,
+        "-map", "[video]",
+        "-an",
+        "-frames:v", str(frames),
+        "-r", str(FPS),
+        "-c:v", "libx264",
+        "-preset", "veryfast",
+        "-crf", "20",
+        "-pix_fmt", "yuv420p",
+        str(destination.resolve()),
+    ]
+
+    result = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+
+    if result.returncode != 0:
+        raise BroadcastError(
+            f"FFmpeg falhou ao renderizar a midia {media_path.name}: "
+            + (result.stderr or "")[-1200:]
+        )
+
+
+# ---------------------------------------------------------------------------
+# Midias automaticas: Wikimedia Commons e ilustracao conceitual
+# ---------------------------------------------------------------------------
+
+def preparar_midias_automaticas(
+    script: dict,
+    project_dir: Path,
+    config: dict,
+    simular: bool,
+) -> None:
+    """Busca midias e registra procedencia. Nao garante identificacao correta."""
+    if simular:
+        info("   simulacao: busca externa e Cloudflare desativados.")
+        return
+
+    import html
+    import unicodedata
+    import urllib.parse
+    import urllib.request
+
+    pasta = project_dir / "imagens"
+    pasta.mkdir(parents=True, exist_ok=True)
+    registro_path = project_dir / "midias_automaticas.json"
+
+    if registro_path.exists():
+        try:
+            registro = load_json(registro_path)
+        except BroadcastError:
+            info("   aviso: nao foi possivel ler o registro anterior de midias.")
+            registro = {"midias": []}
+    else:
+        registro = {"midias": []}
+
+    itens = registro.get("midias")
+    if not isinstance(itens, list):
+        itens = []
+
+    por_cena = {
+        item["cena"]: item
+        for item in itens
+        if isinstance(item, dict) and isinstance(item.get("cena"), int)
+    }
+
+    def salvar_registro():
+        save_json(
+            registro_path,
+            {"midias": [por_cena[k] for k in sorted(por_cena)]},
+        )
+
+    def limpar_html(valor):
+        valor = re.sub(r"<[^>]+>", " ", str(valor or ""))
+        return " ".join(html.unescape(valor).split())
+
+    def normalizar(valor):
+        valor = unicodedata.normalize("NFKD", str(valor or ""))
+        valor = "".join(c for c in valor if not unicodedata.combining(c))
+        return re.sub(r"[^a-z0-9]+", " ", valor.lower()).strip()
+
+    def meta(metadata, nome):
+        campo = metadata.get(nome)
+        return campo.get("value", "") if isinstance(campo, dict) else ""
+
+    def licenca_aceita(url):
+        partes = urllib.parse.urlparse(str(url or "").strip())
+        if partes.scheme not in ("http", "https"):
+            return False
+        if partes.netloc.lower() not in (
+            "creativecommons.org",
+            "www.creativecommons.org",
+        ):
+            return False
+
+        caminho = partes.path.lower().rstrip("/")
+        return bool(
+            re.fullmatch(r"/licenses/by/(3\.0|4\.0)", caminho)
+            or caminho in (
+                "/publicdomain/zero/1.0",
+                "/publicdomain/mark/1.0",
+            )
+        )
+
+    def buscar_commons(termo):
+        parametros = {
+            "action": "query",
+            "generator": "search",
+            "gsrsearch": termo,
+            "gsrnamespace": "6",
+            "gsrlimit": "15",
+            "prop": "imageinfo",
+            "iiprop": "url|mime|extmetadata",
+            "format": "json",
+            "formatversion": "2",
+        }
+        url = (
+            "https://commons.wikimedia.org/w/api.php?"
+            + urllib.parse.urlencode(parametros)
+        )
+        req = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": "BroadcastNewsMediaBot/1.0 (Wikimedia media search)"
+            },
+        )
+
+        with urllib.request.urlopen(req, timeout=25) as resposta:
+            dados = json.loads(resposta.read().decode("utf-8"))
+
+        palavras = [
+            p for p in normalizar(termo).split()
+            if len(p) >= 3
+        ]
+        if not palavras:
+            return None
+
+        paginas = dados.get("query", {}).get("pages", [])
+        paginas.sort(key=lambda p: p.get("index", 999))
+
+        extensoes = {
+            "image/jpeg": ".jpg",
+            "image/png": ".png",
+            "image/webp": ".webp",
+        }
+
+        for pagina in paginas:
+            imagens = pagina.get("imageinfo") or []
+            if not imagens:
+                continue
+
+            imagem = imagens[0]
+            extensao = extensoes.get(str(imagem.get("mime", "")).lower())
+            if not extensao:
+                continue
+
+            metadata = imagem.get("extmetadata") or {}
+            licenca_url = meta(metadata, "LicenseUrl")
+            autor = limpar_html(meta(metadata, "Artist"))
+
+            if not licenca_aceita(licenca_url) or not autor:
+                continue
+
+            texto_verificacao = normalizar(
+                pagina.get("title", "") + " "
+                + limpar_html(meta(metadata, "ImageDescription"))
+            )
+
+            correspondencias = sum(
+                1 for palavra in palavras if palavra in texto_verificacao
+            )
+
+            if correspondencias < min(2, len(palavras)):
+                continue
+
+            url_arquivo = imagem.get("url") or ""
+            pagina_arquivo = imagem.get("descriptionurl") or ""
+
+            if not url_arquivo or not pagina_arquivo:
+                continue
+
+            return {
+                "url_arquivo": url_arquivo,
+                "pagina": pagina_arquivo,
+                "titulo": pagina.get("title", ""),
+                "autor": autor,
+                "licenca": limpar_html(meta(metadata, "LicenseShortName")),
+                "licenca_url": licenca_url,
+                "extensao": extensao,
+            }
+
+        return None
+
+    def baixar_imagem(url, destino):
+        req = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": "BroadcastNewsMediaBot/1.0 (Wikimedia media search)"
+            },
+        )
+        parcial = destino.with_name(destino.name + ".part")
+        limite = 20 * 1024 * 1024
+
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resposta:
+                with parcial.open("wb") as saida:
+                    total = 0
+                    while True:
+                        bloco = resposta.read(64 * 1024)
+                        if not bloco:
+                            break
+                        total += len(bloco)
+                        if total > limite:
+                            raise ValueError("Imagem maior que 20 MB.")
+                        saida.write(bloco)
+
+            with Image.open(parcial) as imagem:
+                imagem.verify()
+
+            parcial.replace(destino)
+        finally:
+            parcial.unlink(missing_ok=True)
+
+    for indice, cena in enumerate(script.get("cenas", []), 1):
+        if find_scene_media(project_dir, indice):
+            info(f"   cena {indice}: midia existente preservada.")
+            continue
+
+        visual = cena.get("visual")
+        if not isinstance(visual, dict):
+            visual = {}
+
+        tipo = str(visual.get("midia_tipo") or "").strip().lower()
+        busca = str(visual.get("busca_wikimedia") or "").strip()
+        prompt = str(visual.get("prompt_midia_ia") or "").strip()
+
+        resultado = None
+
+        if busca:
+            info(f"   cena {indice}: buscando imagem real: {busca[:100]}")
+            try:
+                resultado = buscar_commons(busca)
+            except Exception as exc:
+                info(f"   cena {indice}: busca indisponivel: {str(exc)[:140]}")
+
+        if resultado:
+            destino = pasta / f"{indice:02d}{resultado['extensao']}"
+            try:
+                baixar_imagem(resultado["url_arquivo"], destino)
+                por_cena[indice] = {
+                    "cena": indice,
+                    "arquivo": destino.name,
+                    "tipo": "imagem obtida no Wikimedia Commons",
+                    "busca": busca,
+                    "titulo": resultado["titulo"],
+                    "autor": resultado["autor"],
+                    "pagina": resultado["pagina"],
+                    "licenca": resultado["licenca"],
+                    "licenca_url": resultado["licenca_url"],
+                }
+                salvar_registro()
+                info(f"   cena {indice}: imagem encontrada.")
+                continue
+            except Exception as exc:
+                info(f"   cena {indice}: falha no download: {str(exc)[:140]}")
+
+        if (
+            tipo == "conceito"
+            and prompt
+            and config.get("cloudflare_account_id")
+            and config.get("cloudflare_api_token")
+        ):
+            info(f"   cena {indice}: tentando ilustracao no Cloudflare.")
+            try:
+                caminho = cv.imagem_cloudflare(
+                    config["cloudflare_account_id"],
+                    config["cloudflare_api_token"],
+                    config.get(
+                        "modelo_cloudflare",
+                        "@cf/black-forest-labs/flux-1-schnell",
+                    ),
+                    prompt + (
+                        ", conceptual editorial illustration, no text, "
+                        "no logo, no identifiable real person"
+                    ),
+                    pasta / f"{indice:02d}",
+                    config.get("cloudflare_steps", 4),
+                )
+                por_cena[indice] = {
+                    "cena": indice,
+                    "arquivo": caminho.name,
+                    "tipo": "ilustracao gerada por IA",
+                    "provedor": "Cloudflare",
+                }
+                salvar_registro()
+                info(f"   cena {indice}: ilustracao gerada.")
+                continue
+            except Exception as exc:
+                info(f"   cena {indice}: Cloudflare indisponivel: {str(exc)[:140]}")
+
+        info(f"   cena {indice}: sem midia; usando cartao grafico.")
+
+    salvar_registro()
+
+
+def acrescentar_creditos_midias(project_dir: Path) -> None:
+    registro_path = project_dir / "midias_automaticas.json"
+    publicacao_path = project_dir / "publicacao.txt"
+
+    if not registro_path.exists() or not publicacao_path.exists():
+        return
+
+    try:
+        registro = load_json(registro_path)
+    except BroadcastError:
+        return
+
+    midias = registro.get("midias") or []
+    if not midias:
+        return
+
+    with publicacao_path.open("a", encoding="utf-8") as arquivo:
+        arquivo.write("\n\nMIDIAS — CONFIRA IDENTIFICACAO E CREDITOS\n")
+
+        for item in midias:
+            arquivo.write(
+                f"\nCena {item.get('cena', '?')}: "
+                f"{item.get('tipo', '')}\n"
+            )
+
+            for chave, rotulo in (
+                ("titulo", "Arquivo"),
+                ("autor", "Autor"),
+                ("pagina", "Origem"),
+                ("licenca", "Licenca"),
+                ("licenca_url", "Link da licenca"),
+                ("provedor", "Provedor"),
+            ):
+                valor = item.get(chave)
+                if valor:
+                    arquivo.write(f"  {rotulo}: {valor}\n")
+
+        arquivo.write(
+            "\nConfira cada imagem e as exigencias da licenca "
+            "antes de publicar.\n"
+        )
+
+
 def render_format(script: dict, durations: list[float], narration: Path, project_dir: Path, fmt: str, channel: dict, category: str) -> Path:
     width, height = WIDTHS[fmt]
     title_slug = slug(script["titulo"])
@@ -595,9 +1097,27 @@ def render_format(script: dict, durations: list[float], narration: Path, project
         if not card.exists():
             create_scene_card(scene, index, total, channel_name, category, sources, fmt, card)
         clip = clips_dir / f"cena_{index:03d}.mp4"
-        if not clip.exists() or clip.stat().st_size < 10_000:
+        media = find_scene_media(project_dir, index)
+
+        if media:
+            overlay = work_dir / f"tarja_{index:03d}.png"
+            create_media_overlay(
+                scene,
+                index,
+                total,
+                channel_name,
+                category,
+                fmt,
+                overlay,
+            )
+
+            info(f"   [{fmt}] renderizando midia da cena {index}/{total}: {media.name}")
+            render_media_clip(media, overlay, duration, width, height, clip)
+
+        elif not clip.exists() or clip.stat().st_size < 10_000:
             info(f"   [{fmt}] renderizando cartao {index}/{total}")
             render_scene_clip(card, duration, width, height, clip)
+
         clip_paths.append(clip)
 
     concat_file = clips_dir / "concat.txt"
@@ -710,6 +1230,9 @@ def main() -> int:
         narration, durations = cv.gerar_voz(script, project_dir, channel, args.simular)
         info(f"   narracao pronta: {narration.name}")
 
+        info("\n[2.5/5] Busca automatica de midias")
+        preparar_midias_automaticas(script, project_dir, config, args.simular)
+
         info("\n[3/5] Cartoes graficos")
         for fmt in formats:
             folder = project_dir / "broadcast_assets" / fmt
@@ -741,6 +1264,7 @@ def main() -> int:
                 suggested = script.get("fontes_sugeridas", [])
                 if suggested:
                     handle.write("Fontes sugeridas para checagem manual:\n" + "\n".join(f"- {x}" for x in suggested) + "\n")
+        acrescentar_creditos_midias(project_dir)
         info("   fontes e arquivos de publicacao registrados.")
         info("\nPRONTO. Videos salvos em:")
         for output in outputs:

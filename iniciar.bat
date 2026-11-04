@@ -12,26 +12,33 @@ if errorlevel 1 (
 
 if not exist "%~dp0app.py" (
   echo ERRO: app.py nao foi encontrado ao lado de iniciar.bat.
-  echo Execute este arquivo dentro da pasta canais-darks.
+  echo Execute este arquivo dentro da pasta canais-dark.
   pause
   exit /b 1
 )
 
-start "" /b powershell.exe -NoProfile -WindowStyle Hidden -Command "Start-Sleep -Seconds 2; Start-Process 'http://127.0.0.1:8765'"
+set "PYTHON=%~dp0.venv\Scripts\python.exe"
 
-where py >nul 2>&1
-if not errorlevel 1 (
-  py app.py
-) else (
-  where python >nul 2>&1
-  if errorlevel 1 (
-    echo ERRO: nem o launcher py nem python foram encontrados no PATH.
-    pause
-    exit /b 1
-  )
-  python app.py
+if not exist "%PYTHON%" (
+  echo ERRO: ambiente .venv nao encontrado em "%~dp0.venv".
+  echo Crie com:
+  echo   py -3.12 -m venv .venv
+  echo   .venv\Scripts\python.exe -m pip install -r requirements.txt kokoro-onnx soundfile
+  pause
+  exit /b 1
 )
 
-if errorlevel 1 echo A Fabrica foi encerrada com erro.
+"%PYTHON%" -c "import kokoro_onnx" >nul 2>&1
+if errorlevel 1 (
+  echo AVISO: kokoro_onnx nao esta instalado na .venv. Instalando...
+  "%PYTHON%" -m pip install kokoro-onnx soundfile
+)
+
+rem Abre o navegador em um processo separado, sem afetar esta janela
+start "" /min cmd /c "timeout /t 3 /nobreak >nul & start "" http://127.0.0.1:8765"
+
+"%PYTHON%" app.py 2>&1
+
 echo.
+echo A Fabrica foi encerrada. Codigo de saida: %errorlevel%
 pause

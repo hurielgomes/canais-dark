@@ -36,44 +36,14 @@
       "icon": "🎞️"
     },
     {
-      "id": "broadcast_news",
-      "name": "Broadcast News",
-      "status": "active",
-      "entrypoint": "motores/broadcast_news.py",
-      "description": "Explicadores jornalisticos sobre fatos consolidados, sem exigir Google Search; informacoes atuais e mutaveis precisam de conferencia manual.",
-      "recommended_categories": [
-        "noticias",
-        "economia",
-        "politica_institucional",
-        "documentario"
-      ],
-      "formats": [
-        "16x9",
-        "9x16"
-      ],
-      "features": [
-        "headlines",
-        "data_cards",
-        "timelines",
-        "flows",
-        "comparisons",
-        "charts",
-        "kokoro_tts",
-        "pillow_graphics",
-        "ffmpeg_local_render",
-        "independent_scripts_per_format",
-        "channel_branding",
-        "category_editorial_profiles",
-        "comment_engagement_cta",
-        "consolidated_facts_no_search"
-      ],
-      "limitations": [
-        "Nao consulta a web automaticamente; conferir manualmente leis, aliquotas, calendarios, cargos e dados atuais antes de publicar."
-      ],
-      "adapter": "motores.adapters.broadcast_news:BroadcastNewsEngine",
-      "supports_independent_deliverables": true,
-      "icon": "📰"
-    },
+  "id": "broadcast_motion",
+  "name": "Broadcast Motion",
+  "status": "active",
+  "adapter": "motores.adapters.broadcast_motion:BroadcastMotionEngine",
+  "icon": "📊",
+  "description": "Explicador jornalistico com icones, setas, contadores e graficos animados sobre imagens reais.",
+  "features": ["icones animados", "diagramas com setas", "graficos de barra, linha e rosca", "midia de fundo"]
+},
     {
       "id": "isometric",
       "name": "Isometric",
