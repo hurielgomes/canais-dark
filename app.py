@@ -235,8 +235,12 @@ def lista_canais():
 def estado_chaves():
     cfg = cv.carregar_config()
     fontes = cv.FontesDeImagem(cfg, "")
+    fallback = any(
+        (p.get("api_key") or "").strip() and not p["api_key"].strip().startswith("SUA_")
+        for p in cfg.get("fallback_texto", [])
+    )
     return {"gemini": bool(cfg.get("gemini_api_key")), "imagens": list(fontes.ativos),
-            "video": bool(cfg.get("pixabay_api_key"))}
+            "video": bool(cfg.get("pixabay_api_key")), "fallback": fallback}
 
 
 def lista_videos(canal):
@@ -352,7 +356,9 @@ def validar_roteiro_broadcast(roteiro):
     cenas = roteiro.get("cenas")
     if not isinstance(cenas, list) or len(cenas) < 4:
         raise ValueError("O roteiro Broadcast News precisa ter pelo menos quatro cenas.")
-    tipos = {"headline", "stat", "flow", "timeline", "comparison", "chart", "bullets", "quote", "definition"}
+    tipos = {"headline", "stat", "flow", "timeline", "comparison", "chart",
+         "bullets", "quote", "definition", "impacto"}
+
     for i, cena in enumerate(cenas, 1):
         if not isinstance(cena, dict) or not str(cena.get("narracao", "")).strip():
             raise ValueError(f"A cena {i} precisa ter narracao.")

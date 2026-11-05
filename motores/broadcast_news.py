@@ -20,7 +20,7 @@ from editorial_rules import get_category, ensure_closing_question  # noqa: E402
 
 WIDTHS = {"16x9": (1920, 1080), "9x16": (1080, 1920)}
 FPS = 30
-VISUAL_TYPES = {"headline", "stat", "flow", "timeline", "comparison", "chart", "bullets", "quote", "definition"}
+VISUAL_TYPES = {"headline", "stat", "flow", "timeline", "comparison", "chart", "bullets", "quote", "definition", "impacto"}
 
 
 class BroadcastError(RuntimeError):
@@ -47,6 +47,53 @@ def save_json(path: Path, value: Any) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def cortar_texto(texto: str, limite: int) -> str:
+    """Corta no ultimo espaco, sem quebrar palavra."""
+    texto = " ".join(str(texto or "").split())
+    if len(texto) <= limite:
+        return texto
+    corte = texto[:limite].rsplit(" ", 1)[0]
+    return corte.rstrip(",;:-") + "..."
+
+
+REGRAS_NARRACAO = """
+REGRAS DE NARRACAO (obrigatorio):
+
+1. Escreva PRIMEIRO o campo "narracao_completa": um texto corrido, como um apresentador falando,
+   com conectivos entre as frases ("so que", "e ai", "por isso", "na pratica", "o detalhe e que").
+2. Nunca comece duas frases seguidas com o mesmo sujeito. Use pronomes e sinonimos.
+3. Use fatos e exemplos concretos do Brasil. NAO invente numeros; se nao tiver certeza, nao cite.
+4. Cada frase deve puxar a proxima: pergunta -> resposta, causa -> consequencia, problema -> virada.
+5. Depois divida a narracao_completa entre as cenas: o campo "narracao" de cada cena deve ser um
+   TRECHO EXATO e consecutivo dela. Juntando todas, o resultado deve ser identico a narracao_completa.
+6. A narracao de uma cena pode terminar no meio de um raciocinio e a proxima continuar; o que importa
+   e o texto inteiro soar como uma fala unica.
+7. Sem repeticao de ideia entre cenas. A ultima cena faz a pergunta final, sem resumo.
+"""
+
+LINGUAGEM_POPULAR = """
+LINGUAGEM POPULAR (prioridade maxima, vale mais que qualquer outra regra de estilo):
+- Publico: pessoa comum de 18 a 45 anos, que NAO se interessa pelo tema. Escreva como quem explica
+  pra um amigo no WhatsApp ou pra mae na cozinha. Se ela nao entender de primeira, o roteiro falhou.
+- Fale SEMPRE com "voce" e sobre a vida da pessoa: salario, mercado, conta de luz, celular, aluguel,
+  padaria, onibus, Pix, delivery, guarda-roupa, familia. Nunca escreva do ponto de vista de empresas,
+  empreendedores ou especialistas.
+- Cada ideia precisa de um EXEMPLO CONCRETO do cotidiano logo em seguida ("Pensa no seu celular...",
+  "Sabe quando voce vai no mercado e...").
+- Proibido termo tecnico, palavra em ingles ou palavra de relatorio. Exemplos proibidos: faturamento,
+  margem, demanda, varejo, alocar, recursos, emergente, vulneravel, principio, impacto, otimizar,
+  best-seller, consumidor, setor. Se precisar de um termo tecnico, explique na mesma frase com palavras simples.
+- Frases de no maximo 15 palavras. Uma ideia por frase. Pode usar "pois e", "repara", "olha so", "sabe quando".
+- GANCHO: comece por uma situacao que a pessoa ja viveu ou uma pergunta sobre a vida dela, nunca pelo
+  nome do conceito. Ruim: "Ja ouviu falar da regra 80/20?" Bom: "Por que voce sempre usa as mesmas roupas?"
+- TITULO: curiosidade sobre a vida da pessoa, sem jargao. Ruim: "Regra de Pareto no varejo". Bom:
+  "A regra que explica pra onde vai seu salario".
+- PERGUNTA FINAL: sobre a vida pessoal de quem assiste, facil de responder em uma palavra ou frase.
+- Textos da tela (headline, items, steps) seguem a mesma regra: palavras simples, nada de jargao.
+- Antes de responder, releia a narracao e troque qualquer palavra que um jovem de 18 anos nao usaria.
+"""
+
+
 def make_research_prompt(channel: dict, topic: str, duration: int, category: str) -> str:
     scene_count = max(8, min(48, round(duration / 10)))
     words = max(120, round(duration * 2.15))
@@ -56,7 +103,7 @@ def make_research_prompt(channel: dict, topic: str, duration: int, category: str
     profile = get_category(category).get("editorial_profile", {})
     category_rules = "\n".join([f"Objetivo: {profile.get('objective', '')}", f"Tom: {profile.get('tone', '')}", "Estrutura: " + "; ".join(profile.get("structure", [])), f"Regra factual: {profile.get('fact_policy', '')}", f"Evitar: {profile.get('avoid', '')}", f"Direcao visual: {profile.get('visual_guidance', '')}"])
     closing = profile.get("closing_question", "Qual aspecto desse assunto mais chamou sua atencao? Comente.")
-        return f"""Voce e roteirista de videos curtos virais (TikTok/Reels/Shorts) para o publico brasileiro geral, nao especialista.
+    return f"""Voce e roteirista de videos curtos virais (TikTok/Reels/Shorts) para o publico brasileiro geral, nao especialista.
 
 CANAL: {channel_name}
 PUBLICO: {audience}
@@ -80,7 +127,7 @@ FATOS E PRECISAO (SEM PESQUISA WEB):
 NARRATIVA:
 - Gere cerca de {words} palavras, divididas em aproximadamente {scene_count} cenas.
 - A primeira cena e o GANCHO: pergunta curiosa + frase de retencao ("Aposto que voce nao sabia dessa", "O ultimo ponto vai te surpreender"). Sem resposta ainda.
-- Frases curtas, linguagem do dia a dia, exemplos do cotidiano do brasileiro.
+- Frases curtas, linguagem do dia a dia, mas sempre ligadas a frase anterior por conectivos.
 - Termine retomando o gancho e com uma pergunta final que a pessoa QUEIRA responder: opiniao polarizada ("E voce, e a favor ou contra...?") ou experiencia pessoal ("Ja aconteceu com voce? Me conta aqui"). Proibido pergunta generica ou academica.
 - A explicacao comeca na segunda cena.
 - Use frases faladas, claras, sem jargao desnecessario.
@@ -111,12 +158,14 @@ RESPONDA SOMENTE COM JSON VALIDO, neste formato:
   "descricao": "descricao factual em 2 a 4 frases",
   "tags": ["8 a 12 tags"],
   "gancho_texto": "chamada curta",
+  "texto_miniatura": "frase de impacto para miniatura, ate 6 palavras",
   "resumo_pesquisa": "resumo do conhecimento consolidado utilizado; indicar conferencia manual se depender de dado atual",
+  "narracao_completa": "texto corrido de todo o video, com conectivos; as narracoes das cenas sao trechos exatos dele",
   "cenas": [
     {{
-      "narracao": "texto exato a ser narrado nesta cena",
+      "narracao": "trecho exato e consecutivo da narracao_completa",
       "visual": {{
-        "type": "headline|stat|flow|timeline|comparison|chart|bullets|quote|definition|impacto",
+        "type": "headline|stat|flow|timeline|comparison|chart|bullets|quote|definition",
         "midia_tipo": "pessoa|local|evento|conceito",
         "busca_wikimedia": "nome especifico para busca",
         "prompt_midia_ia": "conceptual illustration prompt in English",
@@ -141,37 +190,51 @@ RESPONDA SOMENTE COM JSON VALIDO, neste formato:
   "pergunta_final": "pergunta especifica para estimular comentarios"
 }}
 
-Nao invente URLs nem apresente fontes como consultadas. Se sugerir documentos para checagem, identifique-os apenas como fontes sugeridas, nao como fontes lidas."""
+Nao invente URLs nem apresente fontes como consultadas. Se sugerir documentos para checagem, identifique-os apenas como fontes sugeridas, nao como fontes lidas.
+{REGRAS_NARRACAO}{LINGUAGEM_POPULAR}"""
+
+
+def validar_narracao(roteiro: dict) -> str:
+    """Garante que narracao_completa == juncao das cenas (ignorando pontuacao)."""
+    norm = lambda t: " ".join(re.findall(r"\w+", (t or "").lower()))
+    juntas = " ".join(str(c.get("narracao", "")).strip() for c in roteiro.get("cenas", []))
+    completa = str(roteiro.get("narracao_completa") or "").strip()
+    if not completa:
+        return juntas
+    if norm(completa) != norm(juntas):
+        info("   aviso: narracao_completa diverge das cenas; usando a juncao das cenas.")
+        return juntas
+    return completa
 
 
 def generate_script_without_search(channel: dict, topic: str, duration: int, category: str, config: dict) -> tuple[dict, list[dict[str, str]]]:
-    """Gera roteiro com conhecimento consolidado do Gemini, sem Google Search ou ferramenta externa."""
-    if not config.get("gemini_api_key"):
-        raise BroadcastError("Falta a chave GEMINI_API_KEY no config.json ou .env.")
-    try:
-        from google import genai
-        from google.genai import types
-    except ImportError as exc:
-        raise BroadcastError("Instale/atualize google-genai: py -m pip install -U google-genai") from exc
-    client = genai.Client(api_key=config["gemini_api_key"])
+    """Tenta o Gemini; se falhar (cota, 503, chave, timeout), tenta as outras IAs."""
+    import ia_fallback
     prompt = make_research_prompt(channel, topic, duration, category)
-    info("   preparando roteiro com fatos consolidados do Gemini (sem Google Search)...")
+    erro_gemini = "sem chave GEMINI_API_KEY"
+    if config.get("gemini_api_key"):
+        try:
+            from google import genai
+            from google.genai import types
+
+            client = genai.Client(
+                api_key=config["gemini_api_key"],
+                http_options=types.HttpOptions(timeout=60000),  # 60 s
+            )
+            response = cv.gerar_conteudo_texto_com_fallback(
+                client, config, prompt,
+                types.GenerateContentConfig(response_mime_type="application/json", temperature=0.7),
+                operacao="roteiro broadcast",
+            )
+            return ia_fallback.extrair_json(getattr(response, "text", None) or ""), []
+        except Exception as exc:
+            erro_gemini = str(exc)[:200]
+    info(f"   Gemini indisponivel ({erro_gemini}). Tentando outras IAs...")
     try:
-        response = cv.gerar_conteudo_texto_com_fallback(
-            client, config, prompt,
-            types.GenerateContentConfig(response_mime_type="application/json", temperature=0.35),
-            operacao="roteiro factual Broadcast News sem pesquisa web",
-        )
+        return ia_fallback.gerar_roteiro(prompt, config, info), []
     except Exception as exc:
-        raise BroadcastError("O Gemini nao conseguiu gerar o roteiro. Verifique chave, modelo e disponibilidade. Detalhe: " + str(exc)[:700]) from exc
-    text = (getattr(response, "text", None) or "").strip()
-    text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text, flags=re.I | re.M).strip()
-    try:
-        script = json.loads(text)
-    except json.JSONDecodeError as exc:
-        raise BroadcastError("O Gemini nao retornou JSON valido para o roteiro Broadcast News.") from exc
-    # Nenhuma fonte externa foi consultada nesta etapa; nao inventar citacoes.
-    return script, []
+        raise BroadcastError(f"Gemini: {erro_gemini} | {exc}") from exc
+
 
 
 def simulated_script(topic: str) -> dict[str, Any]:
@@ -220,14 +283,15 @@ def normalize_script(script: dict[str, Any], sources: list[dict[str, str]]) -> d
         "titulo": str(script.get("titulo") or "Explicador Broadcast News")[:100],
         "descricao": str(script.get("descricao") or "")[:4000],
         "tags": script.get("tags") if isinstance(script.get("tags"), list) else [],
-        "gancho_texto": str(script.get("gancho_texto") or "")[:160],
-        "texto_miniatura": str(script.get("texto_miniatura") or script.get("gancho_texto") or "")[:100],
+        "gancho_texto": cortar_texto(script.get("gancho_texto"), 160),
+        "texto_miniatura": cortar_texto(script.get("texto_miniatura") or script.get("gancho_texto"), 60),
         "resumo_pesquisa": str(script.get("resumo_pesquisa") or ""),
         "cenas": normalized,
         "fontes": sources,
         "fontes_sugeridas": script.get("fontes_sugeridas", []) if isinstance(script.get("fontes_sugeridas", []), list) else [],
         "pergunta_final": str(script.get("pergunta_final") or ""),
     }
+    result["narracao_completa"] = validar_narracao({**script, "cenas": normalized})
     return result
 
 
@@ -1166,6 +1230,92 @@ def create_project_dir(channel_name: str, topic: str, project_arg: str | None, d
     project.mkdir(parents=True, exist_ok=True)
     return project
 
+# ---------------------------------------------------------------------------
+# Voz unica + alinhamento das cenas pelos segundos
+# ---------------------------------------------------------------------------
+
+def duracao_audio(path: Path) -> float:
+    r = subprocess.run(
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    try:
+        return float(r.stdout.strip())
+    except ValueError as exc:
+        raise BroadcastError(f"Nao foi possivel medir o audio {path.name}.") from exc
+
+
+def _palavras(texto: str) -> list[str]:
+    return re.findall(r"\w+", (texto or "").lower())
+
+
+def tempos_palavras(audio: Path, modelo_nome: str = "small") -> list[tuple[float, float]] | None:
+    """Tempo (inicio, fim) de cada palavra via faster-whisper. None se indisponivel."""
+    try:
+        from faster_whisper import WhisperModel
+    except ImportError:
+        info("   faster-whisper nao instalado; alinhando cenas pelo tamanho do texto.")
+        return None
+    try:
+        info(f"   alinhando cenas com Whisper ({modelo_nome})...")
+        modelo = WhisperModel(modelo_nome, device="cpu", compute_type="int8")
+        segs, _ = modelo.transcribe(str(audio), language="pt", word_timestamps=True)
+        tempos = [(w.start, w.end) for s in segs for w in (s.words or [])]
+        return tempos or None
+    except Exception as exc:
+        info(f"   Whisper falhou ({str(exc)[:120]}); alinhando pelo tamanho do texto.")
+        return None
+
+
+def alinhar_cenas(audio: Path, cenas: list[dict], total: float, modelo_whisper: str = "small") -> list[float]:
+    """Retorna a duracao de cada cena; a soma e igual a duracao do audio."""
+    contagens = [max(1, len(_palavras(c["narracao"]))) for c in cenas]
+    soma = sum(contagens)
+    tempos = tempos_palavras(audio, modelo_whisper)
+    limites: list[float] = []
+    acum = 0
+    for i, n in enumerate(contagens[:-1]):
+        acum += n
+        if tempos:
+            escala = len(tempos) / soma
+            idx = max(0, min(int(round(acum * escala)) - 1, len(tempos) - 1))
+            prox = min(idx + 1, len(tempos) - 1)
+            corte = (tempos[idx][1] + tempos[prox][0]) / 2
+        else:
+            corte = total * acum / soma
+        minimo = (limites[-1] if limites else 0.0) + 0.6
+        limites.append(min(max(corte, minimo), total - 0.6 * (len(contagens) - 1 - i)))
+    pontos = [0.0] + limites + [total]
+    return [round(pontos[i + 1] - pontos[i], 3) for i in range(len(cenas))]
+
+
+def gerar_voz_unica(script: dict, project_dir: Path, channel: dict, simular: bool) -> tuple[Path, list[float]]:
+    """Gera UM audio com a narracao completa e calcula a duracao de cada cena."""
+    pasta = project_dir / "voz_unica"
+    pasta.mkdir(parents=True, exist_ok=True)
+    roteiro_voz = {
+        **script,
+        "cenas": [{"narracao": script["narracao_completa"], "visual": {}, "source_ids": []}],
+    }
+    narration, _ = cv.gerar_voz(roteiro_voz, pasta, channel, simular)
+    total = duracao_audio(narration)
+
+    cache = project_dir / "tempos_cenas.json"
+    if cache.exists():
+        try:
+            dados = load_json(cache)
+            if dados.get("cenas") == len(script["cenas"]) and abs(dados.get("total", 0) - total) < 0.05:
+                info("   tempos das cenas reaproveitados.")
+                return narration, dados["duracoes"]
+        except BroadcastError:
+            pass
+
+    duracoes = alinhar_cenas(narration, script["cenas"], total, channel.get("modelo_whisper", "small"))
+    save_json(cache, {"cenas": len(script["cenas"]), "total": total, "duracoes": duracoes})
+    for i, d in enumerate(duracoes, 1):
+        info(f"   cena {i:02d}: {d:.2f}s")
+    return narration, duracoes
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Motor Broadcast News — explicadores baseados em fatos consolidados e motion graphics local")
@@ -1178,6 +1328,7 @@ def main() -> int:
     parser.add_argument("--revisar", action="store_true")
     parser.add_argument("--entrega-format", choices=["16x9", "9x16"])
     parser.add_argument("--projeto")
+    parser.add_argument("--voz-por-cena", action="store_true", help="modo antigo: um audio por cena")
     args = parser.parse_args()
 
     try:
@@ -1206,16 +1357,16 @@ def main() -> int:
 
         info("\n[1/5] Pesquisa e roteiro")
         if roteiro_path.exists():
-            script = load_json(roteiro_path)
-            sources = script.get("fontes", [])
+            raw_script = load_json(roteiro_path)
+            sources = raw_script.get("fontes", [])
             info("   roteiro.json existente; reutilizando o projeto salvo.")
+        elif args.simular:
+            raw_script = simulated_script(args.tema)
         else:
-            if args.simular:
-                raw_script = simulated_script(args.tema)
-            else:
-                raw_script, sources = generate_script_without_search(channel, args.tema, args.duracao, args.categoria, config)
-            script = normalize_script(raw_script, sources)
+            raw_script, sources = generate_script_without_search(channel, args.tema, args.duracao, args.categoria, config)
+        script = normalize_script(raw_script, sources)
         script = ensure_closing_question(script, args.categoria, args.tema, channel.get("tom", ""))
+        script["narracao_completa"] = validar_narracao(script)
         save_json(roteiro_path, script)
         if not research_path.exists():
             save_json(research_path, {"resumo": script.get("resumo_pesquisa", ""), "fontes": sources,
@@ -1227,7 +1378,10 @@ def main() -> int:
             return 0
 
         info("\n[2/5] Voz")
-        narration, durations = cv.gerar_voz(script, project_dir, channel, args.simular)
+        if args.voz_por_cena or not channel.get("voz_unica", True):
+            narration, durations = cv.gerar_voz(script, project_dir, channel, args.simular)
+        else:
+            narration, durations = gerar_voz_unica(script, project_dir, channel, args.simular)
         info(f"   narracao pronta: {narration.name}")
 
         info("\n[2.5/5] Busca automatica de midias")
@@ -1274,7 +1428,6 @@ def main() -> int:
         info(f"ERRO: {exc}")
         return 1
     except SystemExit as exc:
-        # Helpers legados chamam sys.exit; converter em codigo claro para a fila.
         code = int(exc.code or 1) if isinstance(exc.code, int) or exc.code is None else 1
         info("ERRO: O pipeline legado encerrou a execucao com uma falha. Confira as mensagens anteriores.")
         return code

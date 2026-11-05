@@ -368,7 +368,7 @@ def render_motion_clip(scene, index, total, channel, category, fmt, duration, de
         typed_lines = wrap(probe, v.get("quote") or v.get("subheadline") or title, typed_font, W - 2 * m - 60, 6)
     elif kind in ("headline", "definition"):
         typed_font = F(38 if vert else 42, True)
-        msg = v.get("definition") or v.get("key_message") or narr
+        msg = v.get("definition") or v.get("key_message") or v.get("subheadline") or title
         typed_lines = wrap(probe, msg, typed_font, W - m - tx, 6 if vert else 5)
         chips = [x["title"][:22].upper() for x in nodes][:3] if v.get("items") else []
     nwords = sum(len(l.split()) for l in typed_lines) or 1
@@ -739,13 +739,23 @@ def render_format(script, durations, narration, project_dir, fmt, channel, categ
     name = str(channel.get("nome", "Canal"))
     total = len(script["cenas"])
     clips = []
-    for i, (scene, dur) in enumerate(zip(script["cenas"], durations), 1):
+
+    # arredonda pelos limites acumulados para nao somar erro de quadro
+    acum, prev, durs = 0.0, 0, []
+    for d0 in durations:
+        acum += d0
+        fim = round(acum * FPS)
+        durs.append((fim - prev) / FPS)
+        prev = fim
+
+    for i, (scene, dur) in enumerate(zip(script["cenas"], durs), 1):
         clip = clips_dir / f"cena_{i:03d}.mp4"
         if not (clip.exists() and clip.stat().st_size > 10_000):
             media = bn.find_scene_media(project_dir, i)
             bn.info(f"   [{fmt}] animando cena {i}/{total}" + (f" sobre {media.name}" if media else ""))
             render_motion_clip(scene, i, total, name, category, fmt, dur, clip, media)
         clips.append(clip)
+
     (clips_dir / "concat.txt").write_text("\n".join(f"file '{p.name}'" for p in clips) + "\n", encoding="utf-8")
     silent = work / "video_sem_audio.mp4"
     r = subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0",
@@ -760,7 +770,6 @@ def render_format(script, durations, narration, project_dir, fmt, channel, categ
     if r.returncode != 0:
         raise bn.BroadcastError("Nao foi possivel adicionar a narracao: " + (r.stderr or "")[-900:])
     return final
-
 
 # ------------------------------------------------------------------ roteiro
 _orig_prompt = bn.make_research_prompt
@@ -831,4 +840,4 @@ if __name__ == "__main__":
     if not hasattr(bn, "main"):
         print("ERRO: broadcast_news.py nao possui main().")
         sys.exit(1)
-    bn.main()
+    sys.exit(bn.main())

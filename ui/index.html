@@ -271,7 +271,7 @@ function renderTopo(){
   $('#nome-marca').textContent=canalAtual?.titulo||'';
   const k=estado.chaves||{};
   const p=(ok,txt)=>`<span class="pilula ${ok?'ok':'falta'}"><i></i>${txt}</span>`;
-  $('#pilulas').innerHTML=p(k.gemini,k.gemini?'Roteiros: Gemini':'Roteiros: falta a chave do Gemini')
+$('#pilulas').innerHTML=p(k.gemini||k.fallback, k.gemini?(k.fallback?'Roteiros: Gemini + fallback':'Roteiros: Gemini'):(k.fallback?'Roteiros: só fallback':'Roteiros: falta chave de IA'))
     +p((k.imagens||[]).length>0,(k.imagens||[]).length?'Imagens: '+esc(k.imagens.join(', ')):'Imagens: nenhuma fonte configurada')
     +p(k.video,k.video?'V\u00eddeos de banco: Pixabay':'V\u00eddeos de banco: desligado');
 }

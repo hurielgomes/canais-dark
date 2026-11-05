@@ -414,7 +414,8 @@ def gerar_roteiro_gemini(canal, tema, duracao, anteriores, cfg, categoria="curio
         erro("falta a chave do Gemini. Veja o passo a passo (aistudio.google.com) e coloque em config.json.")
     from google import genai
     from google.genai import types
-    cliente = genai.Client(api_key=cfg["gemini_api_key"])
+    cliente = genai.Client(api_key=cfg["gemini_api_key"],
+                       http_options=types.HttpOptions(timeout=120000))
     prompt = montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria)
     info("   pedindo o roteiro ao Gemini...")
     try:
@@ -1203,13 +1204,42 @@ def salvar_publicacao(roteiro, pasta):
 
 # ------------------------------------------------------- ideias e lote de videos
 
+def texto_via_fallback(prompt, cfg, temperatura=1.0):
+    """Tenta provedores compativeis com OpenAI, em ordem. Retorna (texto, nome)."""
+    import urllib.request
+    falhas = []
+    for p in cfg.get("fallback_texto", []):
+        chave = (p.get("api_key") or "").strip()
+        if not chave or chave.startswith("SUA_"):
+            continue
+        try:
+            corpo = json.dumps({
+                "model": p["modelo"],
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": temperatura,
+                "response_format": {"type": "json_object"},
+            }).encode("utf-8")
+            req = urllib.request.Request(p["url"], data=corpo, headers={
+                "Authorization": f"Bearer {chave}",
+                "Content-Type": "application/json",
+            })
+            with urllib.request.urlopen(req, timeout=60) as r:
+                dados = json.loads(r.read().decode("utf-8"))
+            texto = dados["choices"][0]["message"]["content"]
+            if texto and texto.strip():
+                return texto, p.get("nome", p["url"])
+        except Exception as e:  # noqa
+            falhas.append(f"{p.get('nome')}: {str(e)[:120]}")
+    raise RuntimeError("todos os provedores falharam: " + " | ".join(falhas))
+
+
+def _parse_ideias(texto):
+    texto = re.sub(r"^```(?:json)?|```$", "", (texto or "").strip(), flags=re.M).strip()
+    return [str(x).strip() for x in json.loads(texto).get("ideias", []) if str(x).strip()]
+
+
 def sugerir_ideias(canal, nome_canal, n, cfg, categoria=None, motor="classico"):
     """Pede ao Gemini temas respeitando a categoria editorial e o motor visual."""
-    if not cfg["gemini_api_key"]:
-        erro("falta a chave do Gemini no config.json.")
-    from google import genai
-    from google.genai import types
-    cliente = genai.Client(api_key=cfg["gemini_api_key"])
     ant = "\n".join(f"- {t}" for t in titulos_anteriores(nome_canal, RAIZ)) or "(nenhum ainda)"
     categoria_nome = (categoria or {}).get("name", "Curiosidades")
     categoria_id = (categoria or {}).get("id", "curiosidades")
@@ -1256,16 +1286,33 @@ Critérios:
 {ant}
 
 Responda SOMENTE com JSON válido neste formato: {{"ideias": ["tema 1", "tema 2"]}}"""
+    erro_gemini = "sem chave"
+    if cfg.get("gemini_api_key"):
+        try:
+            from google import genai
+            from google.genai import types
+            cliente = genai.Client(api_key=cfg["gemini_api_key"],
+                                   http_options=types.HttpOptions(timeout=60000))
+            resp = gerar_conteudo_texto_com_fallback(
+                cliente, cfg, prompt,
+                types.GenerateContentConfig(response_mime_type="application/json", temperature=1.0),
+                operacao="sugestoes de temas",
+            )
+            ideias = _parse_ideias(resp.text)
+            if ideias:
+                return ideias
+            erro_gemini = "resposta vazia"
+        except Exception as e:  # noqa
+            erro_gemini = str(e)[:150]
+    info(f"   Gemini indisponivel ({erro_gemini}); tentando outros provedores...")
     try:
-        resp = gerar_conteudo_texto_com_fallback(
-            cliente, cfg, prompt,
-            types.GenerateContentConfig(response_mime_type="application/json", temperature=1.0),
-            operacao="sugestoes de temas",
-        )
-        texto = re.sub(r"^```(?:json)?|```$", "", (resp.text or "").strip(), flags=re.M).strip()
-        return [str(x).strip() for x in json.loads(texto).get("ideias", []) if str(x).strip()]
+        texto, provedor = texto_via_fallback(prompt, cfg)
+        ideias = _parse_ideias(texto)
+        info(f"   ideias geradas via {provedor}")
+        return ideias
     except Exception as e:  # noqa
-        erro(f"nao consegui gerar ideias: {str(e)[:300]}")
+        erro(f"nao consegui gerar ideias: Gemini ({erro_gemini}) / fallback ({str(e)[:300]})")
+
 
 
 def gerar_ideias(canal, nome_canal, n, cfg):
@@ -1285,13 +1332,9 @@ def gerar_ideias(canal, nome_canal, n, cfg):
 def piloto_automatico(a, canal, cfg):
     """Busca N ideias e ja cria um video para cada, sem parar no meio."""
     info(f"\nPILOTO AUTOMATICO: buscando {a.auto} ideias e criando os videos...")
-    ideias = sugerir_ideias(canal, a.canal, a.auto, cfg)
-    if not ideias:
-        erro("o Gemini nao devolveu ideias.")
-    arq = canal["_pasta"] / f"auto_{date.today().isoformat()}.txt"
-    arq.write_text("\n".join(ideias) + "\n", encoding="utf-8")
-    a.lote = str(arq)
-    rodar_lote(a, canal)
+    cat = get_category(a.categoria) if getattr(a, "categoria", None) else None
+    motor = getattr(a, "motor", None) or "classico"
+    ideias = sugerir_ideias(canal, a.canal, a.auto, cfg, categoria=cat, motor=motor)
 
 
 def rodar_lote(a, canal):
