@@ -8,68 +8,61 @@
       "status": "active",
       "entrypoint": "criar_video.py",
       "description": "Pipeline atual de roteiro, Kokoro, imagens/videos de apoio, legendas e FFmpeg. Mantido sem quebrar a producao existente.",
-      "recommended_categories": [
-        "curiosidades",
-        "historia",
-        "esportes",
-        "celebridades",
-        "documentario"
-      ],
-      "formats": [
-        "16x9",
-        "9x16"
-      ],
-      "features": [
-        "image_stock",
-        "video_stock",
-        "kokoro_tts",
-        "ffmpeg",
-        "thumbnail_legacy",
-        "independent_scripts_per_format",
-        "channel_branding",
-        "category_editorial_profiles",
-        "comment_engagement_cta"
-      ],
+      "recommended_categories": ["curiosidades", "historia", "esportes", "celebridades", "documentario"],
+      "formats": ["16x9", "9x16"],
+      "features": ["image_stock", "video_stock", "kokoro_tts", "ffmpeg", "thumbnail_legacy", "independent_scripts_per_format", "channel_branding", "category_editorial_profiles", "comment_engagement_cta"],
       "limitations": [],
       "adapter": "motores.adapters.classic:ClassicEngine",
       "supports_independent_deliverables": true,
       "icon": "🎞️"
     },
     {
-  "id": "broadcast_motion",
-  "name": "Broadcast Motion",
-  "status": "active",
-  "adapter": "motores.adapters.broadcast_motion:BroadcastMotionEngine",
-  "icon": "📊",
-  "description": "Explicador jornalistico com icones, setas, contadores e graficos animados sobre imagens reais.",
-  "features": ["icones animados", "diagramas com setas", "graficos de barra, linha e rosca", "midia de fundo"]
-},
+      "id": "broadcast_motion",
+      "name": "Broadcast Motion",
+      "status": "active",
+      "adapter": "motores.adapters.broadcast_motion:BroadcastMotionEngine",
+      "icon": "📊",
+      "description": "Explicador jornalistico com icones, setas, contadores e graficos animados sobre imagens reais.",
+      "features": ["icones animados", "diagramas com setas", "graficos de barra, linha e rosca", "midia de fundo"]
+    },
+    {
+      "id": "animado_whiteboard",
+      "name": "Whiteboard Explainer",
+      "status": "active",
+      "entrypoint": "criar_animado.py",
+      "description": "Quadro branco com caneta que escreve e desenha ao vivo, sincronizado com a narracao. Ideal para conteudo educativo.",
+      "recommended_categories": ["educacao", "como_funciona", "ciencia", "curiosidades"],
+      "formats": ["16x9", "9x16"],
+      "features": ["handwriting_animation", "steps_lists_highlights", "word_timed_captions", "kokoro_tts", "category_editorial_profiles", "comment_engagement_cta"],
+      "limitations": ["Sem imagens reais; apenas texto e desenhos vetoriais."],
+      "adapter": "motores.adapters.animado:WhiteboardEngine",
+      "supports_independent_deliverables": true,
+      "icon": "✍️"
+    },
+    {
+      "id": "animado_telejornal",
+      "name": "Telejornal Animado",
+      "status": "active",
+      "entrypoint": "criar_animado.py",
+      "description": "Pacote visual de telejornal com manchetes, listas de pontos-chave e numeros em destaque animados. Ideal para economia e documentario.",
+      "recommended_categories": ["economia", "documentario", "noticias", "historia"],
+      "formats": ["16x9", "9x16"],
+      "features": ["headline_cards", "animated_counters", "key_points_list", "lower_third", "word_timed_captions", "kokoro_tts", "category_editorial_profiles", "comment_engagement_cta"],
+      "limitations": ["Numeros em destaque exigem conferencia manual antes da publicacao."],
+      "adapter": "motores.adapters.animado:TelejornalAnimadoEngine",
+      "supports_independent_deliverables": true,
+      "icon": "📺"
+    },
     {
       "id": "isometric",
       "name": "Isometric",
       "status": "planned",
       "entrypoint": null,
       "description": "Ambientes isometricos e processos visuais; o protagonista e o sistema, cidade, objeto ou processo, nao um apresentador.",
-      "recommended_categories": [
-        "como_funciona",
-        "educacao",
-        "tecnologia",
-        "cidades",
-        "ciencia"
-      ],
-      "formats": [
-        "16x9",
-        "9x16"
-      ],
-      "features": [
-        "isometric_scenes",
-        "object_animation",
-        "process_visualization",
-        "camera_paths"
-      ],
-      "limitations": [
-        "Motor visual ainda nao implementado."
-      ],
+      "recommended_categories": ["como_funciona", "educacao", "tecnologia", "cidades", "ciencia"],
+      "formats": ["16x9", "9x16"],
+      "features": ["isometric_scenes", "object_animation", "process_visualization", "camera_paths"],
+      "limitations": ["Motor visual ainda nao implementado."],
       "icon": "🏙️"
     },
     {
@@ -78,26 +71,10 @@
       "status": "planned",
       "entrypoint": null,
       "description": "Desenhos tecnicos animados, cortes, componentes explodidos e explicacoes de engenharia e funcionamento.",
-      "recommended_categories": [
-        "engenharia",
-        "mecanica",
-        "construcao",
-        "tecnologia",
-        "como_funciona"
-      ],
-      "formats": [
-        "16x9",
-        "9x16"
-      ],
-      "features": [
-        "technical_lines",
-        "exploded_views",
-        "labels",
-        "component_highlights"
-      ],
-      "limitations": [
-        "Motor visual ainda nao implementado."
-      ],
+      "recommended_categories": ["engenharia", "mecanica", "construcao", "tecnologia", "como_funciona"],
+      "formats": ["16x9", "9x16"],
+      "features": ["technical_lines", "exploded_views", "labels", "component_highlights"],
+      "limitations": ["Motor visual ainda nao implementado."],
       "icon": "📐"
     },
     {
@@ -106,25 +83,10 @@
       "status": "planned",
       "entrypoint": null,
       "description": "Personagem palito expressivo, com silhuetas e movimentos organicos; sem engrenagens aparentes nas articulacoes.",
-      "recommended_categories": [
-        "what_if",
-        "humor",
-        "experimentos",
-        "historias"
-      ],
-      "formats": [
-        "16x9",
-        "9x16"
-      ],
-      "features": [
-        "character_poses",
-        "expressions",
-        "actions",
-        "word_timed_captions"
-      ],
-      "limitations": [
-        "Motor visual ainda nao implementado."
-      ],
+      "recommended_categories": ["what_if", "humor", "experimentos", "historias"],
+      "formats": ["16x9", "9x16"],
+      "features": ["character_poses", "expressions", "actions", "word_timed_captions"],
+      "limitations": ["Motor visual ainda nao implementado."],
       "icon": "🧍"
     },
     {
@@ -133,27 +95,10 @@
       "status": "planned",
       "entrypoint": null,
       "description": "Personagens ilustrados com contorno e expressoes, integrados a cenarios com profundidade 2.5D. O personagem aparece quando a narrativa pede, sem dominar todos os videos.",
-      "recommended_categories": [
-        "historias",
-        "what_if",
-        "humor",
-        "educacao",
-        "curiosidades"
-      ],
-      "formats": [
-        "16x9",
-        "9x16"
-      ],
-      "features": [
-        "character_library",
-        "expressions",
-        "reusable_poses",
-        "2_5d_environments",
-        "parallax"
-      ],
-      "limitations": [
-        "Motor visual ainda nao implementado; personagem e assets serao aprovados separadamente."
-      ],
+      "recommended_categories": ["historias", "what_if", "humor", "educacao", "curiosidades"],
+      "formats": ["16x9", "9x16"],
+      "features": ["character_library", "expressions", "reusable_poses", "2_5d_environments", "parallax"],
+      "limitations": ["Motor visual ainda nao implementado; personagem e assets serao aprovados separadamente."],
       "icon": "🎭"
     }
   ]

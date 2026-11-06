@@ -1,0 +1,165 @@
+{
+  "estilo": "whiteboard",
+  "canal": "SEU CANAL",
+  "cenas": [
+    {
+      "tipo": "livre",
+      "duracao": 11.0,
+      "itens": [
+        {
+          "t": "texto",
+          "x": 110,
+          "y": 185,
+          "txt": "POR QUE O CÉU É AZUL?",
+          "alt": 118,
+          "cor": "preto",
+          "w": 8,
+          "ini": 0.3,
+          "dur": 1.9
+        },
+        {
+          "t": "ondulada",
+          "x": 110,
+          "y": 225,
+          "larg": 1540,
+          "cor": "laranja",
+          "ini": 2.3,
+          "dur": 0.5
+        },
+        {
+          "t": "sol",
+          "x": 300,
+          "y": 600,
+          "r": 78,
+          "cor": "laranja",
+          "w": 8,
+          "ini": 3.0,
+          "dur": 1.2
+        },
+        {
+          "t": "texto",
+          "x": 205,
+          "y": 835,
+          "txt": "luz do Sol",
+          "alt": 84,
+          "cor": "preto",
+          "ini": 4.3,
+          "dur": 0.9
+        },
+        {
+          "t": "arco",
+          "cx": 1400,
+          "cy": 1780,
+          "R": 930,
+          "a0": 215,
+          "a1": 325,
+          "cor": "preto",
+          "w": 9,
+          "ini": 5.3,
+          "dur": 0.8
+        },
+        {
+          "t": "arco",
+          "cx": 1400,
+          "cy": 1780,
+          "R": 1000,
+          "a0": 215,
+          "a1": 325,
+          "cor": "azul",
+          "w": 6,
+          "ini": 5.8,
+          "dur": 0.8
+        },
+        {
+          "t": "texto",
+          "x": 1330,
+          "y": 738,
+          "txt": "atmosfera",
+          "alt": 76,
+          "cor": "azul",
+          "ini": 6.5,
+          "dur": 0.8
+        },
+        {
+          "t": "seta",
+          "de": [
+            390,
+            590
+          ],
+          "para": [
+            1110,
+            838
+          ],
+          "cor": "preto",
+          "w": 8,
+          "ini": 7.0,
+          "dur": 0.9
+        },
+        {
+          "t": "dispersao",
+          "x": 1130,
+          "y": 815,
+          "larg": 150,
+          "alt": 60,
+          "n": 26,
+          "cor": "azul",
+          "w": 6,
+          "ini": 8.0,
+          "dur": 0.6
+        },
+        {
+          "t": "seta",
+          "de": [
+            1130,
+            850
+          ],
+          "para": [
+            1330,
+            905
+          ],
+          "cor": "laranja",
+          "w": 8,
+          "ini": 8.6,
+          "dur": 0.6
+        },
+        {
+          "t": "texto",
+          "x": 900,
+          "y": 395,
+          "txt": "o azul se espalha",
+          "alt": 88,
+          "cor": "azul",
+          "ini": 8.9,
+          "dur": 1.1
+        },
+        {
+          "t": "texto",
+          "x": 900,
+          "y": 495,
+          "txt": "muito mais!",
+          "alt": 88,
+          "cor": "azul",
+          "ini": 9.9,
+          "dur": 0.9
+        }
+      ],
+      "legenda": [
+        {
+          "ini": 0.4,
+          "fim": 3.0,
+          "texto": "Por que o céu é azul?"
+        },
+        {
+          "ini": 3.2,
+          "fim": 7.0,
+          "texto": "A luz do Sol chega branca na Terra"
+        },
+        {
+          "ini": 7.2,
+          "fim": 10.9,
+          "texto": "mas o azul se espalha muito mais"
+        }
+      ]
+    }
+  ]
+}

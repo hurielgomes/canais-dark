@@ -1,0 +1,73 @@
+{
+  "estilo": "telejornal",
+  "canal": "SEU CANAL",
+  "cenas": [
+    {
+      "tipo": "grafico",
+      "duracao": 6.0,
+      "secao": "MERCADOS",
+      "assunto": "DÓLAR · FECHAMENTO DO DIA",
+      "serie": [
+        5.38,
+        5.383,
+        5.396,
+        5.44,
+        5.445,
+        5.453,
+        5.468,
+        5.449,
+        5.458,
+        5.477,
+        5.509,
+        5.482,
+        5.473,
+        5.446,
+        5.48,
+        5.504,
+        5.473,
+        5.521,
+        5.568,
+        5.607,
+        5.642,
+        5.638,
+        5.622,
+        5.65,
+        5.638,
+        5.637
+      ],
+      "rotulos_x": [
+        "01 NOV",
+        "08 NOV",
+        "15 NOV",
+        "22 NOV"
+      ],
+      "limite": {
+        "valor": 5.5,
+        "rotulo": "R$ 5,50"
+      },
+      "tag": "ALTA DE 4 DIAS",
+      "cartao": {
+        "titulo": "DÓLAR COMERCIAL",
+        "destaque": "+2,31%",
+        "destaque_rotulo": "VARIAÇÃO NO DIA",
+        "valor": "R$ 5,63",
+        "valor_rotulo": "FECHAMENTO",
+        "nota": "4 dias seguidos de alta"
+      },
+      "faixa": "Dólar fecha em alta e volta a passar de R$ 5,60",
+      "aviso": "DADOS FICTÍCIOS · EXEMPLO PARA TESTE DE LAYOUT",
+      "legenda": [
+        {
+          "ini": 0.5,
+          "fim": 2.9,
+          "texto": "O dólar encerrou o dia em alta"
+        },
+        {
+          "ini": 3.0,
+          "fim": 5.8,
+          "texto": "pelo quarto pregão seguido"
+        }
+      ]
+    }
+  ]
+}

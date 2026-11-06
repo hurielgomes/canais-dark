@@ -49,6 +49,14 @@ import wave
 from datetime import date
 from pathlib import Path
 
+def erro_temporario_gemini(e) -> bool:
+    """Erros passageiros do Gemini: vale repetir ou trocar de modelo."""
+    msg = str(e).upper()
+    codigos = ("429", "500", "502", "503", "504")
+    termos = ("RESOURCE_EXHAUSTED", "UNAVAILABLE", "INTERNAL", "DEADLINE_EXCEEDED",
+              "DEADLINE EXPIRED", "OVERLOADED", "TIMEOUT", "TIMED OUT")
+    return any(c in msg for c in codigos) or any(t in msg for t in termos)
+
 RAIZ = Path(__file__).resolve().parent
 FPS = 30
 ESCALA_INTERNA = 1.5       # resolucao interna do zoom (maior = mais suave, mais lento)
@@ -165,10 +173,10 @@ def _erro_indisponibilidade_modelo(exc):
 
 
 def gerar_conteudo_texto_com_fallback(cliente, cfg, contents, generation_config, operacao="texto"):
-    """Gera texto com o modelo principal e alternativas se o backend estiver indisponível.
+    """Gera texto com o modelo principal e alternativas se o backend estiver indisponivel.
 
-    A ordem padrão é gemini-3.8-flash -> gemini-3.6-flash -> gemini-3.5-flash-lite.
-    Só alterna após esgotar tentativas curtas do modelo atual e apenas para 5xx/UNAVAILABLE.
+    A ordem padrao e gemini-3.8-flash -> gemini-3.6-flash -> gemini-3.5-flash-lite.
+    Alterna apos esgotar tentativas curtas do modelo atual, para 429/5xx/UNAVAILABLE/DEADLINE_EXCEEDED.
     """
     principal = str(cfg.get("modelo_texto") or "gemini-3.8-flash").strip()
     alternativas = cfg.get("modelos_texto_fallback", ["gemini-3.6-flash", "gemini-3.5-flash-lite"])
@@ -199,11 +207,16 @@ def gerar_conteudo_texto_com_fallback(cliente, cfg, contents, generation_config,
             return resposta
         except Exception as exc:  # noqa
             ultimo_erro = exc
-            if not _erro_indisponibilidade_modelo(exc) or indice == len(modelos) - 1:
+            temporario = erro_temporario_gemini(exc)
+            try:
+                temporario = temporario or _erro_indisponibilidade_modelo(exc)
+            except NameError:
+                pass
+            if not temporario or indice == len(modelos) - 1:
                 raise
             proximo = modelos[indice + 1]
-            info(f"   modelo {nome_modelo} indisponivel (5xx/UNAVAILABLE). Tentando alternativa {proximo} para {operacao}.")
-    raise ultimo_erro or RuntimeError("Falha desconhecida na geração de texto.")
+            info(f"   modelo {nome_modelo} indisponivel ({str(exc)[:60]}). Tentando alternativa {proximo} para {operacao}.")
+    raise ultimo_erro or RuntimeError("Falha desconhecida na geracao de texto.")
 
 
 def carregar_env_local():
@@ -415,7 +428,7 @@ def gerar_roteiro_gemini(canal, tema, duracao, anteriores, cfg, categoria="curio
     from google import genai
     from google.genai import types
     cliente = genai.Client(api_key=cfg["gemini_api_key"],
-                       http_options=types.HttpOptions(timeout=120000))
+                       http_options=types.HttpOptions(timeout=300000))
     prompt = montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria)
     info("   pedindo o roteiro ao Gemini...")
     try:

@@ -1,0 +1,10 @@
+Fontes incluidas neste pacote
+
+EMSTech.json (fonte de caneta de traco unico, usada no estilo whiteboard)
+  EMS Tech - SIL Open Font License 1.1. Fonte de linha unica por Sheldon B. Michaels, derivada de
+  "Architects Daughter" de Kimberly Geswein; conversao para SVG por Windell H. Oskay (Evil Mad Scientist).
+  Obtida a partir do pacote npm "hersheytext" (MIT) via o repositorio Lemo-Opuscar (MIT).
+  Texto da licenca OFL: OFL-ArchitectsDaughter.txt (mesmos termos).
+
+DejaVu Sans / Sans Condensed / Sans Mono (arquivos .ttf)
+  Licenca livre da familia DejaVu/Bitstream Vera: LICENCA-DejaVu.txt.
