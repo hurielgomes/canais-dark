@@ -97,7 +97,7 @@ class EngineCatalogTests(unittest.TestCase):
 
     def test_classic_adapter_can_target_existing_project_for_resume(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
+            root = Path(tmp).resolve()
             project = root / "projetos" / "exemplo" / "2026-11-03_teste"
             project.mkdir(parents=True)
             adapter = get_adapter("classico")

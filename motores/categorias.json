@@ -1,15 +1,11 @@
 {
-  "version": 2,
+  "version": 3,
   "categories": [
     {
       "id": "curiosidades",
       "name": "Curiosidades",
       "icon": "💡",
-      "recommended_engines": [
-        "classico",
-        "character_2_5d",
-        "stickman"
-      ],
+      "recommended_engines": ["classico", "character_2_5d", "stickman"],
       "description": "Fatos surpreendentes, perguntas específicas e descobertas verificáveis sobre o mundo.",
       "editorial_profile": {
         "objective": "Transformar fatos pouco conhecidos em histórias fáceis de entender e compartilhar.",
@@ -24,17 +20,15 @@
         "fact_policy": "Priorizar fatos bem documentados e consensuais; não inventar datas, números ou explicações.",
         "avoid": "Curiosidades falsas, listas genéricas, afirmações sem contexto.",
         "visual_guidance": "Objetos em close, comparações visuais, mapas simples, cenas coloridas e detalhes surpreendentes.",
-        "closing_question": "E você, já conhecia esse fato? O que mais te surpreendeu? Conta nos comentários."
+        "closing_instruction": "Termine com UMA pergunta específica sobre o fato mais marcante deste vídeo, que só faça sentido para este tema. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Qual detalhe desse fato você tem mais dificuldade de acreditar?"
       }
     },
     {
       "id": "historia",
       "name": "História e curiosidades antigas",
       "icon": "🏺",
-      "recommended_engines": [
-        "classico",
-        "character_2_5d"
-      ],
+      "recommended_engines": ["classico", "character_2_5d"],
       "description": "Histórias antigas, civilizações, descobertas arqueológicas, personagens históricos e acontecimentos documentados.",
       "editorial_profile": {
         "objective": "Contar episódios históricos com contexto, cronologia e explicação do que é comprovado.",
@@ -49,16 +43,15 @@
         "fact_policy": "Distinguir evidência arqueológica, registro histórico, hipótese acadêmica e lenda. Datas e atribuições devem ser tratadas com cautela.",
         "avoid": "Lendas como fatos, anacronismos, diálogos inventados apresentados como reais.",
         "visual_guidance": "Mapas antigos, gravuras, artefatos, reconstruções de época identificadas como ilustração e paleta histórica clara.",
-        "closing_question": "Você já conhecia essa história? Que parte dela mais chamou sua atenção? Conta nos comentários."
+        "closing_instruction": "Termine com UMA pergunta específica sobre a decisão, o personagem ou a consequência mais marcante desta história (por exemplo, o que o espectador teria feito no lugar de alguém). Uma única frase. Proibido: \"já conhecia\", \"o que mais chamou sua atenção\", \"conta nos comentários\".",
+        "closing_question": "Se você estivesse nessa época, que decisão teria tomado diferente?"
       }
     },
     {
       "id": "esportes",
       "name": "Esportes",
       "icon": "⚽",
-      "recommended_engines": [
-        "classico"
-      ],
+      "recommended_engines": ["classico"],
       "description": "Regras, táticas, recordes, histórias, partidas e curiosidades esportivas.",
       "editorial_profile": {
         "objective": "Explicar acontecimentos e conceitos esportivos com ritmo, contexto e dados verificáveis.",
@@ -73,17 +66,15 @@
         "fact_policy": "Verificar placares, temporadas, recordes, regras e datas; separar opinião de estatística.",
         "avoid": "Rumores sobre atletas, estatísticas sem fonte, rivalidade ofensiva.",
         "visual_guidance": "Campo, quadra, diagramas táticos, trajetórias, placares e linhas do tempo.",
-        "closing_question": "Na sua opinião, qual foi o momento mais decisivo dessa história? Conta aqui nos comentários."
+        "closing_instruction": "Termine com UMA pergunta de opinião sobre o lance, o recorde ou a comparação mais marcante deste vídeo, que convide a escolher um lado sem hostilidade. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Qual foi, na sua opinião, o momento mais decisivo dessa história?"
       }
     },
     {
       "id": "celebridades",
       "name": "Famosos e cultura pop",
       "icon": "⭐",
-      "recommended_engines": [
-        "classico",
-        "character_2_5d"
-      ],
+      "recommended_engines": ["classico", "character_2_5d"],
       "description": "Carreiras, obras, marcos culturais e fatos públicos verificáveis sobre pessoas conhecidas.",
       "editorial_profile": {
         "objective": "Contextualizar trajetórias e fenômenos culturais sem boatos ou invasão de privacidade.",
@@ -98,17 +89,15 @@
         "fact_policy": "Usar somente fatos públicos verificáveis; distinguir declaração, notícia e especulação. Não inferir vida privada.",
         "avoid": "Boatos, acusações não confirmadas, difamação, detalhes privados e falsos escândalos.",
         "visual_guidance": "Capas de obras, linhas do tempo, objetos culturais e ilustrações genéricas; evitar retrato sintético identificável de pessoa real.",
-        "closing_question": "Qual obra ou momento dessa trajetória mais marcou você? Conta nos comentários."
+        "closing_instruction": "Termine com UMA pergunta específica sobre a obra, o marco ou o fenômeno cultural mais marcante deste vídeo, nunca sobre a vida privada de alguém. Uma única frase. Proibido: \"já conhecia\", \"o que mais marcou você\", \"conta nos comentários\".",
+        "closing_question": "Qual obra ou fase dessa trajetória você considera a mais influente?"
       }
     },
     {
       "id": "what_if",
       "name": "E se...?",
       "icon": "🧪",
-      "recommended_engines": [
-        "stickman",
-        "character_2_5d"
-      ],
+      "recommended_engines": ["stickman", "character_2_5d"],
       "description": "Cenários hipotéticos, experiências mentais e consequências progressivas apoiadas em ciência quando aplicável.",
       "editorial_profile": {
         "objective": "Explorar uma hipótese por etapas, mostrando consequências plausíveis, limites e surpresas.",
@@ -123,18 +112,15 @@
         "fact_policy": "Separar ciência estabelecida, extrapolação plausível e ficção. Não apresentar previsão especulativa como certeza.",
         "avoid": "Falsa precisão, números inventados, promessas científicas impossíveis.",
         "visual_guidance": "Personagem reativo, escala progressiva, comparações antes/depois, situações coloridas e ação visual.",
-        "closing_question": "E você, o que faria se isso acontecesse com você? Conta sua escolha nos comentários."
+        "closing_instruction": "Termine com UMA pergunta que coloque o espectador dentro da hipótese, pedindo uma escolha concreta diante da consequência mais marcante do vídeo. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Diante dessa consequência, qual seria a sua primeira atitude?"
       }
     },
     {
       "id": "como_funciona",
       "name": "Como funciona...?",
       "icon": "⚙️",
-      "recommended_engines": [
-        "isometric",
-        "blueprint",
-        "classico"
-      ],
+      "recommended_engines": ["isometric", "blueprint", "classico"],
       "description": "Explicações passo a passo sobre objetos, serviços, sistemas e processos do cotidiano.",
       "editorial_profile": {
         "objective": "Tornar visível um mecanismo ou processo que normalmente fica escondido.",
@@ -149,18 +135,15 @@
         "fact_policy": "Explicar mecanismo real; apontar diferenças entre modelos e sistemas quando existirem.",
         "avoid": "Jargão sem explicação, detalhes técnicos irrelevantes, analogias que distorcem o funcionamento.",
         "visual_guidance": "Cortes internos, fluxo de etapas, objetos explodidos, diagramas e ambientes isométricos.",
-        "closing_question": "Qual outro objeto ou sistema você gostaria de ver explicado por dentro? Conta aqui."
+        "closing_instruction": "Termine com UMA pergunta sobre a etapa ou o componente mais engenhoso do mecanismo explicado, ou sobre um objeto parecido que o espectador queira ver por dentro. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Qual parte desse mecanismo você acha mais engenhosa?"
       }
     },
     {
       "id": "educacao",
       "name": "Educação e ciência",
       "icon": "🔬",
-      "recommended_engines": [
-        "isometric",
-        "classico",
-        "character_2_5d"
-      ],
+      "recommended_engines": ["isometric", "classico", "character_2_5d"],
       "description": "Conceitos científicos e educacionais explicados com exemplos, analogias e demonstrações.",
       "editorial_profile": {
         "objective": "Ensinar um conceito com clareza, exemplos e progressão lógica.",
@@ -175,17 +158,15 @@
         "fact_policy": "Usar conceitos aceitos e distinguir consenso científico de hipótese em pesquisa.",
         "avoid": "Simplificações enganosas, causalidade falsa, pseudociência.",
         "visual_guidance": "Diagramas, experiências visuais, modelos, comparações e ilustrações de apoio.",
-        "closing_question": "Esse exemplo ajudou a entender o conceito? Que parte você gostaria de aprofundar?"
+        "closing_instruction": "Termine com UMA pergunta que teste a compreensão do conceito com um novo exemplo do dia a dia, ou que pergunte qual parte o espectador quer aprofundar. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Que outro exemplo do dia a dia você consegue explicar com esse conceito?"
       }
     },
     {
       "id": "noticias",
       "name": "Notícias e atualidades",
       "icon": "📰",
-      "recommended_engines": [
-        "broadcast_news",
-        "classico"
-      ],
+      "recommended_engines": ["broadcast_news", "classico"],
       "description": "Explicadores sobre acontecimentos públicos e assuntos recentes, com datas e ressalvas sobre informações que mudam.",
       "editorial_profile": {
         "objective": "Explicar o que aconteceu, o contexto e por que o assunto importa.",
@@ -200,17 +181,15 @@
         "fact_policy": "Sem pesquisa web nesta versão, limitar-se a fatos consolidados e conhecimento estável; não afirmar estado atual, números recentes ou desdobramentos posteriores sem fonte fornecida pelo usuário.",
         "avoid": "Breaking news sem verificação, manchetes alarmistas, acusações, previsões como fatos.",
         "visual_guidance": "Manchetes explicativas, cronologias, mapas, cartões de dados e fluxogramas; sem apresentador obrigatório.",
-        "closing_question": "Qual aspecto desse assunto você considera mais importante para acompanhar? Comente sua opinião."
+        "closing_instruction": "Termine com UMA pergunta neutra sobre o aspecto deste assunto que vale mais ser acompanhado, sem induzir opinião nem tomar lado. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Qual aspecto desse assunto você acompanharia com mais atenção daqui para frente?"
       }
     },
     {
       "id": "economia",
       "name": "Economia e negócios",
       "icon": "📊",
-      "recommended_engines": [
-        "broadcast_news",
-        "classico"
-      ],
+      "recommended_engines": ["broadcast_news", "classico"],
       "description": "Conceitos econômicos, tributos, negócios, meios de pagamento e impactos na vida cotidiana.",
       "editorial_profile": {
         "objective": "Explicar mecanismos econômicos e seus possíveis efeitos sem recomendar decisões financeiras.",
@@ -225,17 +204,15 @@
         "fact_policy": "Não inventar taxas, valores ou regras. Sem fontes atuais, explicar conceitos consolidados e marcar legislação, cronogramas e números recentes para conferência antes de publicar.",
         "avoid": "Recomendação de investimento, previsões categóricas, aconselhamento financeiro ou tributário.",
         "visual_guidance": "Fluxos de dinheiro, cartões de comparação, calendários, tabelas e gráficos apenas com dados fornecidos/confirmados.",
-        "closing_question": "Como você acha que esse mecanismo pode afetar empresas e consumidores? Conta sua opinião."
+        "closing_instruction": "Termine com UMA pergunta sobre quem o mecanismo explicado pode afetar mais (consumidores, empresas ou governo), sem recomendar decisão financeira. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Quem você acha que sente esse efeito primeiro: consumidores ou empresas?"
       }
     },
     {
       "id": "politica_institucional",
       "name": "Política institucional e funcionamento do Estado",
       "icon": "🏛️",
-      "recommended_engines": [
-        "broadcast_news",
-        "classico"
-      ],
+      "recommended_engines": ["broadcast_news", "classico"],
       "description": "Instituições, regras constitucionais, eleições internas, processos legislativos e funcionamento do poder público.",
       "editorial_profile": {
         "objective": "Explicar procedimentos e competências institucionais com neutralidade e contexto.",
@@ -250,17 +227,15 @@
         "fact_policy": "Distinguir regra vigente, proposta, interpretação e opinião. Sem fontes atuais, abordar o funcionamento geral e pedir conferência de regimentos e datas antes da publicação.",
         "avoid": "Propaganda partidária, manipulação de polarização, alegações não comprovadas sobre agentes públicos.",
         "visual_guidance": "Fluxogramas institucionais, organogramas, cronologias, documentos e cartões de regras.",
-        "closing_question": "Você considera esse mecanismo institucional claro e adequado? Por quê? Comente."
+        "closing_instruction": "Termine com UMA pergunta apartidária sobre a etapa ou a regra institucional mais relevante deste vídeo, sem citar partidos, candidatos ou agentes públicos. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Qual etapa desse processo você considera mais importante para o equilíbrio entre os poderes?"
       }
     },
     {
       "id": "documentario",
       "name": "Documentários e explicadores",
       "icon": "🎥",
-      "recommended_engines": [
-        "broadcast_news",
-        "classico"
-      ],
+      "recommended_engines": ["broadcast_news", "classico"],
       "description": "Narrativas documentais sobre processos, lugares, acontecimentos e temas de relevância pública.",
       "editorial_profile": {
         "objective": "Construir uma narrativa factual com contexto, evidências, personagens públicos ou processos e consequências.",
@@ -275,17 +250,15 @@
         "fact_policy": "Não dramatizar evidências, não inventar cenas factuais e indicar quando uma imagem é reconstituição ilustrativa.",
         "avoid": "Fatos sem sustentação, diálogos inventados como reais, sensacionalismo.",
         "visual_guidance": "Mapas, cronologias, fotos/arquivos licenciados, dados e cartões editoriais.",
-        "closing_question": "Qual detalhe desse caso merece ser investigado com mais profundidade? Conta nos comentários."
+        "closing_instruction": "Termine com UMA pergunta específica sobre a virada, a descoberta ou o legado mais marcante deste caso, convidando a refletir sobre a evidência. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Qual detalhe desse caso você acha que mereceria ser investigado a fundo?"
       }
     },
     {
       "id": "engenharia",
       "name": "Engenharia e construção",
       "icon": "📐",
-      "recommended_engines": [
-        "blueprint",
-        "isometric"
-      ],
+      "recommended_engines": ["blueprint", "isometric"],
       "description": "Estruturas, máquinas, obras, materiais, projetos e princípios de engenharia.",
       "editorial_profile": {
         "objective": "Mostrar como algo é projetado, dimensionado, construído ou funciona.",
@@ -300,17 +273,15 @@
         "fact_policy": "Não inventar especificações, capacidades ou medidas. Diferenciar exemplo ilustrativo de projeto real.",
         "avoid": "Instruções perigosas, alegações de segurança sem base, medidas arbitrárias.",
         "visual_guidance": "Blueprint, cortes técnicos, vistas explodidas, cotas visuais e modelos isométricos.",
-        "closing_question": "Qual componente ou estrutura você gostaria de ver desmontado e explicado?"
+        "closing_instruction": "Termine com UMA pergunta técnica sobre a solução, o material ou o componente mais engenhoso deste projeto, ou sobre qual estrutura parecida o espectador gostaria de ver desmontada. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Que solução de projeto você acha mais engenhosa nessa estrutura?"
       }
     },
     {
       "id": "humor",
       "name": "Humor e histórias",
       "icon": "😂",
-      "recommended_engines": [
-        "stickman",
-        "character_2_5d"
-      ],
+      "recommended_engines": ["stickman", "character_2_5d"],
       "description": "Histórias engraçadas, situações cotidianas, ironias e narrativas leves.",
       "editorial_profile": {
         "objective": "Criar uma situação clara, escalada cômica, surpresa e fechamento com personalidade.",
@@ -325,18 +296,15 @@
         "fact_policy": "Identificar ficção, sátira e situações inventadas; não atribuir histórias falsas a pessoas reais.",
         "avoid": "Humilhação, crueldade, preconceito, desinformação apresentada como notícia.",
         "visual_guidance": "Personagens expressivos, poses exageradas, cores vivas, timing cômico e reações visuais.",
-        "closing_question": "E você, já passou por uma situação tão absurda quanto essa ou consegue superar? Conta aí."
+        "closing_instruction": "Termine com UMA pergunta divertida, no mesmo tom da história, ligada à situação absurda ou à virada cômica deste vídeo. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Qual teria sido a sua reação numa situação dessas?"
       }
     },
     {
       "id": "tecnologia",
       "name": "Tecnologia",
       "icon": "💻",
-      "recommended_engines": [
-        "blueprint",
-        "isometric",
-        "broadcast_news"
-      ],
+      "recommended_engines": ["blueprint", "isometric", "broadcast_news"],
       "description": "Produtos, sistemas digitais, infraestrutura, inteligência artificial e tendências tecnológicas.",
       "editorial_profile": {
         "objective": "Explicar o que a tecnologia faz, como funciona e quais são suas limitações e impactos.",
@@ -351,7 +319,8 @@
         "fact_policy": "Não inventar benchmarks, capacidades ou datas de lançamento. Sem fontes atuais, evitar afirmar especificações recentes.",
         "avoid": "Hype, promessas exageradas, comparações sem metodologia.",
         "visual_guidance": "Diagramas, interfaces ilustrativas, fluxos de dados, componentes e cenários técnicos.",
-        "closing_question": "Qual aplicação dessa tecnologia você gostaria de ver testada na prática?"
+        "closing_instruction": "Termine com UMA pergunta sobre a aplicação ou o limite mais relevante da tecnologia explicada, sem hype e sem prometer resultados. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
+        "closing_question": "Em qual situação do seu dia a dia essa tecnologia faria mais diferença?"
       }
     }
   ]

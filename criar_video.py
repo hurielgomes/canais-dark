@@ -31,7 +31,7 @@ com o numero da cena (ex.: 03.mp4) e ele sera usado no lugar do automatico.
 import argparse
 import base64
 import json
-from editorial_rules import get_category, ensure_closing_question
+import logging
 import math
 import os
 import random
@@ -48,6 +48,25 @@ import urllib.request
 import wave
 from datetime import date
 from pathlib import Path
+
+from editorial_rules import get_category, ensure_closing_question, closing_instruction
+from nucleo_editorial import PerfilInvalido, montar_bloco_editorial, resolver_perfil
+from nucleo_editorial.viral_story_engine import (
+    construir_plano,
+    bloco_prompt,
+    avaliar_roteiro,
+    otimizar_roteiro,
+    planejar_narrativa,
+    bloco_narrativo,
+    otimizar_roteiro_completo,
+    refinar_roteiro,
+    nota_7_criterios,
+    perguntas_sem_resposta,
+)
+
+logging.basicConfig(level=logging.WARNING)
+
+
 
 def erro_temporario_gemini(e) -> bool:
     """Erros passageiros do Gemini: vale repetir ou trocar de modelo."""
@@ -333,12 +352,25 @@ def titulos_anteriores(canal_nome, atual):
     return [t for t in titulos if t][-10:]
 
 
-def montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria="curiosidades"):
+def resolver_nucleo(canal, categoria, tema, perfil=None):
+    try:
+        return resolver_perfil(canal, categoria, tema, perfil)
+    except PerfilInvalido as e:
+        erro(str(e))
+
+
+def montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria="curiosidades", perfil=None, resolucao=None, plano_narrativo=None):
+    resolucao = resolucao or resolver_nucleo(canal, categoria, tema, perfil)
     canal = aplicar_modo_tema(canal, categoria)
+    bloco_editorial = montar_bloco_editorial(
+        canal, categoria, resolucao,
+        formato=canal.get("_formato"), motor="classico", tema=tema)
     palavras_total = int(duracao * PALAVRAS_POR_SEGUNDO)
     palavras_cena = int(canal["segundos_por_imagem"] * PALAVRAS_POR_SEGUNDO)
     n_cenas = max(3, round(duracao / canal["segundos_por_imagem"]))
     estrutura = "\n".join(f"  {i}. {e}" for i, e in enumerate(canal.get("estrutura", []), 1)) or "  (livre, mas comece com um gancho forte)"
+    if bloco_editorial:
+        estrutura = "  Siga a ESTRUTURA do PERFIL NARRATIVO no bloco NÚCLEO EDITORIAL abaixo."
     regras = "\n".join(f"- {r}" for r in canal.get("regras", []))
     ant = "\n".join(f"- {t}" for t in anteriores) or "(nenhum ainda)"
     perfil_categoria = get_category(categoria).get("editorial_profile", {})
@@ -350,7 +382,19 @@ def montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria="curiosida
         f"EVITAR: {perfil_categoria.get('avoid','')}",
         f"DIRECAO VISUAL: {perfil_categoria.get('visual_guidance','')}",
     ])
-    fechamento_categoria = perfil_categoria.get("closing_question", "Encerre com uma pergunta natural e específica para convidar comentários.")
+    fechamento_categoria = closing_instruction(categoria)
+    plano = construir_plano(tema, n_cenas, duracao, fechamento_categoria,
+                            formato=canal.get("_formato"), resolucao=resolucao)
+    _baixa = plano["retencao"]["tensao"].startswith("baix")
+    linha_ritmo = (
+        "Mantenha o interesse pela clareza: uma ideia nova por cena, exemplos concretos "
+        "e transições naturais. NÃO crie suspense nem perguntas retóricas no fim das cenas."
+        if _baixa else
+        f"A cada {plano['retencao']['intervalo_mini_gancho']} cenas, um mini-gancho que puxe "
+        "para a próxima parte (varie a fórmula, não repita a mesma frase)."
+    )
+    bloco_retencao = bloco_prompt(plano)
+    bloco_plano = bloco_narrativo(plano_narrativo)
     if canal.get("_usa_video"):
         pct = int(float(canal["proporcao_video"]) * 100)
         bloco_visual = f"""
@@ -378,16 +422,21 @@ A CENA 1 É SÓ O GANCHO (regras):
 - A cena 1 tem UMA frase curta (até 16 palavras) que NÃO conta a história: é apenas uma pergunta direta ou uma afirmação intrigante que gera dúvida. Prefira perguntas ("Por que...?", "O que aconteceria se...?", "Quem...?").
 - A explicação só começa na cena 2, que responde ou desenvolve a pergunta da cena 1. Exemplo: cena 1: "Por que milhares de pessoas abandonaram a superfície para viver na escuridão?" / cena 2: "Isso aconteceu porque, em 1963, um homem reformava a casa e achou uma cidade inteira no subsolo."
 - NUNCA coloque na cena 1 data, contexto, fato narrativo ou a resposta. A cena 1 deve fazer sentido sozinha, com uma pausa depois dela.
-- PROIBIDO: "Neste vídeo", "Você sabia", "Hoje vamos falar", saudações, definições de dicionário, introduções genéricas.
+- PROIBIDO: "Neste vídeo", "Você sabia", "Aposto que você não sabia", "Hoje vamos falar", saudações, definições de dicionário, introduções genéricas.
 - Você pode prometer um pagamento no final ("o último motivo é o mais estranho") SOMENTE se o vídeo realmente o entregar. Em temas de lista de motivos ou curiosidades, deixe o item mais surpreendente para o fim.
+
+ESCOLHA DO GANCHO (antes de escrever as cenas):
+- Crie 5 ganchos candidatos diferentes para a cena 1, cada um com abordagem distinta (pergunta, contradição, número, mistério, consequência).
+- Avalie cada um de 1 a 5 em curiosidade, clareza, surpresa, retenção e relação com o tema.
+- Escolha o melhor em "gancho_escolhido". O texto dele deve ser IDÊNTICO à narração da cena 1.
 
 RITMO E RETENÇÃO:
 - Frases curtas (6 a 14 palavras) e linguagem falada. Uma ideia nova por cena.
-- A cada 2 ou 3 cenas, um mini-gancho que puxe para a próxima parte (varie a fórmula, não repita a mesma frase).
+- {linha_ritmo}
 - Seja específico: nomes, lugares, números e datas, mas SOMENTE se tiver certeza. Se não tiver certeza de um dado, não o inclua.
 - Escreva com suas palavras, com ponto de vista e explicação, não apenas uma lista de fatos. Não copie textos de terceiros.
 - A última cena retoma a pergunta do início, fecha com uma ideia marcante E termina com uma pergunta específica para estimular comentários.
-- PERGUNTA FINAL ADEQUADA À CATEGORIA: {fechamento_categoria}
+- PERGUNTA FINAL ADEQUADA À CATEGORIA: Termine com UMA pergunta específica sobre o ponto mais marcante deste vídeo, que só faça sentido para este tema. Não use "já conhecia esse fato", "o que mais te surpreendeu" nem "conta nos comentários".
 - A pergunta deve combinar com o tom do canal e do assunto: humor para conteúdo descontraído; pergunta séria para conteúdo sério. Evite CTA genérico.
 - Sem emojis nem marcações como "[cena]".
 
@@ -405,9 +454,20 @@ IMAGENS (o programa já acrescenta automaticamente o estilo visual do canal, ent
 - NÃO inclua texto, letras, números, logotipos nem pessoas reais identificáveis.
 
 {bloco_visual}
+{bloco_plano}
+{bloco_retencao}
+{bloco_editorial}
 
-Responda SOMENTE com JSON válido, sem comentários e sem blocos de código, neste formato:
+Responda SOMENTE com JSON válido, neste formato ("ganchos_candidatos" deve ter 5 itens):
 {{
+  "ganchos_candidatos": [
+    {{
+      "texto": "gancho possível para a cena 1 (até 16 palavras, sem revelar a resposta)",
+      "avaliacao": {{"curiosidade": "1 a 5", "clareza": "1 a 5", "surpresa": "1 a 5", "retencao": "1 a 5", "relacao_com_tema": "1 a 5"}},
+      "justificativa": "por que este gancho funciona ou não"
+    }}
+  ],
+  "gancho_escolhido": {{"texto": "o candidato escolhido, idêntico ao da cena 1", "justificativa": "por que foi o melhor"}},
   "titulo": "até 65 caracteres, específico, gera curiosidade (pergunta ou revelação) e o vídeo cumpre o que ele promete",
   "titulos_alternativos": ["2 outros títulos com abordagens diferentes, para teste A/B"],
   "gancho_texto": "versão de até 6 palavras da pergunta da cena 1, aparece em letras grandes nos 3 primeiros segundos",
@@ -422,36 +482,104 @@ Responda SOMENTE com JSON válido, sem comentários e sem blocos de código, nes
 }}"""
 
 
-def gerar_roteiro_gemini(canal, tema, duracao, anteriores, cfg, categoria="curiosidades"):
+def _parse_json(texto):
+    texto = re.sub(r"^```(?:json)?|```$", "", (texto or "").strip(), flags=re.M).strip()
+    i, j = texto.find("{"), texto.rfind("}")
+    if i == -1 or j <= i:
+        raise json.JSONDecodeError("sem JSON", texto, 0)
+    return json.loads(texto[i:j + 1])
+
+
+
+def gerar_roteiro_gemini(canal, tema, duracao, anteriores, cfg, categoria="curiosidades", perfil=None):
     if not cfg["gemini_api_key"]:
         erro("falta a chave do Gemini. Veja o passo a passo (aistudio.google.com) e coloque em config.json.")
     from google import genai
     from google.genai import types
     cliente = genai.Client(api_key=cfg["gemini_api_key"],
-                       http_options=types.HttpOptions(timeout=300000))
-    prompt = montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria)
+                           http_options=types.HttpOptions(timeout=300000))
+
+    def _ia(p, op="planejamento"):
+        r = gerar_conteudo_texto_com_fallback(
+            cliente, cfg, p,
+            types.GenerateContentConfig(response_mime_type="application/json", temperature=0.5),
+            operacao=op)
+        return r.text or ""
+
+    resolucao = resolver_nucleo(canal, categoria, tema, perfil)
+    n_cenas = max(3, round(duracao / canal["segundos_por_imagem"]))
+    fech = closing_instruction(categoria)
+
+    info("   planejando a narrativa...")
+    plano_narr = planejar_narrativa(tema, resolucao, n_cenas, duracao, _ia)
+
+    prompt = montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria,
+                                   perfil=perfil, resolucao=resolucao, plano_narrativo=plano_narr)
+
     info("   pedindo o roteiro ao Gemini...")
-    try:
-        resp = gerar_conteudo_texto_com_fallback(
-            cliente, cfg, prompt,
-            types.GenerateContentConfig(response_mime_type="application/json", temperature=0.9),
-            operacao="roteiro",
-        )
-    except Exception as e:  # noqa
-        msg = str(e)
-        print(f"\nO Gemini recusou o pedido:\n{msg[:600]}\n")
-        if "404" in msg or "NOT_FOUND" in msg or "no longer available" in msg:
-            erro(f"o modelo '{cfg['modelo_texto']}' nao esta disponivel para a sua chave. "
-                 "Troque 'modelo_texto' no config.json pelo nome que a mensagem acima sugere.")
-        if "API key" in msg or "API_KEY" in msg or "401" in msg or "403" in msg or "PERMISSION" in msg:
-            erro("problema com a chave do Gemini. Confira o config.json (sem espacos, entre aspas).")
-        erro("nao foi possivel gerar o roteiro. Leia a mensagem acima e, se nao entender, me envie.")
-    texto = (resp.text or "").strip()
-    texto = re.sub(r"^```(?:json)?|```$", "", texto, flags=re.M).strip()
-    try:
-        return json.loads(texto)
-    except json.JSONDecodeError:
-        erro("o Gemini nao devolveu um JSON valido. Rode o mesmo comando de novo.")
+    roteiro = None
+    for tentativa in range(1, 4):
+        try:
+            resp = gerar_conteudo_texto_com_fallback(
+                cliente, cfg, prompt,
+                types.GenerateContentConfig(response_mime_type="application/json", temperature=0.9),
+                operacao="roteiro",
+            )
+        except Exception as e:  # noqa
+            msg = str(e)
+            print(f"\nO Gemini recusou o pedido:\n{msg[:600]}\n")
+            if "404" in msg or "NOT_FOUND" in msg or "no longer available" in msg:
+                erro(f"o modelo '{cfg['modelo_texto']}' nao esta disponivel para a sua chave. "
+                     "Troque 'modelo_texto' no config.json pelo nome que a mensagem acima sugere.")
+            if "API key" in msg or "API_KEY" in msg or "401" in msg or "403" in msg or "PERMISSION" in msg:
+                erro("problema com a chave do Gemini. Confira o config.json (sem espacos, entre aspas).")
+            erro("nao foi possivel gerar o roteiro. Leia a mensagem acima e, se nao entender, me envie.")
+        bruto = resp.text or ""
+        try:
+            roteiro = _parse_json(bruto)
+            break
+        except json.JSONDecodeError:
+            Path("roteiro_bruto.txt").write_text(bruto, encoding="utf-8")
+            info(f"   JSON invalido (tentativa {tentativa}/3), pedindo de novo...")
+    if roteiro is None:
+        erro("o Gemini nao devolveu um JSON valido em 3 tentativas. Veja roteiro_bruto.txt.")
+
+    esc = (roteiro.get("gancho_escolhido") or {}).get("texto", "").strip()
+    if esc and roteiro.get("cenas"):
+        roteiro["cenas"][0]["narracao"] = esc
+
+    plano = construir_plano(tema, n_cenas, duracao, fech, canal.get("_formato"), resolucao)
+
+    def _avaliar(r):
+        a = avaliar_roteiro(r, plano)
+        ruins_ = perguntas_sem_resposta([c["narracao"] for c in r["cenas"]], lambda p: _ia(p, "checagem"))
+        a["perguntas_sem_resposta"] = ruins_
+        a["score"] = max(0, a["score"] - 10 * len(ruins_))
+        return a, ruins_
+
+    aval, ruins = _avaliar(roteiro)
+    if cfg.get("otimizar_roteiro"):
+        info("   otimizando o roteiro (limpeza + ganchos)...")
+        roteiro, rel = otimizar_roteiro_completo(
+            roteiro, plano, _avaliar, ruins, lambda p: _ia(p, "otimizacao"), plano_narr)
+        if rel["aplicado"]:
+            aval, _ = _avaliar(roteiro)
+        aval["otimizacao"] = rel
+    if cfg.get("refinar_roteiro", True):
+        otim = aval.get("otimizacao")
+        roteiro, rel3 = refinar_roteiro(roteiro, plano, lambda p: _ia(p, "refino"))
+        if rel3["aplicado"]:
+            aval, _ = _avaliar(roteiro)
+            if otim:
+                aval["otimizacao"] = otim
+        aval["refino"] = rel3
+    aval["nota_7_criterios"] = nota_7_criterios(roteiro, aval)
+    roteiro["retencao"] = aval
+
+    if resolucao["modo"] == "nucleo":
+        roteiro["nucleo_editorial"] = resolucao
+    roteiro["plano_narrativo"] = plano_narr
+    return roteiro
 
 
 def validar_roteiro(r):
@@ -1407,6 +1535,8 @@ def main():
     ap.add_argument("--ideias", type=int, help="pede N ideias de temas ao Gemini e salva em canais/<canal>/temas.txt")
     ap.add_argument("--auto", type=int, help="piloto automatico: busca N ideias e cria um video para cada")
     ap.add_argument("--lote", help="arquivo de texto com um tema por linha; cria um video para cada")
+    ap.add_argument("--perfil", default=None, help="id do perfil narrativo (nucleo editorial)")
+
     a = ap.parse_args()
 
     for prog in ("ffmpeg", "ffprobe"):
@@ -1457,7 +1587,8 @@ def main():
 
     if a.so_prompt:
         pasta.mkdir(parents=True, exist_ok=True)
-        prompt = montar_prompt_roteiro(canal, a.tema or base_nome, duracao, titulos_anteriores(a.canal, pasta), a.categoria)
+        prompt = montar_prompt_roteiro(canal, a.tema or base_nome, duracao,
+                               titulos_anteriores(a.canal, pasta), a.categoria, perfil=a.perfil)
         (pasta / "prompt_roteiro.txt").write_text(prompt, encoding="utf-8")
         print(prompt)
         info(f"\n(Salvo em {pasta / 'prompt_roteiro.txt'}.)\nCole no Claude do My Hub, salve a resposta "
@@ -1484,8 +1615,10 @@ def main():
                          {"narracao": "E esta e a cena final. Fim do teste.", "imagem": "x", "busca_stock": "x"}]}
             salvar_json(arq_roteiro, falso)
         else:
-            roteiro = gerar_roteiro_gemini(canal, a.tema, duracao, titulos_anteriores(a.canal, pasta), cfg, a.categoria)
-            salvar_json(arq_roteiro, validar_roteiro(roteiro))
+            roteiro = gerar_roteiro_gemini(canal, a.tema, duracao, titulos_anteriores(a.canal, pasta),
+                               cfg, a.categoria, a.perfil)
+            salvar_json(arq_roteiro, roteiro)
+
     else:
         info("   roteiro.json ja existe, usando.")
     roteiro = validar_roteiro(ler_json(arq_roteiro))

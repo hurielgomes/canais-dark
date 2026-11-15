@@ -27,6 +27,8 @@ class ClassicEngine(VisualEngine):
             command += ["--duracao", str(int(job["duracao"]))]
         if job.get("entrega_format"):
             command += ["--entrega-format", str(job["entrega_format"])]
+        if job.get("perfil"):
+            command += ["--perfil", str(job["perfil"])]
         if job.get("revisar"):
             command.append("--revisar")
         if job.get("simular"):

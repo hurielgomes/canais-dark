@@ -10,9 +10,14 @@ config.local.json
 /data/*.sqlite3-wal
 /projetos/**
 !/projetos/.gitkeep
+/projetos/exemplo/*/
 /modelos/**
+/modelos/*
 !/modelos/.gitkeep
 /canais/*/musicas/**
+
+# Arquivos compactados (evita erro de limite de 100MB no GitHub)
+*.zip
 
 # Python e ferramentas
 __pycache__/

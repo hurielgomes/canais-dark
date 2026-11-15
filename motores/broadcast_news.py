@@ -16,7 +16,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 import criar_video as cv  # noqa: E402
-from editorial_rules import get_category, ensure_closing_question  # noqa: E402
+from editorial_rules import get_category, ensure_closing_question, INSTRUCAO_FECHAMENTO_PADRAO  # noqa: E402
 
 WIDTHS = {"16x9": (1920, 1080), "9x16": (1080, 1920)}
 FPS = 30
@@ -102,7 +102,7 @@ def make_research_prompt(channel: dict, topic: str, duration: int, category: str
     tone = channel.get("tom", "jornalismo explicativo, claro e direto")
     profile = get_category(category).get("editorial_profile", {})
     category_rules = "\n".join([f"Objetivo: {profile.get('objective', '')}", f"Tom: {profile.get('tone', '')}", "Estrutura: " + "; ".join(profile.get("structure", [])), f"Regra factual: {profile.get('fact_policy', '')}", f"Evitar: {profile.get('avoid', '')}", f"Direcao visual: {profile.get('visual_guidance', '')}"])
-    closing = profile.get("closing_question", "Qual aspecto desse assunto mais chamou sua atencao? Comente.")
+    closing = profile.get("closing_instruction") or INSTRUCAO_FECHAMENTO_PADRAO
     return f"""Voce e roteirista de videos curtos virais (TikTok/Reels/Shorts) para o publico brasileiro geral, nao especialista.
 
 CANAL: {channel_name}

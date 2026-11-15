@@ -26,6 +26,15 @@
       "features": ["icones animados", "diagramas com setas", "graficos de barra, linha e rosca", "midia de fundo"]
     },
     {
+      "id": "broadcast_news",
+      "name": "Broadcast News",
+      "status": "active",
+      "adapter": "motores.adapters.broadcast_news:BroadcastNewsEngine",
+      "icon": "📊",
+      "description": "Explicador jornalistico com icones, setas, contadores e graficos animados sobre imagens reais.",
+      "features": ["icones animados", "diagramas com setas", "graficos de barra, linha e rosca", "midia de fundo"]
+    },
+    {
       "id": "animado_whiteboard",
       "name": "Whiteboard Explainer",
       "status": "active",

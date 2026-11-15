@@ -23,6 +23,8 @@ import shutil
 import sys
 from datetime import date
 from pathlib import Path
+from editorial_rules import ensure_closing_question
+
 
 RAIZ = Path(__file__).resolve().parent
 sys.path.insert(0, str(RAIZ))
@@ -102,7 +104,7 @@ def montar_prompt(canal, tema, duracao, estilo, anteriores, categoria="curiosida
     ant = "\n".join(f"- {t}" for t in anteriores) or "(nenhum ainda)"
     regras = "\n".join(f"- {r}" for r in canal.get("regras", []))
     fechamento = perfil_categoria(categoria).get(
-        "closing_question", "Encerre com uma pergunta natural e específica para convidar comentários.")
+        "closing_instruction": "Termine com UMA pergunta específica sobre o ponto mais marcante deste vídeo, que só faça sentido para este tema. Não use \"já conhecia esse fato\", \"o que mais te surpreendeu\" nem \"conta nos comentários\".")
     return f"""Você é roteirista de vídeos animados explicativos para um canal do YouTube sem apresentador, especialista em retenção de audiência.
 Escreva o roteiro completo de UM vídeo, dividido em cenas. Cada cena tem a narração (voz) e o que aparece na tela.
 
@@ -178,24 +180,12 @@ def gerar_roteiro_gemini(canal, tema, duracao, estilo, anteriores, cfg, categori
         cv.erro("o Gemini nao devolveu um JSON valido. Rode o mesmo comando de novo.")
 
 
+from editorial_rules import ensure_closing_question
+
+
 def garantir_pergunta_final(r, categoria, tema=""):
-    """Aplica editorial_rules.ensure_closing_question e garante '?' na ultima narracao."""
-    if ensure_closing_question:
-        try:
-            novo = ensure_closing_question(r, categoria, tema, "")
-            if isinstance(novo, dict) and novo.get("cenas"):
-                r = novo
-        except Exception:  # noqa
-            pass
-    ultima = r["cenas"][-1]
-    narr = str(ultima.get("narracao", "")).strip()
-    if not narr.endswith("?"):
-        pergunta = str(r.get("pergunta_final") or "").strip()
-        if pergunta:
-            if not pergunta.endswith("?"):
-                pergunta += "?"
-            ultima["narracao"] = f"{narr} {pergunta}".strip()
-    return r
+    """Usa a regra central: não duplica e preserva a pergunta da IA."""
+    return ensure_closing_question(r, categoria, tema or r.get("tema", ""), r.get("tom", ""))
 
 
 def validar(r, estilo, categoria="curiosidades"):
