@@ -26,7 +26,7 @@
    "tipo": "cenario",
    "hash": "9a0e72a5dd28db85",
    "versao": 1,
-   "status": "pendente",
+   "status": "aprovado",
    "tags": [
     "interior",
     "sala",
@@ -42,7 +42,7 @@
    "tipo": "cenario",
    "hash": "4977f5d94682809a",
    "versao": 1,
-   "status": "pendente",
+   "status": "aprovado",
    "tags": [
     "natureza",
     "savana",
@@ -58,7 +58,7 @@
    "tipo": "objeto",
    "hash": "33effbaa041666c4",
    "versao": 1,
-   "status": "pendente",
+   "status": "aprovado",
    "tags": [
     "movel",
     "sala"
@@ -73,7 +73,7 @@
    "tipo": "personagem",
    "hash": "58d38c6b6bb13019",
    "versao": 1,
-   "status": "pendente",
+   "status": "aprovado",
    "tags": [
     "animal",
     "felino",
@@ -93,7 +93,7 @@
    "tipo": "objeto",
    "hash": "4abd9ebdf01c8d75",
    "versao": 1,
-   "status": "pendente",
+   "status": "aprovado",
    "tags": [
     "eletronico",
     "sala"

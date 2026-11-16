@@ -14,6 +14,7 @@ import hashlib
 import io
 import json
 import time
+import os
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -57,7 +58,11 @@ class Biblioteca:
 
     # ------------------------------------------------------------------ persistencia
     def _salvar_index(self):
-        self.f_index.write_text(json.dumps(self.idx, indent=1, ensure_ascii=False), encoding="utf-8")
+        txt = json.dumps(self.idx, indent=1, ensure_ascii=False)
+        tmp = self.f_index.with_suffix(".json.tmp")
+        tmp.write_text(txt, encoding="utf-8")
+        os.replace(tmp, self.f_index)
+
 
     def listar(self, status=None):
         return [dict(id=i, **e) for i, e in sorted(self.idx["recursos"].items()) if status in (None, e["status"])]

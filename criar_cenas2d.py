@@ -7,6 +7,7 @@ import json
 import shutil
 import subprocess
 import sys
+import re
 from datetime import date
 from pathlib import Path
 
@@ -17,7 +18,10 @@ import criar_video as cv
 from editorial_rules import ensure_closing_question
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "estudio"))
+
 from estudio.cenas2d.recursos.biblioteca import Biblioteca
+from estudio.estilos.cenas2d import Estilo
+from estudio.nucleo import Tela
 
 PRESET = "alerta_noturno"
 VERSAO_RENDER = "1"
@@ -70,20 +74,76 @@ def cena_modelo(i, cat):
         cena["elementos"].append({"ref": ele[i % len(ele)]["id"], "x": 0.5, "y": 0.62})
     return cena
 
+def criar_ia(cfg):
+    from google import genai
+    from google.genai import types
+    cliente = genai.Client(api_key=cfg["gemini_api_key"], http_options=types.HttpOptions(timeout=300000))
 
-def montar_cenas(roteiro, hashes, bib, arq):
+    def _ia(p, op="direcao"):
+        r = cv.gerar_conteudo_texto_com_fallback(
+            cliente, cfg, p,
+            types.GenerateContentConfig(response_mime_type="application/json", temperature=0.4),
+            operacao=op)
+        return r.text or ""
+    return _ia
+
+
+def dirigir(roteiro, faltam, cat, ia):
+    """Retorna {indice_0based: cena}. Qualquer problema -> {} (cai no modelo local)."""
+    ok = {r["id"]: r for r in cat if _aprovado(r.get("status"))}
+    if not ok or not faltam:
+        return {}
+    lista = "\n".join(f'- {k} ({r.get("tipo")}): {r.get("nome", "")}' for k, r in ok.items())
+    cenas = {i + 1: roteiro["cenas"][i]["narracao"] for i in faltam}
+    prompt = f"""Voce e diretor de cena de um video vertical 2D. Para cada cena, escolha recursos da lista que ilustrem a narracao.
+RECURSOS (use SOMENTE estes ids):
+{lista}
+REGRAS: no maximo 1 cenario (tipo cenario) e ate 3 elementos (os demais tipos). Se nada combinar, deixe cenario null e elementos [].
+x e y vao de 0 a 1 (x: 0.1 esquerda a 0.9 direita; y: 0.5 a 0.8 para personagens e objetos no chao). Nao sobreponha elementos.
+Mantenha coerencia visual entre cenas vizinhas (mesmo cenario quando a acao continua).
+Responda so JSON: {{"cenas": [{{"cena": N, "cenario": "id ou null", "elementos": [{{"ref": "id", "x": 0.5, "y": 0.65}}]}}]}}
+NARRACOES: {json.dumps(cenas, ensure_ascii=False)}"""
+    try:
+        dados = json.loads(re.sub(r"^```(?:json)?|```$", "", ia(prompt).strip(), flags=re.M))
+        out = {}
+        for d in dados["cenas"]:
+            n = int(d["cena"]) - 1
+            if n not in faltam:
+                continue
+            cena = {"elementos": []}
+            cen = d.get("cenario")
+            if cen in ok and str(ok[cen].get("tipo", "")).lower() in TIPOS_CENARIO:
+                cena["cenario"] = {"ref": cen}
+            for e in (d.get("elementos") or [])[:3]:
+                ref = e.get("ref")
+                if ref in ok and str(ok[ref].get("tipo", "")).lower() not in TIPOS_CENARIO:
+                    cena["elementos"].append({
+                        "ref": ref,
+                        "x": round(min(0.9, max(0.1, float(e.get("x", 0.5)))), 3),
+                        "y": round(min(0.85, max(0.4, float(e.get("y", 0.62)))), 3)})
+            out[n] = cena
+        return out
+    except Exception as e:  # noqa
+        cv.info(f"   aviso: diretor Gemini falhou ({e}); usando o diretor local.")
+        return {}
+
+def montar_cenas(roteiro, hashes, bib, arq, ia=None):
     antigo = cv.ler_json(arq).get("cenas", []) if arq.exists() else []
     cat = catalogo(bib)
     if not any(_aprovado(r.get("status")) for r in cat):
         cv.info("   aviso: nenhum recurso aprovado na biblioteca; as cenas ficam sem recursos.")
+    faltam = [i for i, h in enumerate(hashes)
+              if not (i < len(antigo) and antigo[i].get("hash_narracao") == h)]
+    dirigidas = dirigir(roteiro, faltam, cat, ia) if ia else {}
     saida = []
     for i, h in enumerate(hashes):
-        if i < len(antigo) and antigo[i].get("hash_narracao") == h:
+        if i not in faltam:
             saida.append(antigo[i])
         else:
-            saida.append({"hash_narracao": h, "cena": cena_modelo(i, cat)})
+            saida.append({"hash_narracao": h, "cena": dirigidas.get(i) or cena_modelo(i, cat)})
     cv.salvar_json(arq, {"versao": 1, "cenas": saida})
     return [s["cena"] for s in saida]
+
 
 
 # ---------------------------------------------------------------- pre-verificacao
@@ -102,14 +162,9 @@ def _varrer(o, refs, proib, caminho=""):
 
 
 def _status(bib, ref):
-    try:
-        r = bib.obter(ref)
-    except Exception:  # noqa
-        return None
-    if r is None:
-        return None
-    s = r.get("status") if isinstance(r, dict) else getattr(r, "status", "")
-    return str(s or "").lower()
+    e = bib.idx["recursos"].get(ref)
+    return None if e is None else str(e.get("status", "")).lower()
+
 
 
 def preverificar(cenas, bib):
@@ -131,7 +186,7 @@ def preverificar(cenas, bib):
         cv.erro("recursos inexistentes na biblioteca: " + ", ".join(sorted(ausentes)))
     if pendentes:
         cv.erro("recursos pendentes de aprovacao: " + ", ".join(sorted(pendentes)) +
-                ". Aprove-os na biblioteca e use Retomar na interface.")
+                ". Aprove com: py m1_recursos.py aprovar <recurso> (ou --todos) e rode de novo com --projeto.")
 
 
 # ---------------------------------------------------------------- legenda e render
@@ -290,6 +345,7 @@ def main():
     ap.add_argument("--projeto")
     ap.add_argument("--revisar", action="store_true")
     ap.add_argument("--simular", action="store_true")
+    ap.add_argument("--diretor-local", action="store_true")
     ap.add_argument("--formatos", default="9x16")
     ap.add_argument("--perfil", default=None)
     a = ap.parse_args()
@@ -356,10 +412,20 @@ def main():
     cv.salvar_json(pasta / "audio" / "hashes.json", hashes)
 
     # 3. cenas
-    cv.info("\n[3/5] Cenas (diretor local)")
+    usa_gemini = not (a.simular or a.diretor_local)
+    cv.info(f"\n[3/5] Cenas (diretor {'Gemini' if usa_gemini else 'local'})")
     bib = Biblioteca(RAIZ / "biblioteca_m1", bloquear_pendentes=True)
-    cenas = montar_cenas(roteiro, hashes, bib, pasta / "cenas2d.json")
+    ia = criar_ia(cfg) if usa_gemini else None
+    cenas = montar_cenas(roteiro, hashes, bib, pasta / "cenas2d.json", ia)
     preverificar(cenas, bib)
+
+    usados = set()
+    for c in cenas:
+        _varrer(c, usados, [])
+    if usados:
+        cv.info(f"   recursos usados: {', '.join(sorted(usados))}")
+    else:
+        cv.info("   aviso: nenhuma cena usa recursos. Aprove recursos e apague cenas2d.json para redirigir.")
 
     # 4. render + montagem
     cv.info("\n[4/5] Render e montagem")
@@ -389,7 +455,7 @@ def main():
     cv.gerar_miniatura(dict(roteiro, prompt_miniatura=""), pasta, cfg, canal, a.simular, imagens, formatos[0])
 
     try:
-        bib.galeria(pasta / "saida" / "recursos.html")   # CONFIRMAR assinatura
+        bib.galeria(pasta / "saida" / "recursos.html", sorted(usados))
     except Exception as e:  # noqa
         cv.info(f"   aviso: galeria nao gerada ({e})")
 
