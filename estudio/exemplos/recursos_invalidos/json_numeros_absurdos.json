@@ -1,0 +1,1 @@
+{"id": "numeros_absurdos", "tipo": "objeto", "caixa": [0, 0, 1e+30, 100], "partes": [{"id": "a", "formas": [{"t": "rect", "x": 0, "y": 0, "w": 1e+99, "h": 9, "fill": "#f00"}]}]}

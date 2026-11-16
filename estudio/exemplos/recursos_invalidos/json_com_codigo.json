@@ -1,0 +1,1 @@
+{"id": "codigo_python", "tipo": "objeto", "caixa": [0, 0, 100, 100], "__import__": "os", "exec": "import os; os.system('echo hack')", "partes": [{"id": "a", "formas": [{"t": "rect", "x": 0, "y": 0, "w": 50, "h": 50, "fill": "__import__('os').system('echo hack')"}]}]}

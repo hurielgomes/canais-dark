@@ -1,0 +1,112 @@
+{
+ "recursos": {
+  "homem": {
+   "arquivo": "recursos\\personagem\\homem.v1.json",
+   "tipo": "personagem",
+   "hash": "83fed7d7cb0da841",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "humano",
+    "adulto"
+   ],
+   "nome": "Homem de camisa azul",
+   "criado": "2026-11-15 17:57",
+   "animacoes": [
+    "acenar",
+    "apontar_controle",
+    "levantar",
+    "parado",
+    "sentado"
+   ],
+   "motivo": ""
+  },
+  "sala_noite": {
+   "arquivo": "recursos\\cenario\\sala_noite.v1.json",
+   "tipo": "cenario",
+   "hash": "9a0e72a5dd28db85",
+   "versao": 1,
+   "status": "pendente",
+   "tags": [
+    "interior",
+    "sala",
+    "noite"
+   ],
+   "nome": "Sala de estar a noite",
+   "criado": "2026-11-15 17:57",
+   "animacoes": [],
+   "motivo": ""
+  },
+  "savana": {
+   "arquivo": "recursos\\cenario\\savana.v1.json",
+   "tipo": "cenario",
+   "hash": "4977f5d94682809a",
+   "versao": 1,
+   "status": "pendente",
+   "tags": [
+    "natureza",
+    "savana",
+    "por-do-sol"
+   ],
+   "nome": "Savana ao entardecer",
+   "criado": "2026-11-15 17:57",
+   "animacoes": [],
+   "motivo": ""
+  },
+  "sofa": {
+   "arquivo": "recursos\\objeto\\sofa.v1.json",
+   "tipo": "objeto",
+   "hash": "33effbaa041666c4",
+   "versao": 1,
+   "status": "pendente",
+   "tags": [
+    "movel",
+    "sala"
+   ],
+   "nome": "Sofa lateral",
+   "criado": "2026-11-15 17:57",
+   "animacoes": [],
+   "motivo": ""
+  },
+  "tigre": {
+   "arquivo": "recursos\\personagem\\tigre.v1.json",
+   "tipo": "personagem",
+   "hash": "58d38c6b6bb13019",
+   "versao": 1,
+   "status": "pendente",
+   "tags": [
+    "animal",
+    "felino",
+    "extincao"
+   ],
+   "nome": "Tigre-de-bengala",
+   "criado": "2026-11-15 17:57",
+   "animacoes": [
+    "caminhar",
+    "parado",
+    "rugir"
+   ],
+   "motivo": ""
+  },
+  "tv": {
+   "arquivo": "recursos\\objeto\\tv.v1.json",
+   "tipo": "objeto",
+   "hash": "4abd9ebdf01c8d75",
+   "versao": 1,
+   "status": "pendente",
+   "tags": [
+    "eletronico",
+    "sala"
+   ],
+   "nome": "Televisao",
+   "criado": "2026-11-15 17:57",
+   "animacoes": [
+    "desligada",
+    "desligar",
+    "ligada",
+    "ligar"
+   ],
+   "motivo": ""
+  }
+ }
+}

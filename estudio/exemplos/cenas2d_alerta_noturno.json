@@ -1,0 +1,93 @@
+{
+  "estilo": "cenas2d",
+  "preset": "alerta_noturno",
+  "canal": "PROTOTIPO",
+  "cenas": [
+    {
+      "modelo": "objeto_heroi",
+      "duracao": 6.0,
+      "hora": "22:10",
+      "dia": "SEXTA",
+      "legenda": [
+        {
+          "ini": 0.5,
+          "fim": 2.9,
+          "texto": "Quando a luz cai, a geladeira"
+        },
+        {
+          "ini": 2.9,
+          "fim": 5.7,
+          "texto": "vira um cronômetro de quatro horas."
+        }
+      ],
+      "destaques": [
+        "cronômetro",
+        "quatro horas"
+      ]
+    },
+    {
+      "modelo": "nivel",
+      "duracao": 6.0,
+      "hora": "22:15",
+      "dia": "SEXTA",
+      "legenda": [
+        {
+          "ini": 0.6,
+          "fim": 3.1,
+          "texto": "Regra número um: guarde água"
+        },
+        {
+          "ini": 3.1,
+          "fim": 5.7,
+          "texto": "enquanto ainda há pressão."
+        }
+      ],
+      "destaques": [
+        "água",
+        "pressão"
+      ]
+    },
+    {
+      "modelo": "pessoa_tela",
+      "duracao": 6.5,
+      "hora": "06:00",
+      "dia": "SÁBADO",
+      "legenda": [
+        {
+          "ini": 0.6,
+          "fim": 3.3,
+          "texto": "No dia seguinte, a bateria do celular"
+        },
+        {
+          "ini": 3.3,
+          "fim": 6.2,
+          "texto": "vira o seu bem mais precioso."
+        }
+      ],
+      "destaques": [
+        "bateria",
+        "precioso"
+      ]
+    },
+    {
+      "modelo": "numero",
+      "duracao": 5.5,
+      "valor": 90,
+      "legenda": [
+        {
+          "ini": 0.5,
+          "fim": 2.8,
+          "texto": "E se a energia demorasse"
+        },
+        {
+          "ini": 2.8,
+          "fim": 5.2,
+          "texto": "noventa dias para voltar?"
+        }
+      ],
+      "destaques": [
+        "noventa dias"
+      ]
+    }
+  ]
+}

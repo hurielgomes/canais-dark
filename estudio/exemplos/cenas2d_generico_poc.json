@@ -1,0 +1,911 @@
+{
+  "estilo": "cenas2d",
+  "preset": "generico",
+  "canal": "PROVA_DE_CONCEITO_M1",
+  "cenas": [
+    {
+      "modelo": "generica",
+      "duracao": 7.0,
+      "cenario": {
+        "ref": "savana",
+        "enq": {
+          "16x9": {
+            "esc": 1.0,
+            "foco": [
+              1350,
+              640
+            ]
+          },
+          "9x16": {
+            "esc": 1.15,
+            "foco": [
+              1500,
+              700
+            ]
+          }
+        },
+        "ambiente": {
+          "cor": "#2a0f20",
+          "forca": 0.1
+        }
+      },
+      "elementos": [
+        {
+          "id": "tigre",
+          "ref": "tigre",
+          "k": 1.0,
+          "z": 10,
+          "escala": {
+            "16x9": 0.82,
+            "9x16": 0.95
+          },
+          "pos": {
+            "16x9": [
+              0.3,
+              0.78
+            ],
+            "9x16": [
+              0.38,
+              0.7
+            ]
+          },
+          "mover": [
+            {
+              "t": 0.0,
+              "para": {
+                "16x9": [
+                  0.3,
+                  0.78
+                ],
+                "9x16": [
+                  0.38,
+                  0.7
+                ]
+              }
+            },
+            {
+              "t": 0.8,
+              "para": {
+                "16x9": [
+                  0.3,
+                  0.78
+                ],
+                "9x16": [
+                  0.38,
+                  0.7
+                ]
+              }
+            },
+            {
+              "t": 5.3,
+              "para": {
+                "16x9": [
+                  1.0,
+                  0.78
+                ],
+                "9x16": [
+                  1.45,
+                  0.7
+                ]
+              },
+              "ease": "in_out"
+            }
+          ],
+          "olhar": "direita",
+          "linha_do_tempo": [
+            {
+              "t": 0.0,
+              "anim": "parado"
+            },
+            {
+              "t": 0.8,
+              "anim": "caminhar",
+              "sincronizar": true,
+              "mix": 0.4
+            },
+            {
+              "t": 5.3,
+              "anim": "parado",
+              "mix": 0.5
+            },
+            {
+              "t": 5.7,
+              "anim": "rugir",
+              "mix": 0.2
+            }
+          ]
+        }
+      ],
+      "camera": {
+        "seguir": {
+          "elemento": "tigre",
+          "fator": 0.96
+        },
+        "zoom": [
+          {
+            "t": 0,
+            "v": 1.0
+          },
+          {
+            "t": 7.0,
+            "v": 1.06,
+            "ease": "in_out"
+          }
+        ]
+      },
+      "hud": {
+        "etiquetas": [
+          {
+            "texto": "TIGRE-DE-BENGALA",
+            "sub": "Panthera tigris tigris",
+            "t": 0.7,
+            "fim": 6.6,
+            "tam": 40,
+            "pos": {
+              "16x9": [
+                0.74,
+                0.17
+              ],
+              "9x16": [
+                0.5,
+                0.2
+              ]
+            },
+            "rot": -3
+          }
+        ],
+        "pilulas": [
+          {
+            "texto": "ESPÉCIE AMEAÇADA",
+            "t": 1.3,
+            "fim": 6.6,
+            "cor": "#ff6a5a",
+            "pos": {
+              "16x9": [
+                0.74,
+                0.27
+              ],
+              "9x16": [
+                0.5,
+                0.275
+              ]
+            }
+          }
+        ]
+      },
+      "legenda": [
+        {
+          "ini": 0.5,
+          "fim": 3.4,
+          "texto": "O tigre-de-bengala atravessa a savana ao entardecer,"
+        },
+        {
+          "ini": 3.4,
+          "fim": 6.6,
+          "texto": "mas a espécie corre risco de extinção."
+        }
+      ],
+      "destaques": [
+        "extinção",
+        "tigre-de-bengala"
+      ]
+    },
+    {
+      "modelo": "generica",
+      "duracao": 8.0,
+      "cenario": {
+        "ref": "sala_noite",
+        "enq": {
+          "16x9": {
+            "esc": 0.95,
+            "foco": [
+              1150,
+              413
+            ]
+          },
+          "9x16": {
+            "esc": 1.0,
+            "foco": [
+              1450,
+              717
+            ]
+          }
+        },
+        "ambiente": {
+          "cor": "#070b1c",
+          "forca": 0.16
+        }
+      },
+      "elementos": [
+        {
+          "id": "tv",
+          "ref": "tv",
+          "k": 1.0,
+          "z": 9,
+          "escala": {
+            "16x9": 1.2,
+            "9x16": 0.9
+          },
+          "pos": {
+            "16x9": [
+              0.73,
+              0.8
+            ],
+            "9x16": [
+              0.78,
+              0.52
+            ]
+          },
+          "linha_do_tempo": [
+            {
+              "t": 0,
+              "anim": "desligada"
+            },
+            {
+              "t": 5.1,
+              "anim": "ligar",
+              "mix": 0
+            },
+            {
+              "t": 6.3,
+              "anim": "ligada",
+              "mix": 0
+            }
+          ]
+        },
+        {
+          "id": "sofa",
+          "ref": "sofa",
+          "k": 1.0,
+          "z": 10,
+          "escala": {
+            "16x9": 1.0,
+            "9x16": 1.6
+          },
+          "pos": {
+            "16x9": [
+              0.4,
+              0.8
+            ],
+            "9x16": [
+              0.5,
+              0.73
+            ]
+          }
+        },
+        {
+          "id": "homem",
+          "ref": "homem",
+          "k": 1.0,
+          "z": 11,
+          "escala": {
+            "16x9": 1.0,
+            "9x16": 1.6
+          },
+          "ancorar": {
+            "em": "sofa",
+            "ancora": "chao"
+          },
+          "olhar": "direita",
+          "linha_do_tempo": [
+            {
+              "t": 0.0,
+              "anim": "sentado"
+            },
+            {
+              "t": 1.6,
+              "anim": "levantar",
+              "mix": 0.25
+            },
+            {
+              "t": 3.5,
+              "anim": "parado",
+              "mix": 0.3
+            },
+            {
+              "t": 4.2,
+              "anim": "apontar_controle",
+              "mix": 0.3
+            }
+          ]
+        },
+        {
+          "id": "vaso",
+          "def": {
+            "id": "vaso_planta",
+            "tipo": "objeto",
+            "nome": "Vaso com planta",
+            "tags": [
+              "planta",
+              "decoracao"
+            ],
+            "caixa": [
+              0,
+              0,
+              140,
+              300
+            ],
+            "base": [
+              70,
+              300
+            ],
+            "sombra": {
+              "rx": 52,
+              "ry": 9,
+              "y": 300,
+              "x": 70,
+              "a": 0.5
+            },
+            "partes": [
+              {
+                "id": "vaso",
+                "pivo": [
+                  70,
+                  260
+                ],
+                "z": 0,
+                "formas": [
+                  {
+                    "t": "path",
+                    "d": "M 28 232 L 112 232 L 100 300 L 40 300 Z",
+                    "fill": {
+                      "g": [
+                        [
+                          0,
+                          "#c8683c"
+                        ],
+                        [
+                          1,
+                          "#8a3e22"
+                        ]
+                      ],
+                      "dir": "v"
+                    }
+                  },
+                  {
+                    "t": "rect",
+                    "x": 22,
+                    "y": 216,
+                    "w": 96,
+                    "h": 22,
+                    "r": 6,
+                    "fill": "#dc7c4e"
+                  }
+                ]
+              },
+              {
+                "id": "folha1",
+                "pai": "vaso",
+                "pivo": [
+                  66,
+                  222
+                ],
+                "z": -1,
+                "formas": [
+                  {
+                    "t": "path",
+                    "d": "M 66 222 C 30 180 18 118 42 60 C 66 104 80 170 66 222 Z",
+                    "fill": "#2b8450"
+                  }
+                ]
+              },
+              {
+                "id": "folha2",
+                "pai": "vaso",
+                "pivo": [
+                  74,
+                  222
+                ],
+                "z": -1.1,
+                "formas": [
+                  {
+                    "t": "path",
+                    "d": "M 74 222 C 110 176 126 116 104 56 C 78 100 62 170 74 222 Z",
+                    "fill": "#34a062"
+                  }
+                ]
+              },
+              {
+                "id": "folha3",
+                "pai": "vaso",
+                "pivo": [
+                  70,
+                  222
+                ],
+                "z": -1.2,
+                "formas": [
+                  {
+                    "t": "path",
+                    "d": "M 70 222 C 52 160 56 90 72 20 C 90 90 92 160 70 222 Z",
+                    "fill": "#237040"
+                  }
+                ]
+              }
+            ],
+            "animacoes": {
+              "balancar": {
+                "dur": 3.0,
+                "loop": true,
+                "faixas": {
+                  "folha1": {
+                    "rot": [
+                      [
+                        0,
+                        -2
+                      ],
+                      [
+                        1.5,
+                        4
+                      ],
+                      [
+                        3,
+                        -2
+                      ]
+                    ]
+                  },
+                  "folha2": {
+                    "rot": [
+                      [
+                        0,
+                        3
+                      ],
+                      [
+                        1.5,
+                        -4
+                      ],
+                      [
+                        3,
+                        3
+                      ]
+                    ]
+                  },
+                  "folha3": {
+                    "rot": [
+                      [
+                        0,
+                        -1
+                      ],
+                      [
+                        1.5,
+                        2
+                      ],
+                      [
+                        3,
+                        -1
+                      ]
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "k": 1.0,
+          "z": 9.5,
+          "escala": {
+            "16x9": 1.0,
+            "9x16": 1.5
+          },
+          "pos": {
+            "16x9": [
+              0.14,
+              0.82
+            ],
+            "9x16": [
+              0.14,
+              0.73
+            ]
+          },
+          "linha_do_tempo": [
+            {
+              "t": 0,
+              "anim": "balancar"
+            }
+          ]
+        }
+      ],
+      "camera": {
+        "zoom": [
+          {
+            "t": 0,
+            "v": 1.0
+          },
+          {
+            "t": 8.0,
+            "v": 1.07,
+            "ease": "in_out"
+          }
+        ]
+      },
+      "hud": {
+        "chip": {
+          "hora": "21:40",
+          "dia": "SEXTA",
+          "t": 0.4
+        }
+      },
+      "legenda": [
+        {
+          "ini": 0.6,
+          "fim": 3.6,
+          "texto": "Depois do jantar, ele se levanta do sofá"
+        },
+        {
+          "ini": 3.6,
+          "fim": 7.4,
+          "texto": "e liga a televisão."
+        }
+      ],
+      "destaques": [
+        "levanta",
+        "televisão"
+      ]
+    },
+    {
+      "modelo": "generica",
+      "duracao": 7.0,
+      "bloom_limiar": 215,
+      "cenario": {
+        "ref": "sala_noite",
+        "enq": {
+          "16x9": {
+            "esc": 0.95,
+            "foco": [
+              1250,
+              413
+            ]
+          },
+          "9x16": {
+            "esc": 1.0,
+            "foco": [
+              1500,
+              717
+            ]
+          }
+        },
+        "ambiente": {
+          "cor": "#070b1c",
+          "forca": 0.22
+        }
+      },
+      "elementos": [
+        {
+          "id": "tv",
+          "ref": "tv",
+          "k": 1.0,
+          "z": 9,
+          "escala": {
+            "16x9": 1.55,
+            "9x16": 1.15
+          },
+          "pos": {
+            "16x9": [
+              0.7,
+              0.84
+            ],
+            "9x16": [
+              0.72,
+              0.55
+            ]
+          },
+          "linha_do_tempo": [
+            {
+              "t": 0,
+              "anim": "ligada"
+            }
+          ],
+          "slots": {
+            "tela": {
+              "ref": "tigre",
+              "altura": 0.78,
+              "base_y": 0.94,
+              "mover": [
+                {
+                  "t": 0.0,
+                  "para": [
+                    0.12
+                  ]
+                },
+                {
+                  "t": 6.6,
+                  "para": [
+                    0.92
+                  ]
+                }
+              ],
+              "linha_do_tempo": [
+                {
+                  "t": 0.0,
+                  "anim": "caminhar",
+                  "sincronizar": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "sofa",
+          "ref": "sofa",
+          "k": 1.0,
+          "z": 10,
+          "escala": {
+            "16x9": 1.0,
+            "9x16": 1.6
+          },
+          "pos": {
+            "16x9": [
+              0.33,
+              0.84
+            ],
+            "9x16": [
+              0.42,
+              0.75
+            ]
+          }
+        },
+        {
+          "id": "homem",
+          "ref": "homem",
+          "k": 1.0,
+          "z": 11,
+          "escala": {
+            "16x9": 1.0,
+            "9x16": 1.6
+          },
+          "ancorar": {
+            "em": "sofa",
+            "ancora": "chao"
+          },
+          "olhar": "direita",
+          "linha_do_tempo": [
+            {
+              "t": 0.0,
+              "anim": "parado"
+            }
+          ]
+        },
+        {
+          "id": "vaso",
+          "def": {
+            "id": "vaso_planta",
+            "tipo": "objeto",
+            "nome": "Vaso com planta",
+            "tags": [
+              "planta",
+              "decoracao"
+            ],
+            "caixa": [
+              0,
+              0,
+              140,
+              300
+            ],
+            "base": [
+              70,
+              300
+            ],
+            "sombra": {
+              "rx": 52,
+              "ry": 9,
+              "y": 300,
+              "x": 70,
+              "a": 0.5
+            },
+            "partes": [
+              {
+                "id": "vaso",
+                "pivo": [
+                  70,
+                  260
+                ],
+                "z": 0,
+                "formas": [
+                  {
+                    "t": "path",
+                    "d": "M 28 232 L 112 232 L 100 300 L 40 300 Z",
+                    "fill": {
+                      "g": [
+                        [
+                          0,
+                          "#c8683c"
+                        ],
+                        [
+                          1,
+                          "#8a3e22"
+                        ]
+                      ],
+                      "dir": "v"
+                    }
+                  },
+                  {
+                    "t": "rect",
+                    "x": 22,
+                    "y": 216,
+                    "w": 96,
+                    "h": 22,
+                    "r": 6,
+                    "fill": "#dc7c4e"
+                  }
+                ]
+              },
+              {
+                "id": "folha1",
+                "pai": "vaso",
+                "pivo": [
+                  66,
+                  222
+                ],
+                "z": -1,
+                "formas": [
+                  {
+                    "t": "path",
+                    "d": "M 66 222 C 30 180 18 118 42 60 C 66 104 80 170 66 222 Z",
+                    "fill": "#2b8450"
+                  }
+                ]
+              },
+              {
+                "id": "folha2",
+                "pai": "vaso",
+                "pivo": [
+                  74,
+                  222
+                ],
+                "z": -1.1,
+                "formas": [
+                  {
+                    "t": "path",
+                    "d": "M 74 222 C 110 176 126 116 104 56 C 78 100 62 170 74 222 Z",
+                    "fill": "#34a062"
+                  }
+                ]
+              },
+              {
+                "id": "folha3",
+                "pai": "vaso",
+                "pivo": [
+                  70,
+                  222
+                ],
+                "z": -1.2,
+                "formas": [
+                  {
+                    "t": "path",
+                    "d": "M 70 222 C 52 160 56 90 72 20 C 90 90 92 160 70 222 Z",
+                    "fill": "#237040"
+                  }
+                ]
+              }
+            ],
+            "animacoes": {
+              "balancar": {
+                "dur": 3.0,
+                "loop": true,
+                "faixas": {
+                  "folha1": {
+                    "rot": [
+                      [
+                        0,
+                        -2
+                      ],
+                      [
+                        1.5,
+                        4
+                      ],
+                      [
+                        3,
+                        -2
+                      ]
+                    ]
+                  },
+                  "folha2": {
+                    "rot": [
+                      [
+                        0,
+                        3
+                      ],
+                      [
+                        1.5,
+                        -4
+                      ],
+                      [
+                        3,
+                        3
+                      ]
+                    ]
+                  },
+                  "folha3": {
+                    "rot": [
+                      [
+                        0,
+                        -1
+                      ],
+                      [
+                        1.5,
+                        2
+                      ],
+                      [
+                        3,
+                        -1
+                      ]
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "k": 1.0,
+          "z": 9.5,
+          "escala": {
+            "16x9": 1.0,
+            "9x16": 1.5
+          },
+          "pos": {
+            "16x9": [
+              0.12,
+              0.84
+            ],
+            "9x16": [
+              0.12,
+              0.75
+            ]
+          },
+          "linha_do_tempo": [
+            {
+              "t": 0,
+              "anim": "balancar"
+            }
+          ]
+        }
+      ],
+      "camera": {
+        "zoom": [
+          {
+            "t": 0,
+            "v": 1.0
+          },
+          {
+            "t": 7.0,
+            "v": 1.05,
+            "ease": "in_out"
+          }
+        ]
+      },
+      "hud": {
+        "pilulas": [
+          {
+            "texto": "MESMO TIGRE · RECURSO REUTILIZADO",
+            "t": 0.8,
+            "cor": "#5cdba0",
+            "tam": 28,
+            "pos": {
+              "16x9": [
+                0.5,
+                0.1
+              ],
+              "9x16": [
+                0.5,
+                0.13
+              ]
+            }
+          }
+        ]
+      },
+      "legenda": [
+        {
+          "ini": 0.5,
+          "fim": 3.4,
+          "texto": "Na tela, um documentário mostra"
+        },
+        {
+          "ini": 3.4,
+          "fim": 6.4,
+          "texto": "o mesmo tigre, reaproveitado do vídeo."
+        }
+      ],
+      "destaques": [
+        "documentário",
+        "reaproveitado"
+      ]
+    }
+  ]
+}

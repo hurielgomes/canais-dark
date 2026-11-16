@@ -1,0 +1,1 @@
+{"id": "caminho_ruim", "tipo": "objeto", "caixa": [0, 0, 100, 100], "partes": [{"id": "a", "formas": [{"t": "path", "d": "M 10 10 Q Q 50 abc", "fill": "#f00"}]}]}

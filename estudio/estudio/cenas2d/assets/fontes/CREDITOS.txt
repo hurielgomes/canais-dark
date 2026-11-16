@@ -1,0 +1,4 @@
+Inter (Rasmus Andersson) - SIL Open Font License 1.1 - https://github.com/rsms/inter
+DejaVu Sans Mono Bold - licenca DejaVu/Bitstream Vera (ja usada no projeto: ver estudio/fonts/LICENCA-DejaVu.txt)
+ATENCAO: antes de distribuir, copie o texto oficial da OFL 1.1 do repositorio do Inter para esta pasta
+(nao havia acesso a internet no ambiente de desenvolvimento para baixa-lo).
