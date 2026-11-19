@@ -1,0 +1,612 @@
+{
+ "versao": 1,
+ "observacao": "Kits do diretor local do M1 (criar_cenas2d.py). Todos os recursos citados precisam estar APROVADOS em biblioteca_m1. Tempos em segundos para 'dur_ref'; o diretor estica/comprime para a duracao real da narracao.",
+ "kits": [
+  {
+   "id": "tigre_savana",
+   "descricao": "Tigre caminha pela savana ao entardecer e ruge (camera acompanha).",
+   "dur_ref": 7.0,
+   "palavras": [
+    "tigre",
+    "felino",
+    "savana",
+    "selva",
+    "floresta",
+    "animal",
+    "fauna",
+    "natureza",
+    "extincao",
+    "predador",
+    "especie",
+    "bengala",
+    "africa",
+    "india",
+    "cacada",
+    "mamifero"
+   ],
+   "cena": {
+    "modelo": "generica",
+    "cenario": {
+     "ref": "savana",
+     "enq": {
+      "16x9": {
+       "esc": 1.0,
+       "foco": [
+        1350,
+        640
+       ]
+      },
+      "9x16": {
+       "esc": 1.15,
+       "foco": [
+        1500,
+        700
+       ]
+      }
+     },
+     "ambiente": {
+      "cor": "#2a0f20",
+      "forca": 0.1
+     }
+    },
+    "elementos": [
+     {
+      "id": "tigre",
+      "ref": "tigre",
+      "k": 1.0,
+      "z": 10,
+      "escala": {
+       "16x9": 0.82,
+       "9x16": 0.95
+      },
+      "pos": {
+       "16x9": [
+        0.3,
+        0.78
+       ],
+       "9x16": [
+        0.38,
+        0.7
+       ]
+      },
+      "mover": [
+       {
+        "t": 0.0,
+        "para": {
+         "16x9": [
+          0.3,
+          0.78
+         ],
+         "9x16": [
+          0.38,
+          0.7
+         ]
+        }
+       },
+       {
+        "t": 0.8,
+        "para": {
+         "16x9": [
+          0.3,
+          0.78
+         ],
+         "9x16": [
+          0.38,
+          0.7
+         ]
+        }
+       },
+       {
+        "t": 5.3,
+        "para": {
+         "16x9": [
+          1.0,
+          0.78
+         ],
+         "9x16": [
+          1.45,
+          0.7
+         ]
+        },
+        "ease": "in_out"
+       }
+      ],
+      "olhar": "direita",
+      "linha_do_tempo": [
+       {
+        "t": 0.0,
+        "anim": "parado"
+       },
+       {
+        "t": 0.8,
+        "anim": "caminhar",
+        "sincronizar": true,
+        "mix": 0.4
+       },
+       {
+        "t": 5.3,
+        "anim": "parado",
+        "mix": 0.5
+       },
+       {
+        "t": 5.7,
+        "anim": "rugir",
+        "mix": 0.2
+       }
+      ]
+     }
+    ],
+    "camera": {
+     "seguir": {
+      "elemento": "tigre",
+      "fator": 0.96
+     },
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.0
+      },
+      {
+       "t": 7.0,
+       "v": 1.06,
+       "ease": "in_out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sala_homem_tv",
+   "descricao": "Homem se levanta do sofa e liga a televisao.",
+   "dur_ref": 8.0,
+   "palavras": [
+    "televisao",
+    "tv",
+    "sofa",
+    "sala",
+    "casa",
+    "noite",
+    "assistir",
+    "jantar",
+    "rotina",
+    "cotidiano",
+    "familia",
+    "conforto",
+    "lazer",
+    "entretenimento",
+    "streaming"
+   ],
+   "cena": {
+    "modelo": "generica",
+    "cenario": {
+     "ref": "sala_noite",
+     "enq": {
+      "16x9": {
+       "esc": 0.95,
+       "foco": [
+        1150,
+        413
+       ]
+      },
+      "9x16": {
+       "esc": 1.0,
+       "foco": [
+        1450,
+        717
+       ]
+      }
+     },
+     "ambiente": {
+      "cor": "#070b1c",
+      "forca": 0.16
+     }
+    },
+    "elementos": [
+     {
+      "id": "tv",
+      "ref": "tv",
+      "k": 1.0,
+      "z": 9,
+      "escala": {
+       "16x9": 1.2,
+       "9x16": 0.9
+      },
+      "pos": {
+       "16x9": [
+        0.73,
+        0.8
+       ],
+       "9x16": [
+        0.78,
+        0.52
+       ]
+      },
+      "linha_do_tempo": [
+       {
+        "t": 0,
+        "anim": "desligada"
+       },
+       {
+        "t": 5.1,
+        "anim": "ligar",
+        "mix": 0
+       },
+       {
+        "t": 6.3,
+        "anim": "ligada",
+        "mix": 0
+       }
+      ]
+     },
+     {
+      "id": "sofa",
+      "ref": "sofa",
+      "k": 1.0,
+      "z": 10,
+      "escala": {
+       "16x9": 1.0,
+       "9x16": 1.6
+      },
+      "pos": {
+       "16x9": [
+        0.4,
+        0.8
+       ],
+       "9x16": [
+        0.5,
+        0.73
+       ]
+      }
+     },
+     {
+      "id": "homem",
+      "ref": "homem",
+      "k": 1.0,
+      "z": 11,
+      "escala": {
+       "16x9": 1.0,
+       "9x16": 1.6
+      },
+      "ancorar": {
+       "em": "sofa",
+       "ancora": "chao"
+      },
+      "olhar": "direita",
+      "linha_do_tempo": [
+       {
+        "t": 0.0,
+        "anim": "sentado"
+       },
+       {
+        "t": 1.6,
+        "anim": "levantar",
+        "mix": 0.25
+       },
+       {
+        "t": 3.5,
+        "anim": "parado",
+        "mix": 0.3
+       },
+       {
+        "t": 4.2,
+        "anim": "apontar_controle",
+        "mix": 0.3
+       }
+      ]
+     }
+    ],
+    "camera": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.0
+      },
+      {
+       "t": 8.0,
+       "v": 1.07,
+       "ease": "in_out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sala_documentario",
+   "descricao": "Homem assiste, na TV, a um documentario com o tigre.",
+   "dur_ref": 7.0,
+   "palavras": [
+    "documentario",
+    "programa",
+    "reportagem",
+    "noticia",
+    "jornal",
+    "tela",
+    "midia",
+    "transmissao",
+    "imagens",
+    "video",
+    "filme"
+   ],
+   "cena": {
+    "modelo": "generica",
+    "cenario": {
+     "ref": "sala_noite",
+     "enq": {
+      "16x9": {
+       "esc": 0.95,
+       "foco": [
+        1250,
+        413
+       ]
+      },
+      "9x16": {
+       "esc": 1.0,
+       "foco": [
+        1500,
+        717
+       ]
+      }
+     },
+     "ambiente": {
+      "cor": "#070b1c",
+      "forca": 0.22
+     }
+    },
+    "elementos": [
+     {
+      "id": "tv",
+      "ref": "tv",
+      "k": 1.0,
+      "z": 9,
+      "escala": {
+       "16x9": 1.55,
+       "9x16": 1.15
+      },
+      "pos": {
+       "16x9": [
+        0.7,
+        0.84
+       ],
+       "9x16": [
+        0.72,
+        0.55
+       ]
+      },
+      "linha_do_tempo": [
+       {
+        "t": 0,
+        "anim": "ligada"
+       }
+      ],
+      "slots": {
+       "tela": {
+        "ref": "tigre",
+        "altura": 0.78,
+        "base_y": 0.94,
+        "mover": [
+         {
+          "t": 0.0,
+          "para": [
+           0.12
+          ]
+         },
+         {
+          "t": 6.6,
+          "para": [
+           0.92
+          ]
+         }
+        ],
+        "linha_do_tempo": [
+         {
+          "t": 0.0,
+          "anim": "caminhar",
+          "sincronizar": true
+         }
+        ]
+       }
+      }
+     },
+     {
+      "id": "sofa",
+      "ref": "sofa",
+      "k": 1.0,
+      "z": 10,
+      "escala": {
+       "16x9": 1.0,
+       "9x16": 1.6
+      },
+      "pos": {
+       "16x9": [
+        0.33,
+        0.84
+       ],
+       "9x16": [
+        0.42,
+        0.75
+       ]
+      }
+     },
+     {
+      "id": "homem",
+      "ref": "homem",
+      "k": 1.0,
+      "z": 11,
+      "escala": {
+       "16x9": 1.0,
+       "9x16": 1.6
+      },
+      "ancorar": {
+       "em": "sofa",
+       "ancora": "chao"
+      },
+      "olhar": "direita",
+      "linha_do_tempo": [
+       {
+        "t": 0.0,
+        "anim": "parado"
+       }
+      ]
+     }
+    ],
+    "camera": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.0
+      },
+      {
+       "t": 7.0,
+       "v": 1.05,
+       "ease": "in_out"
+      }
+     ]
+    },
+    "bloom_limiar": 215
+   }
+  },
+  {
+   "id": "ambiente_savana",
+   "neutro": true,
+   "descricao": "Somente o cenario da savana, com camera lenta.",
+   "dur_ref": 7.0,
+   "palavras": [
+    "natureza",
+    "savana",
+    "animal",
+    "animais",
+    "tigre",
+    "floresta",
+    "selva",
+    "africa",
+    "india",
+    "fauna",
+    "paisagem",
+    "planeta",
+    "ambiente"
+   ],
+   "cena": {
+    "cenario": {
+     "ref": "savana",
+     "enq": {
+      "16x9": {
+       "esc": 1.0,
+       "foco": [
+        1350,
+        640
+       ]
+      },
+      "9x16": {
+       "esc": 1.15,
+       "foco": [
+        1500,
+        700
+       ]
+      }
+     },
+     "ambiente": {
+      "cor": "#2a0f20",
+      "forca": 0.1
+     }
+    },
+    "elementos": [],
+    "camera": {
+     "pan": [
+      {
+       "t": 0,
+       "x": 0.0,
+       "y": 0.0
+      },
+      {
+       "t": 7.0,
+       "x": 0.22,
+       "y": 0.0,
+       "ease": "in_out"
+      }
+     ],
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.0
+      },
+      {
+       "t": 7.0,
+       "v": 1.07,
+       "ease": "in_out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "ambiente_sala",
+   "neutro": true,
+   "descricao": "Somente o cenario da sala, com camera lenta.",
+   "dur_ref": 7.0,
+   "palavras": [
+    "casa",
+    "sala",
+    "noite",
+    "familia",
+    "cotidiano",
+    "televisao",
+    "sofa",
+    "interior",
+    "rotina",
+    "moradia"
+   ],
+   "cena": {
+    "cenario": {
+     "ref": "sala_noite",
+     "enq": {
+      "16x9": {
+       "esc": 0.95,
+       "foco": [
+        1150,
+        413
+       ]
+      },
+      "9x16": {
+       "esc": 1.0,
+       "foco": [
+        1450,
+        717
+       ]
+      }
+     },
+     "ambiente": {
+      "cor": "#070b1c",
+      "forca": 0.16
+     }
+    },
+    "elementos": [],
+    "camera": {
+     "pan": [
+      {
+       "t": 0,
+       "x": -0.04,
+       "y": 0.0
+      },
+      {
+       "t": 7.0,
+       "x": 0.05,
+       "y": 0.0,
+       "ease": "in_out"
+      }
+     ],
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.0
+      },
+      {
+       "t": 7.0,
+       "v": 1.08,
+       "ease": "in_out"
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

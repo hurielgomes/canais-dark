@@ -362,7 +362,23 @@ class CenaGenerica(CenaBase):
                     if el.ancorar.get("dx") or el.ancorar.get("dy"):
                         x, y = x + el.ancorar.get("dx", 0) * u, y + el.ancorar.get("dy", 0) * u
             pose = self.pose_el(el, t)
-            pos = el.rig.posicionar(pose, el.s, self.flip_el(el, t), (x, y))
+            esc_ent = 1.0
+            ent = el.spec.get("entrada")        # {"tipo": "pop|esq|dir|subir", "t": 0.2, "dur": 0.55}: entrada animada do elemento
+            if ent:
+                t0 = float(ent.get("t", 0.0))
+                if t < t0:
+                    continue
+                pe = tw(t, t0, float(ent.get("dur", 0.55)), "out_back")
+                tipo_e = ent.get("tipo", "pop")
+                if tipo_e == "pop":
+                    esc_ent = 0.5 + 0.5 * pe
+                elif tipo_e == "esq":
+                    x -= (1 - pe) * 0.45 * w
+                elif tipo_e == "dir":
+                    x += (1 - pe) * 0.45 * w
+                else:
+                    y += (1 - pe) * 0.22 * h
+            pos = el.rig.posicionar(pose, el.s * esc_ent, self.flip_el(el, t), (x, y))
             pos_cache[el.id] = pos
             slots = None
             if el.slots:
@@ -398,6 +414,8 @@ class CenaGenerica(CenaBase):
         return m
 
     # ------------------------------------------------------------------ HUD
+    _cache_cont = {}
+
     def hud(self, f, t):
         w, h, u = self.w, self.h, self.u
         spec = self.c.get("hud") or {}
@@ -416,6 +434,42 @@ class CenaGenerica(CenaBase):
             p = self.pf(e.get("pos"), [0.5, 0.2])
             hud.colar(f, img, p[0] * w, p[1] * h + (1 - pe) * 40 * u, ang=float(e.get("rot", -4)) + (1 - pe) * 8, esc=0.7 + 0.3 * pe,
                       opac=tw(t, ini, 0.2, "out_cubic") * clamp((fim - t) / 0.2))
+        for e in spec.get("contadores", []):
+            ini = float(e.get("t", 0.6))
+            fim = float(e.get("fim", self.dur))
+            if not (ini <= t < fim):
+                continue
+            dur_c = float(e.get("dur", 1.8))
+            v = lerp(float(e.get("de", 0)), float(e["ate"]), tw(t, ini + 0.1, dur_c, "out_cubic"))
+            dec = int(e.get("decimais", 0))
+            num = f"{v:,.{dec}f}".replace(",", "#").replace(".", ",").replace("#", ".")
+            texto = f"{e.get('prefixo', '')}{num}{e.get('sufixo', '')}"
+            cc = (_cor(e.get("cor", "#ff3e48")) or (255, 62, 72, 255))[:3]
+            base = float(self.pf(e.get("tam"), 150))
+            tam = min(base, 1.30 * (0.90 * w / u) / max(3.0, len(texto)))
+            ck = (texto, round(tam, 1))
+            if ck not in self._cache_cont:
+                if len(self._cache_cont) > 60:
+                    self._cache_cont.clear()
+                self._cache_cont[ck] = hud.numero_grande(u, texto, tam, cc, extrusao=12, brilho=0.6, claro=0.25)
+            img = self._cache_cont[ck]
+            p = self.pf(e.get("pos"), [0.5, 0.2])
+            pe = tw(t, ini, 0.5, "out_back")
+            meia = img.size[0] / 2 + 0.03 * w
+            cxn = min(max(p[0] * w, meia), w - meia)
+            hud.colar(f, img, cxn, p[1] * h, esc=0.75 + 0.25 * pe, opac=tw(t, ini, 0.2, "out_cubic") * clamp((fim - t) / 0.2))
+            if e.get("sub"):
+                sb = hud.pilula(u, str(e["sub"]), (255, 214, 120), tam=float(e.get("tam_sub", 34)))
+                hud.colar(f, sb, cxn, p[1] * h + tam * u * 0.78, esc=0.8 + 0.2 * pe, opac=tw(t, ini + 0.25, 0.25, "out_cubic") * clamp((fim - t) / 0.2))
+        for e in spec.get("chamadas", []):
+            ini = float(e.get("t", 0.8))
+            fim = float(e.get("fim", self.dur))
+            if not (ini <= t < fim):
+                continue
+            cc = (_cor(e.get("cor", "#ff8a80")) or (255, 138, 128, 255))[:3]
+            a0, a1 = self.pf(e.get("alvo"), [0.5, 0.5]), self.pf(e.get("para"), [0.7, 0.4])
+            hud.chamada(f, (a0[0] * w, a0[1] * h), (a1[0] * w, a1[1] * h), e.get("texto", ""), tw(t, ini, 0.8, "out_cubic") * clamp((fim - t) / 0.2), u,
+                        cor=cc, tam=float(e.get("tam", 28)), detalhe=e.get("detalhe"))
         for e in spec.get("pilulas", []):
             ini = float(e.get("t", 0.5))
             fim = float(e.get("fim", self.dur))

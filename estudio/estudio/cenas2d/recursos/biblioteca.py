@@ -14,7 +14,6 @@ import hashlib
 import io
 import json
 import time
-import os
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -58,11 +57,7 @@ class Biblioteca:
 
     # ------------------------------------------------------------------ persistencia
     def _salvar_index(self):
-        txt = json.dumps(self.idx, indent=1, ensure_ascii=False)
-        tmp = self.f_index.with_suffix(".json.tmp")
-        tmp.write_text(txt, encoding="utf-8")
-        os.replace(tmp, self.f_index)
-
+        self.f_index.write_text(json.dumps(self.idx, indent=1, ensure_ascii=False), encoding="utf-8")
 
     def listar(self, status=None):
         return [dict(id=i, **e) for i, e in sorted(self.idx["recursos"].items()) if status in (None, e["status"])]
@@ -115,7 +110,7 @@ class Biblioteca:
         arq.write_text(json.dumps(d, indent=1, ensure_ascii=False, default=list), encoding="utf-8")
         if svg_txt:
             (sub / f"{rid}.v{versao}.svg").write_text(svg_txt, encoding="utf-8")
-        ents[rid] = {"arquivo": str(arq.relative_to(self.raiz)), "tipo": rec["tipo"], "hash": h, "versao": versao, "status": status,
+        ents[rid] = {"arquivo": arq.relative_to(self.raiz).as_posix(), "tipo": rec["tipo"], "hash": h, "versao": versao, "status": status,
                      "tags": rec["tags"], "nome": rec["nome"], "criado": time.strftime("%Y-%m-%d %H:%M"),
                      "animacoes": sorted(rec["animacoes"]), "motivo": ""}
         self._salvar_index()
@@ -145,8 +140,8 @@ class Biblioteca:
             raise RecursoInvalido(f"recurso '{ref}' foi rejeitado ({e.get('motivo', '')})")
         if e["status"] == "pendente" and self.bloquear:
             raise RecursoInvalido(f"recurso '{ref}' aguarda aprovacao")
-        d = json.loads((self.raiz / e["arquivo"]).read_text(encoding="utf-8"))
-        svg = (self.raiz / e["arquivo"]).with_suffix(".svg")
+        d = json.loads((self.raiz / e["arquivo"].replace("\\", "/")).read_text(encoding="utf-8"))
+        svg = (self.raiz / e["arquivo"].replace("\\", "/")).with_suffix(".svg")
         if svg.exists():               # recurso importado de SVG: reconverte (determinístico)
             sc = None
             for cand in (svg.with_suffix(".anim.json"),):

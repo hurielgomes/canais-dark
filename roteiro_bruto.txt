@@ -1,0 +1,145 @@
+{
+  "ganchos_candidatos": [
+    {
+      "texto": "Por que a civilização moderna desmoronaria em apenas três dias no escuro total?",
+      "avaliacao": {
+        "curiosidade": "4",
+        "clareza": "4",
+        "surpresa": "4",
+        "retencao": "4",
+        "relacao_com_tema": "5"
+      },
+      "justificativa": "Boa pergunta, mas um pouco genérica sobre o desmoronamento."
+    },
+    {
+      "texto": "Sem eletricidade por três dias, a água potável acaba antes mesmo do combustível.",
+      "avaliacao": {
+        "curiosidade": "4",
+        "clareza": "5",
+        "surpresa": "4",
+        "retencao": "3",
+        "relacao_com_tema": "5"
+      },
+      "justificativa": "Revela um fato importante que deveria surgir apenas na metade do vídeo."
+    },
+    {
+      "texto": "O que aconteceria se o planeta ficasse sem eletricidade por setenta e duas horas?",
+      "avaliacao": {
+        "curiosidade": "5",
+        "clareza": "5",
+        "surpresa": "5",
+        "retencao": "5",
+        "relacao_com_tema": "5"
+      },
+      "justificativa": "Pergunta direta, instigante, delimita a premissa clara e abre espaço sem dar spoiler das consequências."
+    },
+    {
+      "texto": "Setenta e duas horas no escuro e a civilização inteira entra em colapso definitivo.",
+      "avaliacao": {
+        "curiosidade": "3",
+        "clareza": "4",
+        "surpresa": "3",
+        "retencao": "3",
+        "relacao_com_tema": "5"
+      },
+      "justificativa": "Afirmação categórica que antecipa a conclusão antes da hora."
+    },
+    {
+      "texto": "Qual o primeiro serviço invisível a falhar quando a Terra perde a energia?",
+      "avaliacao": {
+        "curiosidade": "4",
+        "clareza": "4",
+        "surpresa": "4",
+        "retencao": "4",
+        "relacao_com_tema": "4"
+      },
+      "justificativa": "Foca apenas no primeiro segundo e ignora o impacto acumulado dos três dias."
+    
+  ],
+  "gancho_escolhido": {
+    "texto": "O que aconteceria se o planeta ficasse sem eletricidade por setenta e duas horas?",
+    "justificativa": "Foi o candidato mais direto, gera dúvida imediata e estabelece a premissa exata sem estragar os spoilers da progressão temporal."
+  },
+  "titulo": "E se o Mundo Ficasse 72 Horas Sem Energia Elétrica?",
+  "titulos_alternativos": [
+    "O Colapso Global em 72 Horas Sem Eletricidade",
+    "Apagão Mundial de 3 Dias: O Que Acontece?"
+  ],
+  "gancho_texto": "E se o mundo apagasse?",
+  "descricao": "Explore o cenário hipotético de um apagão elétrico global com duração de 72 horas. Descubra o efeito dominó no transporte, hospitais, abastecimento de água e redes de comunicação, revelando a fragilidade da vida moderna.\n\nInscreva-se no canal para mais cenários hipotéticos e curiosidades fascinantes!",
+  "tags": [
+    "apagão mundial",
+    "sem eletricidade",
+    "cenário hipotético",
+    "ciência curiosa",
+    "colapso da rede",
+    "curiosidades antigas",
+    "e se",
+    "infraestrutura moderna"
+  ],
+  "texto_miniatura": "72 HORAS NO ESCURO",
+  "pergunta_final": "Se o apagão começasse agora, qual item essencial você buscaria primeiro para sobreviver?",
+  "prompt_miniatura": "dutch angle shot, glowing holographic Earth globe suddenly flickering and turning pitch black, high contrast electric blue lighting, mysterious dark atmosphere, clear space on side for text",
+  "cenas": [
+    {
+      "narracao": "O que aconteceria se o planeta ficasse sem eletricidade por setenta e duas horas?",
+      "imagem": "dutch angle shot, glowing blue globe with electric sparks suddenly dimming into black, dark cosmic void, dramatic neon contrast",
+      "busca_stock": "planet dark blackout"
+    },
+    {
+      "narracao": "Em poucos segundos, o mundo moderno congelaria em um silêncio absoluto e assustador.",
+      "imagem": "aerial wide shot, massive metropolitan highway filled with unlit traffic lights and frozen cars, dark city center, twilight sky background",
+      "busca_stock": "darkened city traffic"
+    },
+    {
+      "narracao": "Transportes param, mas o que falha no exato segundo em que a energia cai?",
+      "imagem": "macro shot, hand holding a smartphone showing no signal bar icon, dark room background, stark screen illumination",
+      "busca_stock": "no signal smartphone"
+    },
+    {
+      "narracao": "Semáforos, redes de telefonia celular e servidores de internet desligam em questão de minutos.",
+      "imagem": "low angle shot, massive steel cell tower silhouette against a dark crimson night sky, red warning beacon turning off",
+      "busca_stock": "cell tower night"
+    },
+    {
+      "narracao": "Ao completar vinte e quatro horas, serviços vitais dependem apenas de geradores a diesel.",
+      "imagem": "close-up shot, industrial diesel generator exhaust pipe emitting heavy smoke, dark concrete basement, flickering emergency lamp",
+      "busca_stock": "industrial diesel generator"
+    },
+    {
+      "narracao": "Esses equipamentos têm limites. Quanto tempo os hospitais conseguem operar com energia própria?",
+      "imagem": "over-the-shoulder shot, doctor standing in dark hospital hallway looking at dimming emergency ceiling light, cool blue tones",
+      "busca_stock": "dark hospital corridor"
+    },
+    {
+      "narracao": "A maioria dos geradores hospitalares possui combustível para durar apenas um único dia.",
+      "imagem": "extreme close-up, fuel gauge needle dropping down to critical red empty level, metallic industrial surface, amber warning LED",
+      "busca_stock": "fuel gauge empty"
+    },
+    {
+      "narracao": "No segundo dia, por que a água potável para de chegar às nossas torneiras?",
+      "imagem": "low angle shot, dry stainless steel kitchen faucet with a single suspended drop of water, dark modern kitchen, sharp spotlight",
+      "busca_stock": "dry water tap"
+    },
+    {
+      "narracao": "Bombas elétricas urbanas param. A eletricidade volta instantaneamente ao fim das setenta e duas horas?",
+      "imagem": "aerial shot, massive water treatment plant reservoir completely motionless, gloomy overcast sky, muted industrial colors",
+      "busca_stock": "water treatment plant"
+    },
+    {
+      "narracao": "Não, o religamento precisa ser gradual para não destruir transformadores, levando semanas.",
+      "imagem": "dutch angle shot, electrical power grid transformer station sparking violently with blue electric arcs, pitch black night",
+      "busca_stock": "power transformer night"
+    },
+    {
+      "narracao": "Esse apagão revela a extrema fragilidade do sistema invisível que sustenta nossa vida diária.",
+      "imagem": "silhouette shot, lone human standing on high rooftop overlooking a vast pitch black city skyline, starry clear night sky",
+      "busca_stock": "dark city skyline"
+    },
+    {
+      "narracao": "Se o apagão começasse agora, qual item essencial você buscaria primeiro para sobreviver?",
+      "imagem": "macro shot, a single lit match head flaring brightly in absolute darkness, warm orange and yellow flame",
+      "busca_stock": "match striking darkness"
+    }
+  ]
+}

@@ -109,8 +109,8 @@ PADROES = {
     "modelo_cloudflare": "@cf/black-forest-labs/flux-1-schnell",
     "cloudflare_steps": 4,
     "provedores_imagem": ["cloudflare", "gemini", "pixabay", "pexels"],
-    "modelo_texto": "gemini-3.8-flash",
-    "modelos_texto_fallback": ["gemini-3.6-flash", "gemini-3.5-flash-lite"],
+    "modelo_texto": "gemini-3.6-flash",
+    "modelos_texto_fallback": ["gemini-3.5-flash-lite"],
     "modelo_imagem": "gemini-3.1-flash-lite-image",
     "imagem_ia": False,          # True = tenta gerar imagens com o Gemini (pode exigir plano pago)
     "pausa_entre_imagens": 4,
@@ -197,8 +197,8 @@ def gerar_conteudo_texto_com_fallback(cliente, cfg, contents, generation_config,
     A ordem padrao e gemini-3.8-flash -> gemini-3.6-flash -> gemini-3.5-flash-lite.
     Alterna apos esgotar tentativas curtas do modelo atual, para 429/5xx/UNAVAILABLE/DEADLINE_EXCEEDED.
     """
-    principal = str(cfg.get("modelo_texto") or "gemini-3.8-flash").strip()
-    alternativas = cfg.get("modelos_texto_fallback", ["gemini-3.6-flash", "gemini-3.5-flash-lite"])
+    principal = str(cfg.get("modelo_texto") or "gemini-3.6-flash").strip()
+    alternativas = cfg.get("modelos_texto_fallback", ["gemini-3.5-flash-lite"])
     if isinstance(alternativas, str):
         alternativas = [x.strip() for x in alternativas.split(",") if x.strip()]
     if not isinstance(alternativas, (list, tuple)):

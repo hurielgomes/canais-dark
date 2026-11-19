@@ -101,13 +101,15 @@
     {
       "id": "character_2_5d",
       "name": "Personagem ilustrado 2.5D",
-      "status": "planned",
-      "entrypoint": null,
+      "status": "active",
+      "entrypoint": "criar_cenas2d.py",
       "description": "Personagens ilustrados com contorno e expressoes, integrados a cenarios com profundidade 2.5D. O personagem aparece quando a narrativa pede, sem dominar todos os videos.",
       "recommended_categories": ["historias", "what_if", "humor", "educacao", "curiosidades"],
       "formats": ["16x9", "9x16"],
-      "features": ["character_library", "expressions", "reusable_poses", "2_5d_environments", "parallax"],
-      "limitations": ["Motor visual ainda nao implementado; personagem e assets serao aprovados separadamente."],
+      "features": ["layered_2d_scenes", "json_scene_composition", "svg_resource_library", "articulated_characters", "kokoro_tts", "word_timed_captions"],
+      "limitations": ["Usa apenas recursos aprovados da biblioteca M1 (biblioteca_m1/); recursos novos precisam ser registrados e aprovados."],
+      "adapter": "motores.adapters.character_2_5d:Character25DEngine",
+      "supports_independent_deliverables": true,
       "icon": "🎭"
     }
   ]

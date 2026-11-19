@@ -47,7 +47,8 @@ class EngineCatalogTests(unittest.TestCase):
     def test_classic_and_broadcast_news_engines_are_executable(self):
         self.assertTrue(engine_registry.is_engine_executable("classico"))
         self.assertTrue(engine_registry.is_engine_executable("broadcast_news"))
-        for engine_id in ("isometric", "blueprint", "stickman", "character_2_5d"):
+        self.assertTrue(engine_registry.is_engine_executable("character_2_5d"))
+        for engine_id in ("isometric", "blueprint", "stickman"):
             self.assertFalse(engine_registry.is_engine_executable(engine_id), engine_id)
 
     def test_broadcast_news_adapter_does_not_require_google_search(self):
