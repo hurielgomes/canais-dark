@@ -84,23 +84,24 @@ class DiretorIATests(_Base):
         def llm(prompt, json_mode=True):
             chamadas.append(json_mode)
             if json_mode:
-                return json.dumps({"cenas": [{"n": 1, "cenario": {"novo": {"id": "usina", "tipo": "cenario", "nome": "Usina", "tags": ["usina"], "descricao": "usina a noite", "clima": "noite"}},
+                return json.dumps({"tema": "tensao_quente", "cenas": [{"n": 1, "cenario": {"novo": {"id": "usina", "tipo": "cenario", "nome": "Usina", "tags": ["usina"], "descricao": "usina a noite", "clima": "noite"}},
                                               "clima": "alerta", "hero": {"novo": {"id": "turbina", "tipo": "objeto", "nome": "Turbina", "tags": ["turbina"], "descricao": "turbina"}},
                                               "apoio": [{"ref": "id_que_nao_existe"}], "personagens": [{"ref": "homem", "anim": "acenar"}],
                                               "chip": "dia 1 · usina", "rotulos": [{"texto": "72 horas", "sub": "sem energia"}]}]})
             return ("```svg\n" + SVG_OK + "\n```\n" + SIDECAR) if "Turbina" in prompt else "texto sem svg nenhum"   # cenario: IA falha -> procedural
         cv = type("CV", (), {"_parse_json": staticmethod(lambda t: json.loads(t))})
-        planos = diretor_m1.planejar_arte_ia(roteiro("A usina para."), diretor_m1.catalogo_aprovado(self.bib), llm, cv)
-        planos = diretor_m1.materializar(planos, self.bib, llm, log=lambda m: None)
+        planos, tema_ia = diretor_m1.planejar_arte_ia(roteiro("A usina para."), diretor_m1.catalogo_aprovado(self.bib), llm, cv, "curiosidades", None)
+        self.assertEqual(tema_ia, "tensao_quente")
+        planos = diretor_m1.materializar(planos, self.bib, llm, log=lambda m: None, tema_id="tensao_quente")
         p = planos[0]
         self.assertEqual(p["personagens"], ["homem"])
         self.assertEqual(p["objetos"], ["turbina"])           # id inexistente foi descartado
         self.assertEqual(p["hero"], "turbina")
-        self.assertEqual(p["cenario"], "usina")
+        self.assertEqual(p["cenario"], "usina__tensao_quente")      # cenario carrega o tema no id
         self.assertEqual(p["chip"], "DIA 1 · USINA")
         self.assertEqual(p["rotulos"][0], {"texto": "72 HORAS", "sub": "sem energia"})
         self.assertEqual(self.bib.idx["recursos"]["turbina"]["origem"], "ia")
-        self.assertEqual(self.bib.idx["recursos"]["usina"]["origem"], "procedural")   # fallback quando o SVG da IA falha
+        self.assertEqual(self.bib.idx["recursos"]["usina__tensao_quente"]["origem"], "procedural")   # fallback quando o SVG da IA falha
         self.assertIn("abrir", self.bib.idx["recursos"]["turbina"]["animacoes"])      # animacao em JSON vinda da IA
         self.assertIn("piscar", self.bib.idx["recursos"]["turbina"]["animacoes"])     # + presets
         self.assertTrue(chamadas.count(False) >= 2)
@@ -186,6 +187,47 @@ class DidaticaTests(_Base):
         self.assertEqual(c["hud"]["chip"]["hora"], "22:10")
         self.assertEqual(c["elementos"][0]["linha_do_tempo"][-1]["anim"], "subir")
         self.assertIn("chamadas", c["hud"])
+
+
+class TemasTests(_Base):
+    def test_prioridade_canal_ia_categoria(self):
+        import temas_m1 as TM
+        self.assertEqual(TM.resolver("curiosidades", {"tema_fixo": "saude_claro"}, "tensao_quente")[0], "saude_claro")   # canal vence
+        self.assertEqual(TM.resolver("curiosidades", {}, "tensao_quente"), ("tensao_quente", "ia"))                         # depois a IA
+        self.assertEqual(TM.resolver("historia", {}, None, "")[0], "historia_pergaminho")                                    # depois a categoria
+        self.assertEqual(TM.resolver("curiosidades", {}, "tema_inventado")[0], "neon_escuro")                                # IA nao inventa tema
+        self.assertEqual(TM.resolver("curiosidades", {}, None, "Como o cancer afeta o corpo")[0], "saude_claro")            # heuristica local
+
+    def test_acento_da_marca_do_canal(self):
+        import temas_m1 as TM
+        self.assertEqual(TM.tema("saude_claro", {"tema_acento": "#112233"})["acento"], "#112233")
+        self.assertNotEqual(TM.tema("saude_claro", {"tema_acento": "vermelho"})["acento"], "vermelho")
+
+    def test_legendas_legiveis_em_todos_os_temas(self):
+        import temas_m1 as TM
+        for tid, t in TM.TEMAS.items():
+            self.assertGreaterEqual(TM.contraste_wcag(t["legenda"]["texto"], t["base_rgb"]), 7.0, tid)
+            self.assertGreaterEqual(TM.contraste_wcag(t["legenda"]["nao_falada"], t["base_rgb"]), 4.5, f"nao_falada {tid}")
+            self.assertGreaterEqual(TM.contraste_wcag(TM.cor_rgb(t["acento"]), t["base_rgb"]), 4.5, f"acento {tid}")
+
+    def test_roteiro_de_saude_gera_video_claro_sem_neon(self):
+        r = roteiro("O corpo reage ao sono e ao cerebro.", "O hospital recebe pacientes.", titulo="Como o sono cura o corpo")
+        cenas = diretor_m1.dirigir(r, [6.0, 6.0], self.bib, modo="local", log=lambda m: None, categoria="curiosidades", canal={})
+        th = cenas[0]["tema"]
+        self.assertEqual((th["id"], th["modo"], th["bloom_ganho"]), ("saude_claro", "claro", 0.0))
+        self.assertTrue(cenas[0]["cenario"]["ref"].endswith("__saude_claro"))
+        self.assertEqual(th["legenda"]["texto"], [14, 32, 56])
+
+    def test_tema_fixo_do_canal_ignora_o_assunto(self):
+        r = roteiro("O hospital recebe pacientes.", titulo="Saude")
+        cenas = diretor_m1.dirigir(r, [6.0], self.bib, modo="local", log=lambda m: None, categoria="curiosidades", canal={"tema_fixo": "neon_escuro"})
+        self.assertEqual(cenas[0]["tema"]["id"], "neon_escuro")
+
+    def test_cenario_escuro_curado_nao_serve_a_tema_claro(self):
+        import temas_m1 as TM
+        sala = next(x for x in diretor_m1.catalogo_aprovado(self.bib) if x["id"] == "sala_noite")
+        self.assertTrue(diretor_m1.cenario_serve(sala, TM.tema("neon_escuro")))
+        self.assertFalse(diretor_m1.cenario_serve(sala, TM.tema("saude_claro")))
 
 
 class CenaTests(_Base):

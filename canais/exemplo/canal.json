@@ -13,7 +13,7 @@
     "Clímax e resposta à pergunta central",
     "Fechamento curto que retoma o início"
   ],
-"publico_livre": "adultos curiosos, público geral",
+  "publico_livre": "adultos curiosos, público geral",
   "regras": [
     "Se o assunto for saúde, direito ou finanças, não dê conselhos; apenas informe e deixe claro que é informação geral."
   ],
@@ -38,5 +38,14 @@
   "musica": "",
   "usar_video_stock": true,
   "proporcao_video": 0.5,
-  "duracao_plano_video": 4.0
+  "duracao_plano_video": 4.0,
+  "tts": {
+    "motor": "voicebox",
+    "engine": "qwen",
+    "perfil": "Nicoly",
+    "idioma": "pt",
+    "velocidade": 1.0,
+    "velocidade_gancho": 1.0,
+    "fallback_kokoro": true
+  }
 }

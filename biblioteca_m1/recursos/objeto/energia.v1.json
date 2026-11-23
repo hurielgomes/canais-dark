@@ -13,7 +13,7 @@
    "id": "brilho",
    "pivo": [
     100.0,
-    100.0
+    200.0
    ],
    "z": 0,
    "formas": [
@@ -66,8 +66,8 @@
   {
    "id": "corpo",
    "pivo": [
-    101.5,
-    101.0
+    100.0,
+    200.0
    ],
    "z": 1,
    "formas": [
@@ -84,6 +84,8 @@
  ],
  "nome": "Energia",
  "tags": [
+  "eletricas",
+  "eletric",
   "energia"
  ],
  "frente": "direita",

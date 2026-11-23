@@ -84,7 +84,8 @@ class CenaGenerica(CenaBase):
         w, h, u = self.w, self.h, self.u
         c = self.c
         # --- cenario
-        self.camadas_cen, self.ambiente, self.base_rgb = [], None, (8, 10, 20)
+        self.camadas_cen, self.ambiente = [], None
+        self.base_rgb = tuple((c.get("tema") or {}).get("base_rgb", (8, 10, 20)))
         cen = c.get("cenario")
         if cen:
             rig = self.recurso(cen, "cenario")
@@ -379,6 +380,11 @@ class CenaGenerica(CenaBase):
                 else:
                     y += (1 - pe) * 0.22 * h
             pos = el.rig.posicionar(pose, el.s * esc_ent, self.flip_el(el, t), (x, y))
+            halo = (self.c.get("tema") or {}).get("halo", 1.0)      # tema claro reduz/elimina o brilho neon dos objetos
+            if halo < 0.999 and isinstance(getattr(pos, "op", None), dict):
+                for kk in list(pos.op):
+                    if kk in ("brilho", "luz", "glow"):
+                        pos.op[kk] = pos.op[kk] * halo
             pos_cache[el.id] = pos
             slots = None
             if el.slots:
@@ -432,7 +438,9 @@ class CenaGenerica(CenaBase):
             cc = (_cor(e.get("cor", "#ff4d4f")) or (255, 77, 79, 255))[:3]
             img = hud.etiqueta(u, e.get("texto", ""), fundo=cc, tam=float(e.get("tam", 46)), subtexto=e.get("sub"))
             p = self.pf(e.get("pos"), [0.5, 0.2])
-            hud.colar(f, img, p[0] * w, p[1] * h + (1 - pe) * 40 * u, ang=float(e.get("rot", -4)) + (1 - pe) * 8, esc=0.7 + 0.3 * pe,
+            meia = img.size[0] / 2 * 1.05 + 0.025 * w          # o selo nunca ultrapassa a borda da tela (rotacao inclusa)
+            px = min(max(p[0] * w, meia), w - meia)
+            hud.colar(f, img, px, p[1] * h + (1 - pe) * 40 * u, ang=float(e.get("rot", -4)) + (1 - pe) * 8, esc=0.7 + 0.3 * pe,
                       opac=tw(t, ini, 0.2, "out_cubic") * clamp((fim - t) / 0.2))
         for e in spec.get("contadores", []):
             ini = float(e.get("t", 0.6))
@@ -447,7 +455,7 @@ class CenaGenerica(CenaBase):
             cc = (_cor(e.get("cor", "#ff3e48")) or (255, 62, 72, 255))[:3]
             base = float(self.pf(e.get("tam"), 150))
             tam = min(base, 1.30 * (0.90 * w / u) / max(3.0, len(texto)))
-            ck = (texto, round(tam, 1))
+            ck = (texto, round(tam, 1), tuple(cc))
             if ck not in self._cache_cont:
                 if len(self._cache_cont) > 60:
                     self._cache_cont.clear()

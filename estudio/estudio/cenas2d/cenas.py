@@ -37,21 +37,33 @@ class CenaBase:
 
     # --- pipeline do quadro -----------------------------------------------
     def quadro(self, t):
+        th = self.c.get("tema") or {}      # tema visual (temas_m1.py); sem tema = look neon escuro original
         m = self.mundo(t)
         rgb = m.rgb()
-        rgb = bloom(rgb, limiar=int(self.c.get("bloom_limiar", 175)), ganho=float(self.c.get("bloom_ganho", 1.0)))
-        rgb = vinheta(rgb, 0.60)
-        rgb = grade(rgb, 1.07, tint=(0, 3, 14))
+        gb = float(th.get("bloom_ganho", self.c.get("bloom_ganho", 1.0)))
+        if gb > 0.01:
+            rgb = bloom(rgb, limiar=int(th.get("bloom_limiar", self.c.get("bloom_limiar", 175))), ganho=gb)
+        if float(th.get("vinheta", 0.60)) > 0.005:
+            rgb = vinheta(rgb, float(th.get("vinheta", 0.60)))
+        rgb = grade(rgb, float(th.get("contraste", 1.07)), tint=tuple(th.get("tint", (0, 3, 14))))
         f = rgb.convert("RGBA")
-        legendas.faixa_base(f, self.w, self.h, 0.60 if self.vert else 0.74, 0.58)
+        fx = th.get("faixa") or {}
+        legendas.faixa_base(f, self.w, self.h, 0.60 if self.vert else 0.74, float(fx.get("forca", 0.58)), tuple(fx.get("cor", (0, 0, 6))))
         self.hud(f, t)
-        legendas.desenhar(f, t, self.c.get("legenda", []), self.w, self.h, self.formato, self.c.get("destaques", []))
-        # entrada (da escuridao) e saida
+        lg = th.get("legenda") or {}
+        kw = {}
+        if lg:
+            kw = dict(cor_texto=tuple(lg["texto"]), cor_nao_falada=tuple(lg["nao_falada"]), cor_sombra=tuple(lg["sombra"]))
+            if lg.get("destaque"):
+                from .recursos.validar import cor as _cor
+                kw["cor_destaque"] = tuple((_cor(lg["destaque"]) or (255, 92, 92, 255))[:3])
+        legendas.desenhar(f, t, self.c.get("legenda", []), self.w, self.h, self.formato, self.c.get("destaques", []), **kw)
+        # entrada (da escuridao / do claro) e saida
         a_in = 1 - tw(t, 0.0, 0.30, "linear")
         a_out = tw(t, self.dur - 0.20, 0.20, "in_cubic")
         esc = max(a_in, a_out)
         if esc > 0.004:
-            ov = Image.new("RGBA", f.size, (3, 5, 12, int(255 * min(1.0, esc))))
+            ov = Image.new("RGBA", f.size, tuple(th.get("fade", (3, 5, 12))) + (int(255 * min(1.0, esc)),))
             f.alpha_composite(ov)
         return f.convert("RGB")
 
@@ -62,7 +74,9 @@ class CenaBase:
     def chip(self, f, t, hora, dia, ini=0.35, alvo=None):
         p = tw(t, ini, 0.55, "out_back")
         o = tw(t, ini, 0.25, "out_cubic")
-        img, m = hud.chip_relogio(self.u, hora, dia, t)
+        th = self.c.get("tema") or {}
+        ac = (th.get("acento") and tuple(int(th["acento"].lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))) or (255, 77, 79)
+        img, m = hud.chip_relogio(self.u, hora, dia, t, acento=ac, tema={k: tuple(v) for k, v in (th.get("chip") or {}).items()} or None)
         if self.vert:
             cx, cy = self.w / 2, self.h * 0.098
         else:

@@ -13,7 +13,7 @@
    "id": "brilho",
    "pivo": [
     100.0,
-    100.0
+    200.0
    ],
    "z": 0,
    "formas": [
@@ -67,7 +67,7 @@
    "id": "corpo",
    "pivo": [
     100.0,
-    100.0
+    200.0
    ],
    "z": 1,
    "formas": [
@@ -107,7 +107,8 @@
  ],
  "nome": "Cadeado",
  "tags": [
-  "seguranca",
+  "bancos",
+  "banco",
   "cadeado"
  ],
  "frente": "direita",

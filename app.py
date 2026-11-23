@@ -232,6 +232,45 @@ def lista_canais():
     return saida
 
 
+def salvar_provedores_ia(dados):
+    """Atualiza somente provedores no config.json, com backup e escrita atomica."""
+    permitidos = {
+        "provedor_planejamento_narrativa": "planejamento",
+        "provedor_geracao_roteiro": "roteiro",
+        "provedor_refino_roteiro": "refino",
+        "m1_diretor_padrao": "artes_m1",
+    }
+    atualizacoes = {}
+    for campo in permitidos:
+        valor = str(dados.get(campo, "")).strip().lower()
+        opcoes = ("myhub", "gemini", "local", "auto") if campo == "m1_diretor_padrao" else ("myhub", "gemini", "auto")
+        if valor not in opcoes:
+            raise ValueError(f"Provedor inválido para {campo}. Opções: {', '.join(opcoes)}.")
+        atualizacoes[campo] = valor
+
+    caminho = RAIZ / "config.json"
+    if caminho.exists():
+        try:
+            cfg = json.loads(caminho.read_text(encoding="utf-8-sig"))
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"config.json inválido na linha {exc.lineno}, coluna {exc.colno}.") from exc
+    else:
+        cfg = {}
+    if not isinstance(cfg, dict):
+        raise ValueError("A raiz de config.json precisa ser um objeto JSON.")
+
+    backup = caminho.with_name("config.json.backup_provedores")
+    if caminho.exists():
+        # Mantém um backup anterior, sem incluir cópias ilimitadas do arquivo.
+        backup.write_text(caminho.read_text(encoding="utf-8-sig"), encoding="utf-8")
+    cfg.update(atualizacoes)
+    temporario = caminho.with_suffix(".json.tmp")
+    temporario.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    json.loads(temporario.read_text(encoding="utf-8"))
+    temporario.replace(caminho)
+    return atualizacoes
+
+
 def estado_chaves():
     cfg = cv.carregar_config()
     fontes = cv.FontesDeImagem(cfg, "")
@@ -239,8 +278,21 @@ def estado_chaves():
         (p.get("api_key") or "").strip() and not p["api_key"].strip().startswith("SUA_")
         for p in cfg.get("fallback_texto", [])
     )
+    texto_provedores = {
+        "planejamento": str(cfg.get("provedor_planejamento_narrativa") or "auto").lower(),
+        "roteiro": str(cfg.get("provedor_geracao_roteiro") or "auto").lower(),
+        "refino": str(cfg.get("provedor_refino_roteiro") or "auto").lower(),
+        "artes_m1": str(cfg.get("m1_diretor_padrao") or "auto").lower(),
+    }
+    try:
+        from myhub_llm import bridge_disponivel
+        bridge_configurado = bridge_disponivel(cfg, RAIZ)
+    except Exception:  # noqa
+        bridge_configurado = False
+    efetivos = {k: (("myhub" if bridge_configurado else "gemini") if v == "auto" else v) for k, v in texto_provedores.items()}
     return {"gemini": bool(cfg.get("gemini_api_key")), "imagens": list(fontes.ativos),
-            "video": bool(cfg.get("pixabay_api_key")), "fallback": fallback}
+            "video": bool(cfg.get("pixabay_api_key")), "fallback": fallback,
+            "texto_provedores": texto_provedores, "texto_provedores_efetivos": efetivos, "myhub_bridge_configurado": bridge_configurado}
 
 
 def lista_videos(canal):
@@ -515,6 +567,13 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         url = urlparse(self.path)
         d = self._corpo()
+        if url.path == "/api/config/provedores":
+            try:
+                provedores = salvar_provedores_ia(d)
+            except ValueError as exc:
+                return self._json(400, {"erro": str(exc)})
+            return self._json(200, {"ok": True, "provedores": provedores,
+                                    "mensagem": "Provedores salvos. Novas produções usarão as escolhas atualizadas."})
         if url.path == "/api/ideias":
             canal_nome, n = str(d.get("canal", "")), max(1, min(20, int(d.get("n") or 8)))
             if not re.fullmatch(r"[a-zA-Z0-9_-]{1,60}", canal_nome) or not (RAIZ / "canais" / canal_nome / "canal.json").is_file():

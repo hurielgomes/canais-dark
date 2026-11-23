@@ -44,23 +44,25 @@ def _marca_destaques(palavras, destaques):
 _cache_scrim = {}
 
 
-def faixa_base(frame_rgba, w, h, y0=0.62, forca=0.62):
-    """escurece suavemente a parte de baixo do quadro (integra a legenda sem caixa)"""
-    k = (w, h, y0, forca)
+def faixa_base(frame_rgba, w, h, y0=0.62, forca=0.62, cor=(0, 0, 6)):
+    """escurece suavemente a parte de baixo do quadro (integra a legenda sem caixa); em tema claro, `cor` clara faz um 'veu' leve"""
+    cor = tuple(int(c) for c in cor)
+    k = (w, h, y0, forca, cor)
     if k not in _cache_scrim:
         ya = int(h * y0)
         a = Image.new("L", (1, h - ya))
         a.putdata([int(255 * forca * (j / max(1, h - ya - 1)) ** 1.6) for j in range(h - ya)])
         a = a.resize((w, h - ya))
-        ov = Image.new("RGBA", (w, h), (0, 0, 6, 0))
-        band = Image.new("RGBA", (w, h - ya), (0, 0, 6, 0))
+        ov = Image.new("RGBA", (w, h), cor + (0,))
+        band = Image.new("RGBA", (w, h - ya), cor + (0,))
         band.putalpha(a)
         ov.paste(band, (0, ya))
         _cache_scrim[k] = ov
     frame_rgba.alpha_composite(_cache_scrim[k])
 
 
-def desenhar(frame_rgba, t, trechos, w, h, formato, destaques=None, cor_destaque=(255, 92, 92), ocultar=False):
+def desenhar(frame_rgba, t, trechos, w, h, formato, destaques=None, cor_destaque=(255, 92, 92), ocultar=False,
+             cor_texto=(255, 255, 255), cor_nao_falada=(196, 205, 230), cor_sombra=(0, 0, 0)):
     """desenha a legenda do instante t. trechos = [{ini, fim, texto}]"""
     atual = next((tr for tr in trechos if tr["ini"] <= t < tr["fim"]), None)
     if atual is None:
@@ -109,10 +111,10 @@ def desenhar(frame_rgba, t, trechos, w, h, formato, destaques=None, cor_destaque
             esc = 1.0 + 0.045 * bump
             lev = -0.075 * tam * bump
             falada = inicios[i] <= t + 1e-6
-            cor = cor_destaque if marc[i] else ((255, 255, 255) if falada else (196, 205, 230))
+            cor = cor_destaque if marc[i] else (tuple(cor_texto) if falada else tuple(cor_nao_falada))
             sz = tam * esc
             cx = x + wp / 2
-            sombra.texto(cx, yy + 0.07 * tam + lev, p, "forte", sz, (0, 0, 0, 255), anchor="mm")
+            sombra.texto(cx, yy + 0.07 * tam + lev, p, "forte", sz, tuple(cor_sombra) + (255,), anchor="mm")
             texto.texto(cx, yy + lev, p, "forte", sz, cor + (255,), anchor="mm")
             x += wp + espaco
         y += alt

@@ -10,12 +10,14 @@ diretor LOCAL (palavras da narracao x tags/nome dos recursos; cria icones/cenari
 Qualquer falha da IA cai no diretor local; nenhuma cena fica sem recursos.
 """
 import json
+from pathlib import Path
 import re
 import unicodedata
 from collections import Counter
 
 import recursos_ativos as A
 import recursos_ia as R
+import temas_m1 as TM
 
 STOP = set("""para pois como mais mas que uma uns umas por com sem sobre entre ate nos nas dos das seu sua seus suas
 isso essa esse esta este aqui ali ela ele eles elas voce voces nao sim ja ao aos pela pelo era foi ser tem ter ha
@@ -97,6 +99,14 @@ def pontuar(rec, pal):
     return len(achadas), achadas
 
 
+def cenario_serve(r, tema):
+    """cenario so serve ao tema dele; cenarios curados (sem tema) sao escuros, entao servem a temas escuros"""
+    if r.get("tipo") != "cenario":
+        return True
+    rt = r.get("tema")
+    return rt == tema["id"] or (rt is None and tema["modo"] == "escuro")
+
+
 def catalogo_aprovado(bib):
     return [r for r in bib.listar() if str(r.get("status", "")).startswith("aprov")]
 
@@ -143,9 +153,10 @@ def _icone_de(pal):
     return None
 
 
-def planejar_local(roteiro, catalogo):
+def planejar_local(roteiro, catalogo, tema=None):
     """planos com ids existentes (casamento por tags) + 'novo' (specs de recursos a criar) quando a biblioteca nao cobre."""
-    cen = [r for r in catalogo if r["tipo"] == "cenario"]
+    tema = tema or TM.tema(TM.PADRAO)
+    cen = [r for r in catalogo if r["tipo"] == "cenario" and cenario_serve(r, tema)]
     per = [r for r in catalogo if r["tipo"] == "personagem"]
     obj = [r for r in catalogo if r["tipo"] not in ("cenario", "fundo", "personagem")]
     cenas = roteiro["cenas"]
@@ -166,7 +177,7 @@ def planejar_local(roteiro, catalogo):
     for i, pal in enumerate(pals):
         plano = {"cenario": None, "personagens": [], "objetos": [], "destaques": [],
                  "rotulos": _rotulos(textos[i]) or (_rotulos(str(roteiro.get("titulo", ""))) if i == 0 else []),
-                 "clima": _clima(textos[i]) if _clima(textos[i]) != "noite" else clima_video}
+                 "clima": (_clima(textos[i]) if _clima(textos[i]) != "noite" else clima_video) if tema["modo"] == "escuro" else "dia"}
         # cenario: biblioteca primeiro; senao um procedural coerente com o tema/clima
         melhor = max(cen, key=lambda r: pontuar(r, pal)[0]) if cen else None
         forte = False
@@ -177,10 +188,10 @@ def planejar_local(roteiro, catalogo):
             cen_atual = melhor["id"]
         elif cen_atual is None or not str(cen_atual).startswith("cenario_"):
             cen_atual = {"novo": {"id": f"cenario_{tipo_cen}_{plano['clima']}", "tipo": "cenario", "nome": f"Cenario {tipo_cen}",
-                                  "tags": [tipo_cen, plano["clima"]], "clima": plano["clima"]}}
+                                  "tags": [tipo_cen, plano["clima"]], "clima": plano["clima"], "tema": tema["id"]}}
         elif isinstance(cen_atual, dict) and cen_atual["novo"]["clima"] != plano["clima"]:
             cen_atual = {"novo": {"id": f"cenario_{tipo_cen}_{plano['clima']}", "tipo": "cenario", "nome": f"Cenario {tipo_cen}",
-                                  "tags": [tipo_cen, plano["clima"]], "clima": plano["clima"]}}
+                                  "tags": [tipo_cen, plano["clima"]], "clima": plano["clima"], "tema": tema["id"]}}
         plano["cenario"] = cen_atual
         # personagens / objetos da biblioteca que casam
         pp = sorted(((pontuar(r, pal)[0], -k, r["id"]) for k, r in enumerate(per)), reverse=True)
@@ -269,13 +280,126 @@ Responda apenas JSON: {"cenas":[{"n":1,"cenario":{"ref":"id"}|{"novo":{...}},"cl
 """
 
 
-def planejar_arte_ia(roteiro, catalogo, llm, cv):
-    """Gemini escolhe recursos existentes e PEDE os que faltam (descricao visual). Ids invalidos sao descartados."""
-    cat = [{"id": r["id"], "tipo": r["tipo"], "nome": r.get("nome", ""), "tags": r.get("tags", []), "animacoes": r.get("animacoes", [])} for r in catalogo]
+def _prompt_tema(tema_fixo, categoria):
+    if tema_fixo:
+        t = TM.TEMAS[tema_fixo]
+        return (f'TEMA VISUAL OBRIGATORIO (definido pelo canal): "{tema_fixo}" ({t["modo"]}): {t["paleta"]}. '
+                'Descreva TODO cenario e objeto novo nessa paleta/modo e devolva "tema":"%s".\n' % tema_fixo)
+    return ("TEMA VISUAL: escolha UM tema para o video inteiro, o que melhor combina com o ASSUNTO (devolva em \"tema\"). "
+            f"Padrao da categoria '{categoria}': \"{TM.padrao_categoria(categoria)}\". Temas disponiveis:\n{TM.lista_para_prompt()}\n"
+            "Em temas CLAROS os cenarios e objetos novos devem ser claros, sem fundo preto e sem neon. Descreva tudo na paleta do tema escolhido.\n")
+
+
+def _extrair_json_direcao(texto):
+    """Extrai o objeto JSON principal sem depender de cercas Markdown."""
+    texto = (texto or "").strip().lstrip("\ufeff")
+    texto = re.sub(r"^\s*```(?:json)?\s*", "", texto, flags=re.I)
+    texto = re.sub(r"\s*```\s*$", "", texto)
+    inicio, fim = texto.find("{"), texto.rfind("}")
+    if inicio < 0 or fim <= inicio:
+        raise json.JSONDecodeError("objeto JSON de direcao de arte nao encontrado", texto, max(0, inicio))
+    return texto[inicio:fim + 1]
+
+
+def _carregar_json_direcao(texto, max_virgulas=5):
+    """Corrige apenas separadores ausentes indicados precisamente pelo parser."""
+    candidato = _extrair_json_direcao(texto)
+    inseridas = 0
+    while True:
+        try:
+            return json.loads(candidato), inseridas
+        except json.JSONDecodeError as exc:
+            if exc.msg != "Expecting ',' delimiter" or inseridas >= max_virgulas:
+                raise
+            candidato = candidato[:exc.pos] + "," + candidato[exc.pos:]
+            inseridas += 1
+
+
+def _validar_json_direcao(dados, quantidade_cenas):
+    if not isinstance(dados, dict) or not isinstance(dados.get("cenas"), list):
+        raise ValueError("JSON da direcao de arte precisa conter a lista 'cenas'.")
+    cenas = dados["cenas"]
+    if len(cenas) != quantidade_cenas:
+        raise ValueError(f"direcao de arte retornou {len(cenas)} cenas; esperadas {quantidade_cenas}.")
+    numeros = []
+    for item in cenas:
+        if not isinstance(item, dict):
+            raise ValueError("uma entrada de 'cenas' nao e um objeto JSON.")
+        try:
+            numeros.append(int(item.get("n")))
+        except (TypeError, ValueError):
+            raise ValueError("uma cena da direcao de arte nao possui numero 'n' valido.")
+    if numeros != list(range(1, quantidade_cenas + 1)):
+        raise ValueError("a direcao de arte tem numeros de cena ausentes ou duplicados.")
+    return dados
+
+
+def _parse_json_direcao(texto, roteiro, llm, log=print, cv=None):
+    """Valida a resposta; respeita o parser da Factory e tenta reparo local/único."""
+    quantidade = len(roteiro.get("cenas") or [])
+    primeiro_erro = None
+    parser = getattr(cv, "_parse_json", None) if cv is not None else None
+    try:
+        if callable(parser):
+            dados = parser(texto)
+            virgulas = 0
+        else:
+            dados, virgulas = _carregar_json_direcao(texto)
+        _validar_json_direcao(dados, quantidade)
+        if virgulas:
+            log(f"   MyHub: JSON da direcao corrigido localmente ({virgulas} separador(es)).")
+        return dados
+    except Exception as exc:
+        primeiro_erro = exc
+        # Alguns parsers da Factory são intencionalmente estritos. Antes de
+        # pedir outra resposta ao MyHub, tenta a correção sintática local.
+        try:
+            dados, virgulas = _carregar_json_direcao(texto)
+            _validar_json_direcao(dados, quantidade)
+            log(f"   MyHub: JSON da direcao recuperado localmente ({virgulas} separador(es)).")
+            return dados
+        except Exception as local_error:
+            primeiro_erro = local_error
+
+    log("   MyHub: JSON da direcao de arte invalido; solicitando uma unica correcao estrutural, sem novo planejamento.")
+    reparo = (
+        "Corrija SOMENTE o JSON de direcao de arte abaixo, preservando decisoes visuais, IDs, referencias, "
+        "paleta e descricoes. Nao faca novo planejamento e nao invente cenas. Devolva um unico objeto JSON "
+        "com a chave 'cenas' e exatamente " + str(quantidade) + " cenas numeradas de 1 a " + str(quantidade) + ". "
+        "Corrija aspas, virgulas, colchetes e chaves. Sem Markdown ou comentarios.\n\n"
+        f"Erro: {str(primeiro_erro)[:300]}\nRESPOSTA ORIGINAL:\n{texto or ''}"
+    )
+    try:
+        corrigido = llm(reparo, True)
+        if callable(parser):
+            try:
+                dados = parser(corrigido)
+                virgulas = 0
+            except Exception:
+                dados, virgulas = _carregar_json_direcao(corrigido)
+        else:
+            dados, virgulas = _carregar_json_direcao(corrigido)
+        _validar_json_direcao(dados, quantidade)
+        log("   MyHub: JSON da direcao de arte recuperado com uma correcao unica.")
+        if virgulas:
+            log(f"   MyHub: ajuste local adicional de {virgulas} separador(es).")
+        return dados
+    except Exception as segundo_erro:
+        raise ValueError(
+            "JSON de direcao de arte invalido e a correcao unica falhou: "
+            f"{str(segundo_erro)[:240]}"
+        ) from segundo_erro
+
+
+def planejar_arte_ia(roteiro, catalogo, llm, cv, categoria=None, tema_fixo=None, log=print):
+    """Gemini escolhe tema + recursos existentes e PEDE os que faltam (descricao visual). Ids invalidos sao descartados.
+    Devolve (planos, tema_escolhido_pela_ia|None)."""
+    cat = [{"id": r["id"], "tipo": r["tipo"], "nome": r.get("nome", ""), "tags": r.get("tags", []), "animacoes": r.get("animacoes", []),
+            **({"tema": r["tema"]} if r.get("tema") else {})} for r in catalogo]
     cenas = [{"n": i + 1, "narracao": c["narracao"], "visual": c.get("imagem", "")} for i, c in enumerate(roteiro["cenas"])]
-    prompt = (PROMPT_ARTE + f"\nTITULO: {roteiro.get('titulo', '')}\n\nCATALOGO (reutilizaveis):\n{json.dumps(cat, ensure_ascii=False)}"
+    prompt = (PROMPT_ARTE + "\n" + _prompt_tema(tema_fixo, categoria) + f"\nTITULO: {roteiro.get('titulo', '')}\n\nCATALOGO (reutilizaveis; cenarios com 'tema' so servem a esse tema):\n{json.dumps(cat, ensure_ascii=False)}"
               f"\n\nCENAS:\n{json.dumps(cenas, ensure_ascii=False)}")
-    dados = cv._parse_json(llm(prompt, True))
+    dados = _parse_json_direcao(llm(prompt, True), roteiro, llm, log, cv)
     ids = {x["id"]: x for x in catalogo}
 
     def item(x, tipos):
@@ -324,28 +448,53 @@ def planejar_arte_ia(roteiro, catalogo, llm, cv):
             if t:
                 pl["rotulos"].append({"texto": t.upper()[:28], "sub": (str(r.get("sub") or "")[:40] if isinstance(r, dict) else "")})
         planos.append(pl)
+    return planos, (dados.get("tema") if TM.existe(dados.get("tema")) else None)
+
+
+def ajustar_cenarios(planos, catalogo, tema, roteiro):
+    """cenario fora do tema (ou esquecido pela IA) -> herda o da cena anterior ou vira um cenario novo do tema"""
+    ids = {r["id"]: r for r in catalogo}
+    ant = None
+    for i, p in enumerate(planos):
+        c = p.get("cenario")
+        if isinstance(c, str) and not cenario_serve(ids.get(c, {"tipo": "cenario"}), tema):
+            c = None
+        if c is None:
+            if ant is not None:
+                c = ant
+            else:
+                pal = palavras(str(roteiro.get("titulo", "")) + " " + " ".join(x["narracao"] for x in roteiro["cenas"]))
+                tipo_cen = next((R.CHAVES_CENARIO[k] for w in pal for k in R.CHAVES_CENARIO if _radical(w, k)), "cidade")
+                c = {"novo": {"id": f"cenario_{tipo_cen}", "tipo": "cenario", "nome": f"Cenario {tipo_cen}", "tags": [tipo_cen],
+                              "descricao": f"cenario de {tipo_cen} coerente com o assunto do video", "clima": p.get("clima", "noite")}}
+        p["cenario"] = c
+        ant = c
     return planos
 
 
-def materializar(planos, bib, llm, log=print):
-    """cria os recursos 'novo' (IA ou procedural), registra/aprova e troca os pedidos por ids."""
-    criados = {}
+def materializar(planos, bib, llm, log=print, tema_id=None):
+    """cria os recursos 'novo' (IA ou procedural; com MyHub, objetos/cenarios em lotes de 2), registra/aprova e troca os pedidos por ids."""
+    specs = []
+    for p in planos:
+        for x in [p["cenario"]] + list(p["personagens"]) + list(p["objetos"]):
+            if isinstance(x, dict) and "novo" in x:
+                if tema_id:
+                    x["novo"].setdefault("tema", tema_id)
+                specs.append(x["novo"])
+    criados = R.criar_recursos_lote(specs, bib, llm, log) if specs else {}
 
     def res(x):
         if x is None or isinstance(x, str):
             return x
-        n = x["novo"]
-        if n["id"] not in criados:
-            criados[n["id"]] = R.criar_recurso(n, bib, llm, log)
-        return criados[n["id"]]
+        return criados.get(R.slug(x["novo"]["id"]), R.slug(x["novo"]["id"]))
     for p in planos:
         p["cenario"] = res(p["cenario"])
         p["personagens"] = [res(x) for x in p["personagens"]]
         p["objetos"] = [res(x) for x in p["objetos"]]
         ia = p.get("ia") or {}
-        p["ia"] = {(R.slug(k) if R.slug(k) in criados.values() else k): v for k, v in ia.items()}
+        p["ia"] = {(criados.get(R.slug(k), k) if R.slug(k) in criados else k): v for k, v in ia.items()}
         if p.get("hero"):
-            p["hero"] = R.slug(p["hero"]) if R.slug(p["hero"]) in criados.values() else p["hero"]
+            p["hero"] = criados.get(R.slug(p["hero"]), p["hero"])
         p["personagens"] = _unicos([x for x in p["personagens"] if x])
         p["objetos"] = _unicos([x for x in p["objetos"] if x])
     return planos
@@ -416,7 +565,7 @@ def _contador(texto):
     return {"de": 0, "ate": val, "decimais": dec, "sufixo": (" " + resto.upper()) if resto else ""}
 
 
-def plano_para_cena(plano, catalogo, narracao, dur, i, texto_extra="", bib=None):
+def plano_para_cena(plano, catalogo, narracao, dur, i, texto_extra="", bib=None, tema=None):
     ids = {r["id"]: r for r in catalogo}
     if bib is not None:                         # origem do recurso (ia/procedural) pode mudar a escolha da animacao
         for r in catalogo:
@@ -424,12 +573,14 @@ def plano_para_cena(plano, catalogo, narracao, dur, i, texto_extra="", bib=None)
     pal = palavras(narracao + " " + texto_extra)
     andar_geral = any(_casa(w, m) for w in pal for m in MOVIMENTO)
     cena = {"modelo": "generica", "duracao": dur, "elementos": []}
+    tema = tema or TM.tema(TM.PADRAO)
     clima = plano.get("clima") or "noite"
-    acento = ACENTO.get(clima, "#2de2e6")
+    luz_tipo, luz_int, luz_cor = tema["luz"]
+    acento = luz_cor or (ACENTO.get(clima, tema["acento2"]) if tema["id"] == "neon_escuro" else tema["acento2"])
+    cena["tema"] = TM.para_motor(tema)
     if plano.get("cenario") in ids:
         cena["cenario"] = {"ref": plano["cenario"]}
-        amb = R.CLIMAS.get(clima, R.CLIMAS["noite"])
-        cena["cenario"]["ambiente"] = {"cor": amb[4], "forca": round(amb[5] * 0.55, 3)}     # menos "veu" escuro: o cenario precisa aparecer
+        cena["cenario"]["ambiente"] = {"cor": tema["amb"][0], "forca": tema["amb"][1]}     # veu leve: o cenario precisa aparecer
     chars = [c for c in plano.get("personagens", []) if c in ids][:2]
     objs = [o for o in plano.get("objetos", []) if o in ids]
     hero = plano.get("hero") if plano.get("hero") in objs else (objs[0] if objs else None)
@@ -490,9 +641,10 @@ def plano_para_cena(plano, catalogo, narracao, dur, i, texto_extra="", bib=None)
         cena["elementos"].append(el)
     # luz de recorte atras do heroi: separa o objeto do fundo e guia o olhar
     luzes = []
-    if info_hero:
-        luzes.append({"pos": {f: [info_hero[f][0], info_hero[f][1] - info_hero[f][2] * 0.5] for f in info_hero}, "raio": {"16x9": 0.55, "9x16": 0.40},
-                      "cor": acento, "int": 0.42, "k": 0.6, "exp": 1.6})
+    if info_hero and luz_tipo != "nenhuma" and luz_int > 0:
+        luzes.append({"pos": {f: [info_hero[f][0], info_hero[f][1] - info_hero[f][2] * 0.5] for f in info_hero},
+                      "raio": {"16x9": 0.55 if luz_tipo == "neon" else 0.70, "9x16": 0.40 if luz_tipo == "neon" else 0.55},
+                      "cor": acento, "int": luz_int, "k": 0.6, "exp": 1.6 if luz_tipo == "neon" else 2.2})
     if luzes:
         cena["luzes"] = luzes
     if dur > 1.5:      # "soco" de camera no inicio + aproximacao lenta (o motor ja soma um assentamento de 0,5 s)
@@ -500,23 +652,25 @@ def plano_para_cena(plano, catalogo, narracao, dur, i, texto_extra="", bib=None)
     hud = {}
     chip = plano.get("chip")
     if chip and dur > 1.5:
-        partes = re.split(r"\s*[·|•/-]\s*", str(chip), maxsplit=1)
+        partes = re.split(r"\s*[·|•]\s*|\s+[/-]\s+", str(chip), maxsplit=1)
         hud["chip"] = {"hora": partes[0].strip()[:18], "dia": (partes[1].strip()[:18] if len(partes) > 1 else ""), "t": 0.3}
     rot = (plano.get("rotulos") or [None])[0]
     if rot and dur > 2:
         cont = _contador(rot["texto"])
         if cont:     # numero dominante com contagem animada (gancho visual); a explicacao vai embaixo
-            hud["contadores"] = [dict(cont, t=0.7, fim=max(1.5, dur - 0.4), dur=1.8, cor=("#ff3e48" if clima in ("alerta", "apagado") else "#ffd23a"),
+            cor_cont = (("#ff3e48" if clima in ("alerta", "apagado") else "#ffd23a") if tema["id"] == "neon_escuro" else tema["acento"])
+            hud["contadores"] = [dict(cont, t=0.7, fim=max(1.5, dur - 0.4), dur=1.8, cor=cor_cont,
                                       sub=rot.get("sub", ""), tam={"16x9": 150, "9x16": 150},
                                       pos={"16x9": [0.76, 0.22], "9x16": [0.5, 0.17]})]
         else:
             hx = {f: (min(0.84, info_hero[f][0] + 0.26) if f == "16x9" else min(0.80, info_hero[f][0] + 0.28), max(0.14, info_hero[f][1] - info_hero[f][2] - 0.01))
                   for f in info_hero} if info_hero else {"16x9": (0.76, 0.18), "9x16": (0.5, 0.16)}
             hud["etiquetas"] = [{"texto": rot["texto"], "sub": rot.get("sub", ""), "t": 0.8, "fim": max(1.5, dur - 0.4), "tam": 58, "rot": -3,
+                                 **({"cor": tema["acento"]} if tema["id"] != "neon_escuro" else {}),
                                  "pos": {f: list(hx[f]) for f in hx}}]
     ch = plano.get("chamada")
     if ch and info_hero and dur > 2.5:
-        hud["chamadas"] = [{"texto": str(ch.get("texto", ""))[:18], "detalhe": str(ch.get("detalhe", ""))[:30], "t": 1.4, "cor": "#ff8a80", "tam": 34,
+        hud["chamadas"] = [{"texto": str(ch.get("texto", ""))[:18], "detalhe": str(ch.get("detalhe", ""))[:30], "t": 1.4, "cor": ("#ff8a80" if tema["id"] == "neon_escuro" else tema["acento"]), "tam": 34,
                             "alvo": {f: [info_hero[f][0], info_hero[f][1] - info_hero[f][2] * 0.55] for f in info_hero},
                             "para": {f: [info_hero[f][0] - (0.10 if f == "16x9" else 0.08), info_hero[f][1] - info_hero[f][2] * 0.95] for f in info_hero}}]
     if hud:
@@ -526,29 +680,60 @@ def plano_para_cena(plano, catalogo, narracao, dur, i, texto_extra="", bib=None)
     return cena
 
 
-def dirigir(roteiro, duracoes, bib, modo="auto", cfg=None, cv=None, log=print):
-    """devolve lista de cenas M1 (uma por cena do roteiro). Cria na biblioteca os recursos que o roteiro pedir."""
+def criar_llm(modo, cfg, cv, log=print, chat_scope=None, raiz=None):
+    """-> (llm, nome). modo: myhub | gemini | auto | local.
+    auto = MyHub se o Bridge estiver instalado, senao Gemini se houver chave, senao local (llm=None)."""
+    cfg = cfg or {}
+    raiz = Path(raiz or Path(__file__).resolve().parent)
+    modo = str(modo or "auto").lower()
+    if modo == "local":
+        return None, "local"
+    if modo in ("auto", "myhub"):
+        try:
+            from myhub_llm import bridge_disponivel, criar_llm_myhub
+            if modo == "myhub" or bridge_disponivel(cfg, raiz):
+                return criar_llm_myhub(cfg, raiz, log, chat_scope=chat_scope), "MyHub Bridge"
+        except Exception as e:  # noqa
+            log(f"   MyHub Bridge indisponivel ({str(e)[:140]}).")
+            if modo == "myhub":
+                return None, "local"
+    if modo in ("auto", "gemini") and cfg.get("gemini_api_key") and cv is not None:
+        try:
+            return llm_gemini(cfg, cv), "Gemini"
+        except Exception as e:  # noqa
+            log(f"   Gemini indisponivel ({str(e)[:100]}).")
+    return None, "local"
+
+
+def dirigir(roteiro, duracoes, bib, modo="auto", cfg=None, cv=None, log=print, categoria=None, canal=None, chat_scope=None):
+    """devolve lista de cenas M1 (uma por cena do roteiro). Cria na biblioteca os recursos que o roteiro pedir.
+    Tema visual: canal.tema_fixo > escolha da IA > padrao da categoria (+ heuristica local sem IA).
+    IA: MyHub Bridge, Gemini ou local (ver criar_llm)."""
     R.garantir_kit(bib, log)
     cat = catalogo_aprovado(bib)
-    llm = None
-    if modo in ("auto", "gemini") and cfg and cfg.get("gemini_api_key") and cv is not None:
-        try:
-            llm = llm_gemini(cfg, cv)
-        except Exception as e:  # noqa
-            log(f"   IA indisponivel ({str(e)[:80]}); usando o diretor local.")
-    planos = None
+    texto = " ".join([str(roteiro.get("titulo", ""))] + [c["narracao"] for c in roteiro["cenas"]])
+    fixo_id, _ = TM.resolver(categoria, canal, None, texto)
+    tema_fixo = fixo_id if (canal or {}).get("tema_fixo") == fixo_id else None
+    llm, nome_ia = criar_llm(modo, cfg, cv, log, chat_scope)
+    planos, tema_ia = None, None
     if llm:
         # a IA so ve recursos de qualidade (curados/desenhados por IA): icones procedurais de reserva nao sao oferecidos
-        cat_ia = [r for r in cat if bib.idx["recursos"].get(r["id"], {}).get("origem") != "procedural"]
+        cat_ia = [r for r in cat if r.get("origem") != "procedural"]
         try:
-            planos = planejar_arte_ia(roteiro, cat_ia, llm, cv)
-            log("   direcao de arte: Gemini")
+            planos, tema_ia = planejar_arte_ia(roteiro, cat_ia, llm, cv, categoria, tema_fixo, log)
+            log(f"   direcao de arte: {nome_ia}")
         except Exception as e:  # noqa
-            log(f"   direcao de arte por IA falhou ({str(e)[:80]}); usando o diretor local.")
+            log(f"   direcao de arte por {nome_ia} falhou ({str(e)[:140]}); usando o diretor local.")
+            llm = None
+    tid, origem = TM.resolver(categoria, canal, tema_ia, texto)
+    tema = TM.tema(tid, canal)
+    log(f"   tema visual: {tema['nome']} [{tid}] ({origem})")
     if planos is None:
-        planos = planejar_local(roteiro, cat)
+        planos = planejar_local(roteiro, cat, tema)
         log("   direcao de arte: local (palavras-chave + biblioteca)")
-    planos = materializar(planos, bib, llm if planos and llm else None, log)
+    else:
+        planos = ajustar_cenarios(planos, cat, tema, roteiro)
+    planos = materializar(planos, bib, llm, log, tema_id=tid)
     cat = catalogo_aprovado(bib)
-    return [plano_para_cena(p, cat, c["narracao"], duracoes[i], i, " ".join(str(c.get(k, "")) for k in ("imagem", "busca_stock")), bib=bib)
+    return [plano_para_cena(p, cat, c["narracao"], duracoes[i], i, " ".join(str(c.get(k, "")) for k in ("imagem", "busca_stock")), bib=bib, tema=tema)
             for i, (p, c) in enumerate(zip(planos, roteiro["cenas"]))]

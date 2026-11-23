@@ -24,6 +24,17 @@
 - Kit didático curado (instalado automaticamente): termômetro que sobe, medidor, relógio que passa, barras crescendo/desabando, alvo.
 - IA: SVG sem fundo retangular, contorno com gradiente aceito, animações com parte inexistente são podadas (não descartadas).
 
+## Temas visuais (novo)
+Prioridade: `canal.json` → `tema_fixo` > tema escolhido pelo Gemini (entre os curados) > padrão da categoria (+ heurística do assunto sem IA).
+- Temas: `neon_escuro` (padrão atual), `tensao_quente`, `financas_neutro`, `saude_claro`, `natureza_dia`, `historia_pergaminho`, `educacao_claro`, `pop_claro` (arquivo `temas_m1.py`; categoria → tema em `POR_CATEGORIA`).
+- Opcional no `canais/<canal>/canal.json`: `"tema_fixo": "saude_claro"` e `"tema_acento": "#RRGGBB"` (cor da marca; só troca o acento).
+- O tema controla: cores do cenário, bloom, vinheta, brilho neon dos objetos, luz de recorte, legenda (cor/sombra), chip, contador, selo e fade. Cenários são específicos do tema (`id__tema`); objetos são reutilizáveis entre temas.
+- Contraste da legenda e do acento validado por teste automático (WCAG ≥ 7:1 / 4,5:1).
+
+## MyHub Bridge (novo)
+Integrado com o Bridge em `C:/myhub-bridge` (ver `docs/MYHUB_NO_PROJETO.md`): roteiro (planejamento/geração/refino) e direção de arte + SVG do M1 via `myhub_llm.py`;
+provedor `auto/myhub/gemini/local` por etapa (UI "Provedores de IA" ou `config.json`); lotes de 2 SVG por mensagem; reparo de JSON; teste de cenário liso.
+
 ## Pendências conhecidas
 - `editorial_rules.py` não define `INSTRUCAO_FECHAMENTO_PADRAO` (usado por `closing_instruction` e `motores/broadcast_news.py`); quebra `tests/test_backend.py` na importação. Existia no ZIP original, não foi alterado.
 - Recursos da biblioteca de exemplo foram marcados como `aprovado`.

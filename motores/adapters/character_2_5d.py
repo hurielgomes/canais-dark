@@ -1,9 +1,23 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
 from engine_interface import VisualEngine
+
+
+DIRETORES_VALIDOS = {"myhub", "gemini", "local", "auto"}
+
+
+def _diretor_configurado(root: Path) -> str:
+    """le o provedor salvo pela interface (config.json -> m1_diretor_padrao) no momento de iniciar o job"""
+    caminho = Path(root) / "config.json"
+    try:
+        valor = str(json.loads(caminho.read_text(encoding="utf-8-sig")).get("m1_diretor_padrao") or "auto").strip().lower()
+    except (OSError, ValueError):
+        return "auto"
+    return valor if valor in DIRETORES_VALIDOS else "auto"
 
 
 class Character25DEngine(VisualEngine):
@@ -31,8 +45,10 @@ class Character25DEngine(VisualEngine):
             command += ["--entrega-format", str(job["entrega_format"])]
         if job.get("perfil"):
             command += ["--perfil", str(job["perfil"])]
-        if job.get("diretor") in ("auto", "local", "gemini"):
-            command += ["--diretor", str(job["diretor"])]
+        diretor = str(job.get("diretor") or _diretor_configurado(root)).strip().lower()
+        if diretor not in DIRETORES_VALIDOS:
+            raise ValueError(f"Diretor M1 invalido: {diretor}. Opcoes: {', '.join(sorted(DIRETORES_VALIDOS))}.")
+        command += ["--diretor", diretor]
         if job.get("revisar"):
             command.append("--revisar")
         if job.get("simular"):

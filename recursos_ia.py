@@ -16,7 +16,9 @@ import tempfile
 import unicodedata
 from pathlib import Path
 
+import qualidade_cenario as _qc
 import recursos_ativos as A
+import temas_m1 as TM
 from estudio.cenas2d.recursos.biblioteca import Biblioteca
 from estudio.cenas2d.recursos.svg import importar_svg
 from estudio.cenas2d.recursos.validar import RecursoInvalido, validar_recurso
@@ -125,22 +127,33 @@ def svg_icone(nome_icone, cor):
 
 
 # ------------------------------------------------------------------ cenarios procedurais, viewBox 1920x1080
-def svg_cenario(tipo, clima="noite", seed="x"):
+def svg_cenario(tipo, clima="noite", seed="x", tema=None):
     ct, cb, luz, acesas, _, _ = CLIMAS.get(clima, CLIMAS["noite"])
-    if tipo == "guerra":
+    th = tema if isinstance(tema, dict) else None
+    claro = bool(th and th["modo"] == "claro")
+    tom_fundo, tom_meio, chao_a, chao_b = "#141a36", "#0f1428", "#2a2f44", "#0b0d16"
+    if th:         # paleta do tema (cores curadas, contraste ja testado)
+        ct, cb, luz, acesas = th["ceu_topo"], th["ceu_base"], th["janela"], th["janelas_acesas"]
+        tom_fundo, tom_meio, chao_a, chao_b = th["predio_fundo"], th["predio_meio"], th["chao_topo"], th["chao_base"]
+        if clima == "apagado" and not claro:
+            acesas = 0.04
+    if tipo == "guerra" and not th:
         ct, cb = "#0b0710", "#7a2c1c" if clima != "apagado" else "#2a1612"
     r = _rng(f"{tipo}{clima}{seed}")
     W, H = 1920, 1080
-    defs = _grad("ceu", ct, cb) + _grad("chao", "#2a2f44", "#0b0d16")
+    defs = _grad("ceu", ct, cb) + _grad("chao", chao_a, chao_b)
     g = [f'<g id="ceu"><rect width="{W}" height="{H}" fill="url(#ceu)"/>']
-    if clima in ("noite", "apagado", "alerta", "entardecer"):
+    if claro:      # ceu claro: sol suave e nuvens (sem estrelas/lua)
+        g.append(_glow(1500, 170, 80, "#ffffff", 0.30, 3) + '<circle cx="1500" cy="170" r="56" fill="#fffbe8" opacity="0.95"/>')
+        g += [f'<ellipse cx="{r.randint(100, 1800)}" cy="{r.randint(90, 380)}" rx="{r.randint(110, 240)}" ry="{r.randint(24, 46)}" fill="#ffffff" opacity="{r.uniform(.45, .8):.2f}"/>' for _ in range(6)]
+    elif clima in ("noite", "apagado", "alerta", "entardecer"):
         g += [f'<circle cx="{r.randint(0, W)}" cy="{r.randint(0, 520)}" r="{r.choice((1.5, 2, 2.5))}" fill="#ffffff" opacity="{r.uniform(.3, .9):.2f}"/>' for _ in range(70)]
         g.append(f'<circle cx="{r.randint(1300, 1750)}" cy="{r.randint(110, 230)}" r="62" fill="#f2f0e0" opacity="0.92"/>' + _glow(1500, 170, 90, "#cfd8ff", 0.10, 3))
     elif clima == "dia":
         g.append(_glow(1500, 170, 70, "#fff3b0", 0.35, 4) + '<circle cx="1500" cy="170" r="62" fill="#fff6c0"/>')
     g.append("</g>")
     if tipo == "cidade":
-        for nome, base, alt, larg, tom in (("predios_fundo", 760, (160, 360), (70, 120), "#141a36"), ("predios_meio", 860, (240, 520), (90, 150), "#0f1428")):
+        for nome, base, alt, larg, tom in (("predios_fundo", 760, (160, 360), (70, 120), tom_fundo), ("predios_meio", 860, (240, 520), (90, 150), tom_meio)):
             g.append(f'<g id="{nome}">')
             x = -20
             while x < W:
@@ -150,10 +163,10 @@ def svg_cenario(tipo, clima="noite", seed="x"):
                 for yy in range(base - h + 22, base - 10, 38):
                     for xx in range(x + 12, x + w - 18, 26):
                         on = r.random() < acesas
-                        g.append(f'<rect x="{xx}" y="{yy}" width="12" height="20" fill="{luz if on else "#1a2038"}" opacity="{0.95 if on else 0.55}"/>')
+                        g.append(f'<rect x="{xx}" y="{yy}" width="12" height="20" fill="{luz if on else ("#ffffff" if claro else "#1a2038")}" opacity="{0.95 if on else (0.55 if not claro else 0.7)}"/>')
                 x += w + r.randint(0, 10)
             g.append("</g>")
-        g.append(f'<g id="rua"><rect y="900" width="{W}" height="180" fill="url(#chao)"/><rect y="990" width="{W}" height="8" fill="#e8c14a" opacity="0.35"/></g>')
+        g.append(f'<g id="rua"><rect y="900" width="{W}" height="180" fill="url(#chao)"/><rect y="990" width="{W}" height="8" fill="{'#ffffff' if claro else '#e8c14a'}" opacity="0.35"/></g>')
     elif tipo == "interior":
         g.append(f'<g id="parede"><rect width="{W}" height="760" fill="{cb}" opacity="0.9"/><rect x="1180" y="150" width="420" height="360" rx="10" fill="{ct}" stroke="#0a0c14" stroke-width="14"/>'
                  f'<rect x="1384" y="150" width="12" height="360" fill="#0a0c14"/><rect x="1180" y="324" width="420" height="12" fill="#0a0c14"/></g>'
@@ -165,9 +178,9 @@ def svg_cenario(tipo, clima="noite", seed="x"):
         g.append(f'<g id="chao"><rect y="900" width="{W}" height="180" fill="#10241c"/></g>')
     elif tipo == "guerra":
         g[0] = f'<g id="ceu"><rect width="{W}" height="{H}" fill="url(#ceu)"/>'
-        g.append(f'<g id="fumaca">' + "".join(f'<ellipse cx="{r.randint(0, W)}" cy="{r.randint(80, 520)}" rx="{r.randint(260, 560)}" ry="{r.randint(50, 120)}" fill="#1b1a22" opacity="{r.uniform(.25, .55):.2f}"/>' for _ in range(9)) + '</g>')
+        g.append(f'<g id="fumaca">' + "".join(f'<ellipse cx="{r.randint(0, W)}" cy="{r.randint(80, 520)}" rx="{r.randint(260, 560)}" ry="{r.randint(50, 120)}" fill="{tom_fundo if th else '#1b1a22'}" opacity="{r.uniform(.25, .55):.2f}"/>' for _ in range(9)) + '</g>')
         g.append('<g id="horizonte">' + _glow(960, 760, 460, "#ff7a2e", 0.16, 4) + "".join(
-            f'<polygon points="{x},780 {x},{780 - h} {x + w * 0.35:.0f},{780 - h - r.randint(10, 60)} {x + w * 0.6:.0f},{780 - h + r.randint(0, 40)} {x + w},{780 - h * 0.6:.0f} {x + w},780" fill="#0e0c14"/>'
+            f'<polygon points="{x},780 {x},{780 - h} {x + w * 0.35:.0f},{780 - h - r.randint(10, 60)} {x + w * 0.6:.0f},{780 - h + r.randint(0, 40)} {x + w},{780 - h * 0.6:.0f} {x + w},780" fill="{tom_meio}"/>'
             for x, w, h in ((i * 150 - 20, r.randint(90, 160), r.randint(90, 330)) for i in range(15))) + '</g>')
         g.append(f'<g id="chao"><rect y="780" width="{W}" height="300" fill="url(#chao)"/>' + "".join(
             f'<ellipse cx="{r.randint(0, W)}" cy="{r.randint(840, 1040)}" rx="{r.randint(60, 150)}" ry="{r.randint(10, 26)}" fill="#07060a" opacity="0.7"/>' for _ in range(7)) + '</g>')
@@ -342,6 +355,16 @@ def _quadro_de_prova(rec, tipo):
         return list(b.problemas)
 
 
+def _texto_tema(spec):
+    if spec.get("tema") and TM.existe(spec["tema"]):
+        t = TM.TEMAS[spec["tema"]]
+        return (f"\nTEMA VISUAL OBRIGATORIO: {t['nome']} ({t['modo']}). Paleta: {t['paleta']}. "
+                f"Cores de referencia: topo {t['ceu_topo']}, base {t['ceu_base']}, acento {t['acento']}, acento secundario {t['acento2']}. "
+                + ("MODO CLARO: nada de fundo preto nem brilho neon; use cores claras/medias, sombras suaves e bom contraste sobre fundo claro. " if t["modo"] == "claro" else
+                   "MODO ESCURO: pode usar luz de contorno, mas respeite a paleta. "))
+    return ""
+
+
 def _prompt_svg(spec):
     tipo = spec["tipo"]
     if tipo == "cenario":
@@ -370,9 +393,10 @@ def _prompt_svg(spec):
                    '{"partes":{"porta":{"pivo":[x,y da dobradica]}},"animacoes":{"abrir":{"dur":1.2,"loop":false,"faixas":{"porta":{"sx":[[0,1],[1.2,0.15,"out_cubic"]]}}}}} . '
                    "Propriedades de faixa: rot (graus), tx, ty, sx, sy, op; cada keyframe e [tempo, valor]. Use SOMENTE ids de partes existentes; "
                    "se nada tiver movimento proprio, omita o JSON.")
+    tema_txt = _texto_tema(spec)
     return ("Voce e um ilustrador vetorial senior de motion graphics (estilo infografico cinematografico, noturno, com luz de contorno). "
             "Escreva UM arquivo SVG, somente o codigo, sem explicacao nem cercas de markdown.\n"
-            f"DESENHE: {spec.get('nome', spec['id'])}. {spec.get('descricao', '')}{extra}\n"
+            f"DESENHE: {spec.get('nome', spec['id'])}. {spec.get('descricao', '')}{extra}{tema_txt}\n"
             f"FORMATO: {forma}\n"
             "NIVEL DE DETALHE (obrigatorio): objeto RICO e reconhecivel, nao um icone: 40 a 250 formas; volumes com gradientes lineares (claro->escuro), "
             "reflexos e brilhos como formas translucidas, sombras proprias, partes pequenas que contam a historia (pecas, painéis, parafusos, "
@@ -424,6 +448,9 @@ def _gerar_por_ia(spec, llm, log, tentativas=3):
                         raise RecursoInvalido(f"desenho simples demais ({n_formas} formas; faca 40 ou mais, com detalhes)")
                     validar_recurso(rec)
                     _quadro_de_prova(rec, spec["tipo"])
+                    if spec["tipo"] == "cenario" and _qc.liso_rec(rec):
+                        raise RecursoInvalido("o cenario ficou LISO (parede/ceu de uma cor so): desenhe o LUGAR de verdade, com os moveis, equipamentos, "
+                                              "janelas, predios ou objetos que o identificam, em varias camadas de profundidade")
                     break
                 except Exception as e:  # noqa
                     if sc is None:
@@ -434,6 +461,9 @@ def _gerar_por_ia(spec, llm, log, tentativas=3):
         except Exception as e:  # noqa
             erros = str(e)[:240]
             log(f"      tentativa {k + 1} de '{spec['id']}' falhou: {erros}")
+            if getattr(e, "no_retry", False):
+                log("      sem nova tentativa: falha de captura/anexo; evitando repetir o mesmo pedido.")
+                break
     return None
 
 
@@ -449,7 +479,7 @@ def _procedural(spec):
             return rec
     if spec["tipo"] == "cenario":
         tipo = next((CHAVES_CENARIO[k] for w in nomes for k in CHAVES_CENARIO if w == k or (len(k) >= 4 and w.startswith(k))), "cidade")
-        svg = svg_cenario(tipo, spec.get("clima") or "noite", spec["id"])
+        svg = svg_cenario(tipo, spec.get("clima") or "noite", spec["id"], TM.tema(spec["tema"]) if spec.get("tema") else None)
     else:
         ic = next((CHAVES_ICONE[k] for w in nomes for k in CHAVES_ICONE if w == k or (len(k) >= 4 and w.startswith(k))), None)
         ic = ic or (("pessoa", "#4a78d8", "Pessoa") if spec["tipo"] == "personagem" else ("estrela", "#e8c14a", "Simbolo"))
@@ -464,14 +494,28 @@ def palavras_chave(txt):
     return [w for w in re.findall(r"[a-z0-9]+", t) if len(w) >= 3]
 
 
-def criar_recurso(spec, bib, llm=None, log=print):
-    """cria (se ainda nao existir) e devolve o id aprovado na biblioteca. Nunca falha: cai no gerador procedural."""
+def _normalizar_spec(spec):
     spec = dict(spec)
-    spec["id"] = slug(spec.get("id") or spec.get("nome"))
+    bruto = str(spec.get("id") or spec.get("nome") or "")
     spec.setdefault("tipo", "objeto")
     if spec["tipo"] not in ("personagem", "objeto", "cenario"):
         spec["tipo"] = "objeto"
+    if spec.get("tema") and not TM.existe(spec["tema"]):
+        spec.pop("tema")
+    suf = ("__" + spec["tema"]) if spec.get("tema") else None
+    if suf and bruto.endswith(suf):                         # idempotente: ja normalizado
+        spec["id"] = slug(bruto[:-len(suf)]) + suf
+    else:
+        spec["id"] = slug(bruto)
+        if spec["tipo"] == "cenario" and suf:
+            spec["id"] += suf                                # cenario e especifico do tema (um cenario escuro nao serve a um video claro)
     spec["tags"] = list(dict.fromkeys(list(spec.get("tags") or []) + palavras_chave(spec.get("nome", ""))[:2]))
+    return spec
+
+
+def criar_recurso(spec, bib, llm=None, log=print):
+    """cria (se ainda nao existir) e devolve o id aprovado na biblioteca. Nunca falha: cai no gerador procedural."""
+    spec = _normalizar_spec(spec)
     e = bib.idx["recursos"].get(spec["id"])
     if e and e.get("status") not in ("rejeitado",):
         # reserva procedural + IA disponivel: tenta substituir por um desenho de IA (nova versao do mesmo id)
@@ -489,9 +533,149 @@ def criar_recurso(spec, bib, llm=None, log=print):
     if getattr(res, "status", "") != "aprovado":
         bib.aprovar(res.id)
     bib.idx["recursos"][res.id]["origem"] = origem
+    if spec.get("tema"):
+        bib.idx["recursos"][res.id]["tema"] = spec["tema"]
     bib._salvar_index()
     log(f"   recurso novo: {res.id} ({spec['tipo']}, {origem})")
     return res.id
+
+
+def _registrar_recurso_gerado(spec, rec, bib, origem="ia", log=print):
+    res = bib.registrar(rec)
+    if getattr(res, "status", "") != "aprovado":
+        bib.aprovar(res.id)
+    bib.idx["recursos"][res.id]["origem"] = origem
+    if spec.get("tema"):
+        bib.idx["recursos"][res.id]["tema"] = spec["tema"]
+    bib._salvar_index()
+    log(f"   recurso novo: {res.id} ({spec['tipo']}, {origem})")
+    return res.id
+
+
+def _svg_validar_para_spec(svg, spec):
+    rec, _ = _recurso_de_svg(svg, spec, sidecar=None)
+    n_formas = sum(len(pt.get("formas", [])) for pt in (rec.get("partes", []) + rec.get("camadas", [])))
+    if n_formas < 15:
+        raise RecursoInvalido(f"desenho simples demais ({n_formas} formas; faca 40 ou mais, com detalhes)")
+    validar_recurso(rec)
+    _quadro_de_prova(rec, spec["tipo"])
+    if spec["tipo"] == "cenario" and _qc.liso_rec(rec):
+        raise RecursoInvalido("cenario LISO (uma cor so): falta desenhar o lugar de verdade")
+    return rec
+
+
+def _prompt_svg_lote(specs):
+    """um pedido com ate 2 SVGs independentes (um arquivo por recurso); respeita o tema visual de cada item"""
+    linhas = [
+        "Voce e um ilustrador vetorial senior de motion graphics cinematograficos. Gere ARQUIVOS SVG ANEXOS, nao imagens rasterizadas.",
+        "IMPORTANTE: cada item abaixo deve virar um arquivo SVG SEPARADO. Nao combine desenhos, nao reutilize o mesmo desenho e nao omita itens.",
+        "Nomeie cada arquivo exatamente com o id informado seguido de .svg. Se nao puder nomear, anexe separadamente e mantenha a ordem.",
+        "Nao escreva JSON, explicacoes ou markdown. Cada SVG deve ser XML completo, com uma unica raiz <svg> e fechamento </svg>.",
+        "REGRAS TECNICAS: use apenas path, rect, circle, ellipse, line, polyline, polygon, g, defs e linearGradient; gradiente somente em fill; "
+        "stroke em cor solida #hex. Proibido text, image, use, filter, mask, clipPath, pattern, style, script, animate, radialGradient e href.",
+        "DETALHE: desenho reconhecivel, volumes, reflexos, sombras proprias e detalhes de materiais (40 a 250 formas). Fundo transparente para objetos; "
+        "cenario deve preencher o viewBox e mostrar o LUGAR de verdade (nao uma parede lisa).",
+        "NAO reduza a complexidade para caber no lote. Gere cada arquivo completo, independente e valido.",
+    ]
+    for i, spec in enumerate(specs, start=1):
+        if spec["tipo"] == "cenario":
+            view = 'viewBox="0 0 1920 1080"; cenario completo com profundidade, camadas (<g id=...> do fundo para a frente) e atmosfera, sem personagens.'
+            clima = f" Clima: {spec.get('clima', 'noite')}. Terco inferior mais limpo (legendas)."
+        else:
+            view = "viewBox proporcional ao objeto (ex.: 0 0 500 400), objeto isolado, centralizado, base apoiada."
+            clima = " Fundo transparente, sem cartao ou retangulo de fundo."
+        linhas.append(
+            f"ARQUIVO {i}: {spec['id']}.svg\n"
+            f"ID INTERNO: {spec['id']} (inclua id=\"{spec['id']}\" na raiz <svg>).\n"
+            f"TIPO: {spec['tipo']}. NOME: {spec.get('nome', spec['id'])}.\n"
+            f"DESCRICAO VISUAL: {spec.get('descricao', '')}.\n"
+            f"TAGS: {', '.join(spec.get('tags') or [])}.{clima}{_texto_tema(spec)}\n"
+            f"FORMATO/COMPOSICAO: {view}\n")
+    return "\n".join(linhas)
+
+
+def _associar_svgs_lote(specs, artifacts):
+    """associa arquivos a recursos por nome/ID; usa a ordem so para nomes genericos"""
+    itens = [a for a in (artifacts or []) if a.get("extension") == ".svg" and a.get("valid") and a.get("content")]
+    itens.sort(key=lambda a: (0 if str(a.get("source", "")).lower() in {"download", "myhub_download"} else 1, str(a.get("filename", "")).lower()))
+    unicos, vistos = [], set()
+    for item in itens:
+        h = hashlib.sha256(str(item.get("content", "")).encode("utf-8")).hexdigest()
+        if h not in vistos:
+            vistos.add(h)
+            unicos.append(item)
+    atribuido, sobra = {}, []
+    norm = {slug(s["id"]): s["id"] for s in specs}            # slug() colapsa "__tema" em "_": compara pelos ids normalizados
+    for item in unicos:
+        stem = slug(Path(str(item.get("filename", ""))).stem)
+        achou = next((norm[k] for k in norm if k == stem or k in stem or stem in k), None)
+        if achou and achou not in atribuido:
+            atribuido[achou] = item.get("content", "")
+        else:
+            sobra.append(item.get("content", ""))
+    for spec in specs:
+        if spec["id"] not in atribuido and sobra:
+            atribuido[spec["id"]] = sobra.pop(0)
+    return atribuido
+
+
+def criar_recursos_lote(specs, bib, llm=None, log=print, tamanho_lote=2):
+    """cria varios recursos de uma vez. Com MyHub (llm.request_artifacts): objetos/cenarios em lotes de ate 2 por mensagem
+    (o chat do MyHub e lento); personagens ficam individuais (precisam de pivos/animacoes). Devolve {id_pedido: id_final}."""
+    prontos, mapa, vistos, resultado = [], {}, set(), {}
+    for original in specs or []:
+        spec = _normalizar_spec(original)
+        orig_id = slug(original.get("id") or original.get("nome"))
+        mapa[orig_id] = spec["id"]
+        if spec["id"] in vistos:
+            continue
+        vistos.add(spec["id"])
+        e = bib.idx["recursos"].get(spec["id"])
+        if e and e.get("status") not in ("rejeitado",) and not (llm and e.get("origem") == "procedural"):
+            if e.get("status") != "aprovado":
+                bib.aprovar(spec["id"])
+            resultado[spec["id"]] = spec["id"]
+        else:
+            prontos.append(spec)
+    individuais = [s for s in prontos if s["tipo"] == "personagem"]
+    agrupaveis = [s for s in prontos if s["tipo"] != "personagem"]
+    for spec in individuais:
+        resultado[spec["id"]] = criar_recurso(spec, bib, llm, log)
+    if not llm or not callable(getattr(llm, "request_artifacts", None)):
+        for spec in agrupaveis:
+            resultado[spec["id"]] = criar_recurso(spec, bib, llm, log)
+    else:
+        tamanho_lote = max(1, min(2, int(tamanho_lote or 2)))
+        for off in range(0, len(agrupaveis), tamanho_lote):
+            lote = agrupaveis[off:off + tamanho_lote]
+            ids = [s["id"] for s in lote]
+            escopo = slug(str(getattr(llm, "batch_scope", "projeto") or "projeto"))[:20]
+            chat = f"fabrica_m1__lote__{escopo}__" + hashlib.sha1("|".join(ids).encode("utf-8")).hexdigest()[:12]
+            try:
+                log(f"   MyHub Bridge: lote SVG {off // tamanho_lote + 1} - {len(lote)} recurso(s): {', '.join(ids)}")
+                pacote = llm.request_artifacts(_prompt_svg_lote(lote), chat=chat, outputs=("svg",), capture_all_downloads=True)
+                associados = _associar_svgs_lote(lote, pacote.get("artifacts", []))
+            except Exception as exc:  # noqa
+                log(f"   MyHub Bridge: lote falhou ({str(exc)[:180]}); usando reserva sem duplicar chamadas.")
+                associados = {}
+            tem_svg = bool(associados)
+            for spec in lote:
+                rec, svg = None, associados.get(spec["id"])
+                if svg:
+                    try:
+                        rec = _svg_validar_para_spec(svg, spec)
+                    except Exception as exc:  # noqa
+                        log(f"      SVG do lote rejeitado em '{spec['id']}': {str(exc)[:180]}")
+                if rec is None and tem_svg:
+                    log(f"      recurso '{spec['id']}' ausente/invalido no lote; uma tentativa individual.")
+                    rec = _gerar_por_ia(spec, llm, log, tentativas=1)
+                elif rec is None:
+                    log(f"      lote sem SVG valido; sem nova chamada individual para '{spec['id']}' (evita dobrar o tempo).")
+                origem = "ia"
+                if rec is None:
+                    rec, origem = _procedural(spec), "procedural"
+                resultado[spec["id"]] = _registrar_recurso_gerado(spec, rec, bib, origem=origem, log=log)
+    return {orig: resultado.get(final, final) for orig, final in mapa.items()}
 
 
 def garantir_kit(bib, log=print):

@@ -181,6 +181,20 @@ label.campo+input,label.campo+textarea{width:100%}
       <div class="config-grid">
         <label>Categoria editorial<select id="categoria" aria-label="Categoria editorial"><option value="curiosidades">Carregando categorias...</option></select></label>
       </div>
+      <details class="motor-picker" id="ia-picker">
+        <summary><span>🧠</span><span>Provedores de IA: <b>MyHub Bridge / Gemini</b></span><span class="motor-picker-hint">Configurar</span></summary>
+        <div style="padding:0 12px 12px">
+          <p class="submini">Escolha separadamente quem planeja, escreve, refina e cria as artes do M1. As alterações valem para novas produções.</p>
+          <div class="config-grid">
+            <label>Planejamento (Clássico/M1)<select id="prov-planejamento"><option value="auto">Automático (MyHub se instalado)</option><option value="myhub">MyHub Bridge</option><option value="gemini">Gemini</option></select></label>
+            <label>Criação do roteiro (Clássico/M1)<select id="prov-roteiro"><option value="auto">Automático (MyHub se instalado)</option><option value="myhub">MyHub Bridge</option><option value="gemini">Gemini</option></select></label>
+            <label>Checagem, otimização e refino (Clássico/M1)<select id="prov-refino"><option value="auto">Automático (MyHub se instalado)</option><option value="myhub">MyHub Bridge</option><option value="gemini">Gemini</option></select></label>
+            <label>Direção de arte e SVG/JSON do M1<select id="prov-arte-m1"><option value="auto">Automático (MyHub se instalado)</option><option value="myhub">MyHub Bridge</option><option value="gemini">Gemini</option><option value="local">Diretor local</option><option value="auto">Automático</option></select></label>
+          </div>
+          <button class="btn pequeno" id="btn-salvar-provedores" type="button">Salvar provedores de IA</button>
+          <span class="meta" id="provedores-status" aria-live="polite"></span>
+        </div>
+      </details>
       <div id="categoria-descricao" class="motor-alerta" aria-live="polite"></div>
       <details class="motor-picker" id="motor-picker">
         <summary><span id="motor-picker-icon">🎬</span><span>Motor visual: <b id="motor-picker-name">Clássico</b></span><span class="motor-picker-hint">Alterar</span></summary>
@@ -271,9 +285,25 @@ function renderTopo(){
   $('#nome-marca').textContent=canalAtual?.titulo||'';
   const k=estado.chaves||{};
   const p=(ok,txt)=>`<span class="pilula ${ok?'ok':'falta'}"><i></i>${txt}</span>`;
-$('#pilulas').innerHTML=p(k.gemini||k.fallback, k.gemini?(k.fallback?'Roteiros: Gemini + fallback':'Roteiros: Gemini'):(k.fallback?'Roteiros: só fallback':'Roteiros: falta chave de IA'))
+  const tp=k.texto_provedores_efetivos||k.texto_provedores||{};
+  const nomeProv=v=>({myhub:'MyHub',gemini:'Gemini',local:'Local',auto:'Automático'}[String(v||'auto').toLowerCase()]||'Automático');
+  const resumoTexto=(tp.planejamento===tp.roteiro&&tp.roteiro===tp.refino)
+    ?`Texto Clássico/M1: ${nomeProv(tp.roteiro)} (planejamento, roteiro e refino)`
+    :`Texto Clássico/M1: plan. ${nomeProv(tp.planejamento)} · roteiro ${nomeProv(tp.roteiro)} · refino ${nomeProv(tp.refino)}`;
+  const usaMyhub=[tp.planejamento,tp.roteiro,tp.refino,tp.artes_m1].includes('myhub');
+  const usaGemini=[tp.planejamento,tp.roteiro,tp.refino,tp.artes_m1].includes('gemini');
+  const provedoresOk=(!usaMyhub||k.myhub_bridge_configurado)&&(!usaGemini||k.gemini);
+  $('#pilulas').innerHTML=p(provedoresOk,esc(resumoTexto))
     +p((k.imagens||[]).length>0,(k.imagens||[]).length?'Imagens: '+esc(k.imagens.join(', ')):'Imagens: nenhuma fonte configurada')
     +p(k.video,k.video?'V\u00eddeos de banco: Pixabay':'V\u00eddeos de banco: desligado');
+  if(!renderTopo.provedoresCarregados){
+    const tp=k.texto_provedores||{};
+    $('#prov-planejamento').value=tp.planejamento||'auto';
+    $('#prov-roteiro').value=tp.roteiro||'auto';
+    $('#prov-refino').value=tp.refino||'auto';
+    $('#prov-arte-m1').value=tp.artes_m1||'auto';
+    renderTopo.provedoresCarregados=true;
+  }
 }
 
 /* ---------- ideias ---------- */
@@ -492,6 +522,22 @@ async function carregar(){
 [['qtd'],['duracao-16x9'],['duracao-9x16'],['f169'],['f916'],['revisar'],['simular']].forEach(([id])=>{const el=$('#'+id);const k='op_'+id;const v=localStorage.getItem(k);
   if(v!==null){el.type==='checkbox'?el.checked=v==='1':el.value=v}
   el.addEventListener('change',()=>localStorage.setItem(k,el.type==='checkbox'?(el.checked?'1':'0'):el.value))});
+$('#btn-salvar-provedores').addEventListener('click',async()=>{
+  const b=$('#btn-salvar-provedores');b.disabled=true;
+  try{
+    await api('/api/config/provedores',{
+      provedor_planejamento_narrativa:$('#prov-planejamento').value,
+      provedor_geracao_roteiro:$('#prov-roteiro').value,
+      provedor_refino_roteiro:$('#prov-refino').value,
+      m1_diretor_padrao:$('#prov-arte-m1').value
+    });
+    $('#provedores-status').textContent='Salvo. Novas produções usarão estas escolhas.';
+    renderTopo.provedoresCarregados=false;
+    await carregar();
+    toast('Provedores de IA atualizados.');
+  }catch(e){$('#provedores-status').textContent=e.message;toast(e.message,true)}
+  finally{b.disabled=false}
+});
 renderIdeias();carregarCatalogos();carregar().then(carregarVideos);setInterval(carregar,2000);
 </script>
 </body>

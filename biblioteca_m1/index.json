@@ -129,7 +129,7 @@
     "esquenta"
    ],
    "nome": "Termometro",
-   "criado": "2026-11-18 09:08",
+   "criado": "2026-11-20 21:03",
    "animacoes": [
     "balancar",
     "descer",
@@ -156,7 +156,7 @@
     "indice"
    ],
    "nome": "Medidor",
-   "criado": "2026-11-18 09:08",
+   "criado": "2026-11-20 21:03",
    "animacoes": [
     "balancar",
     "descer",
@@ -183,7 +183,7 @@
     "contagem"
    ],
    "nome": "Relogio",
-   "criado": "2026-11-18 09:08",
+   "criado": "2026-11-20 21:03",
    "animacoes": [
     "balancar",
     "flutuar",
@@ -209,7 +209,7 @@
     "cresce"
    ],
    "nome": "Barras crescendo",
-   "criado": "2026-11-18 09:08",
+   "criado": "2026-11-20 21:03",
    "animacoes": [
     "balancar",
     "crescer",
@@ -237,7 +237,7 @@
     "perda"
    ],
    "nome": "Barras desabando",
-   "criado": "2026-11-18 09:08",
+   "criado": "2026-11-20 21:03",
    "animacoes": [
     "balancar",
     "desabar",
@@ -262,7 +262,7 @@
     "objetivo"
    ],
    "nome": "Alvo",
-   "criado": "2026-11-18 09:08",
+   "criado": "2026-11-20 21:03",
    "animacoes": [
     "balancar",
     "flutuar",
@@ -275,40 +275,45 @@
    "motivo": "",
    "origem": "curado"
   },
-  "estudio_escuro": {
-   "arquivo": "recursos/cenario/estudio_escuro.v1.json",
+  "clinica_estetica_clara__saude_claro": {
+   "arquivo": "recursos/cenario/clinica_estetica_clara__saude_claro.v1.json",
    "tipo": "cenario",
-   "hash": "128a0cd67fd09527",
+   "hash": "39fd26a5ff2dd6d4",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "estudio",
-    "escuro",
-    "abstrato",
-    "minimalista"
+    "clinica",
+    "estetica",
+    "consultorio",
+    "saude",
+    "sala",
+    "tratamento"
    ],
-   "nome": "Estudio minimalista escuro",
-   "criado": "2026-11-18 09:13",
+   "nome": "Sala de Tratamento Estético Clinico",
+   "criado": "2026-11-20 21:06",
    "animacoes": [],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "saude_claro"
   },
-  "lampada_filamento": {
-   "arquivo": "recursos/objeto/lampada_filamento.v1.json",
+  "camada_pele_gordura": {
+   "arquivo": "recursos/objeto/camada_pele_gordura.v1.json",
    "tipo": "objeto",
-   "hash": "a02393c1aec99593",
+   "hash": "55126387e2d1b196",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "lampada",
-    "energia",
-    "luz",
-    "incandescentes"
+    "pele",
+    "gordura",
+    "tecido",
+    "adipocitos",
+    "anatomia",
+    "corte",
+    "transversal"
    ],
-   "nome": "Lampada incandescentes de filamento",
-   "criado": "2026-11-18 09:13",
+   "nome": "Corte Transversal de Pele e Gordura",
+   "criado": "2026-11-20 21:09",
    "animacoes": [
-    "apagar",
     "balancar",
     "flutuar",
     "parado",
@@ -317,322 +322,709 @@
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "saude_claro"
   },
-  "cruzamento_urbano": {
-   "arquivo": "recursos/cenario/cruzamento_urbano.v1.json",
-   "tipo": "cenario",
-   "hash": "1f709efbc92634e6",
+  "aplicador_criolipolise": {
+   "arquivo": "recursos/objeto/aplicador_criolipolise.v1.json",
+   "tipo": "objeto",
+   "hash": "92f1516109f85933",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "rua",
-    "cidade",
-    "escuro",
-    "cruzamento",
-    "urbano"
+    "aplicador",
+    "criolipolise",
+    "equipamento",
+    "vacuo",
+    "manopla"
    ],
-   "nome": "Cruzamento urbano no escuro",
-   "criado": "2026-11-18 09:17",
+   "nome": "Manopla do Aplicador de Vácuo",
+   "criado": "2026-11-20 21:09",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "pulso_temperatura",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "saude_claro"
+  },
+  "microscopio_celular__saude_claro": {
+   "arquivo": "recursos/cenario/microscopio_celular__saude_claro.v1.json",
+   "tipo": "cenario",
+   "hash": "9c420644787a8b84",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "microscopio",
+    "celulas",
+    "biologia",
+    "micro",
+    "visao",
+    "microscopica"
+   ],
+   "nome": "Visão Microscópica de Tecido Biológico",
+   "criado": "2026-11-20 21:11",
    "animacoes": [],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "saude_claro"
   },
-  "semaforo_apagado": {
-   "arquivo": "recursos/objeto/semaforo_apagado.v1.json",
+  "celula_adiposa": {
+   "arquivo": "recursos/objeto/celula_adiposa.v1.json",
    "tipo": "objeto",
-   "hash": "efa527c140c99990",
+   "hash": "cfaa65174bda36eb",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "semaforo",
-    "transito",
-    "cidade"
+    "adipocito",
+    "gordura",
+    "celula",
+    "lipidio"
    ],
-   "nome": "Semaforo de transito apagado",
-   "criado": "2026-11-18 09:19",
+   "nome": "Célula de Gordura (Adipócito)",
+   "criado": "2026-11-20 21:12",
    "animacoes": [
     "balancar",
+    "congelar",
     "flutuar",
-    "oscilacao_vento",
     "parado",
     "piscar",
     "pulsar",
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "saude_claro"
   },
-  "antena_celular_fora": {
-   "arquivo": "recursos/objeto/antena_celular_fora.v1.json",
+  "celula_apoptose": {
+   "arquivo": "recursos/objeto/celula_apoptose.v1.json",
    "tipo": "objeto",
-   "hash": "3542657bf735ea69",
+   "hash": "77394230b5151e31",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "antena",
-    "sinal",
-    "celular",
-    "torre",
-    "telefonia"
+    "apoptose",
+    "morte_celular",
+    "fragmentacao",
+    "celula"
    ],
-   "nome": "Torre de telefonia sem sinal",
-   "criado": "2026-11-18 09:26",
+   "nome": "Célula em Apoptose",
+   "criado": "2026-11-20 21:13",
    "animacoes": [
     "balancar",
     "flutuar",
     "parado",
     "piscar",
     "pulsar",
-    "sem_sinal_alerta",
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "saude_claro"
   },
-  "servidor_desligado": {
-   "arquivo": "recursos/objeto/servidor_desligado.v1.json",
+  "macrofago_imunologico": {
+   "arquivo": "recursos/objeto/macrofago_imunologico.v1.json",
    "tipo": "objeto",
-   "hash": "410022aa5ccd430f",
+   "hash": "a51f0e0abbbd88ad",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "servidor",
-    "internet",
-    "dados",
-    "rack",
-    "servidores"
+    "macrofago",
+    "imunidade",
+    "defesa",
+    "limpeza",
+    "imunologico"
    ],
-   "nome": "Rack de servidores desligados",
-   "criado": "2026-11-18 09:29",
+   "nome": "Macrófago Imunológico",
+   "criado": "2026-11-20 21:14",
    "animacoes": [
-    "abrir_porta",
     "balancar",
-    "balancar_cabos",
+    "engolfar",
     "flutuar",
     "parado",
     "piscar",
     "pulsar",
-    "puxar_gaveta",
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "saude_claro"
   },
-  "subsolo_hospital": {
-   "arquivo": "recursos/cenario/subsolo_hospital.v1.json",
+  "sistema_linfatico_bg__saude_claro": {
+   "arquivo": "recursos/cenario/sistema_linfatico_bg__saude_claro.v1.json",
    "tipo": "cenario",
-   "hash": "f1d4e8829021af7f",
+   "hash": "2bfe6218c318f71b",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "hospital",
-    "subsolo",
-    "emergencia"
+    "linfatico",
+    "corpo",
+    "circulacao",
+    "metabolismo",
+    "rede",
+    "linfatica"
    ],
-   "nome": "Subsolo do hospital em emergencia",
-   "criado": "2026-11-18 09:32",
+   "nome": "Rede Linfática do Corpo",
+   "criado": "2026-11-20 21:16",
    "animacoes": [],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "saude_claro"
   },
-  "gerador_hospitalar": {
-   "arquivo": "recursos/objeto/gerador_hospitalar.v1.json",
+  "vaso_linfatico": {
+   "arquivo": "recursos/objeto/vaso_linfatico.v1.json",
    "tipo": "objeto",
-   "hash": "f075884d9ef2e731",
+   "hash": "9de8e66aeb029f79",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "gerador",
-    "hospital",
-    "energia",
-    "diesel"
+    "vaso",
+    "linfatico",
+    "fluxo",
+    "drenagem",
+    "duto"
    ],
-   "nome": "Gerador diesel de grande porte",
-   "criado": "2026-11-18 09:34",
+   "nome": "Duto do Vaso Linfático",
+   "criado": "2026-11-20 21:18",
    "animacoes": [
     "balancar",
+    "drenagem_linfatica",
     "flutuar",
-    "operacao_emergencia",
     "parado",
     "piscar",
     "pulsar",
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "saude_claro"
   },
-  "cozinha_apartamento": {
-   "arquivo": "recursos/cenario/cozinha_apartamento.v1.json",
-   "tipo": "cenario",
-   "hash": "90a301ed61e43ba6",
+  "silhueta_reducao": {
+   "arquivo": "recursos/objeto/silhueta_reducao.v1.json",
+   "tipo": "objeto",
+   "hash": "531b32bf4a8e4f35",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "cozinha",
-    "apartamento",
-    "noite"
+    "cintura",
+    "silhueta",
+    "resultado",
+    "antes_depois",
+    "grafico"
    ],
-   "nome": "Cozinha de apartamento escuro",
-   "criado": "2026-11-18 09:39",
+   "nome": "Gráfico de Silhueta Corporal em Redução",
+   "criado": "2026-11-20 21:19",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "reduzir_gordura",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "saude_claro"
+  },
+  "aparelho_estetico_completo": {
+   "arquivo": "recursos/objeto/aparelho_estetico_completo.v1.json",
+   "tipo": "objeto",
+   "hash": "211d887c916eb533",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "aparelho",
+    "maquina",
+    "tecnologia",
+    "estetica",
+    "equipamento",
+    "criolipolise"
+   ],
+   "nome": "Equipamento de Criolipólise Premium",
+   "criado": "2026-11-20 21:21",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "respiro",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "saude_claro"
+  },
+  "astronauta_apollo_lunar": {
+   "arquivo": "recursos/personagem/astronauta_apollo_lunar.v1.json",
+   "tipo": "personagem",
+   "hash": "79d4888140fc45f5",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "astronauta",
+    "Apollo",
+    "traje espacial",
+    "Lua",
+    "apollo"
+   ],
+   "nome": "Astronauta Apollo em traje extraveicular",
+   "criado": "2026-11-22 22:28",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "procedural",
+   "tema": "neon_escuro"
+  },
+  "cenario_superficie_lunar_neon__neon_escuro": {
+   "arquivo": "recursos/cenario/cenario_superficie_lunar_neon__neon_escuro.v1.json",
+   "tipo": "cenario",
+   "hash": "da5e9cc757ca6ffe",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "lua",
+    "superficie lunar",
+    "crateras",
+    "espaco",
+    "superficie",
+    "lunar"
+   ],
+   "nome": "Superfície lunar sob céu profundo",
+   "criado": "2026-11-22 22:29",
    "animacoes": [],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "neon_escuro"
   },
-  "torneira_gotejando": {
-   "arquivo": "recursos/objeto/torneira_gotejando.v1.json",
+  "bota_astronauta_lunar": {
+   "arquivo": "recursos/objeto/bota_astronauta_lunar.v1.json",
    "tipo": "objeto",
-   "hash": "42f5a4d958b91df3",
+   "hash": "abaacfa60b6f67b5",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "torneira",
-    "agua",
-    "seca",
-    "inox"
+    "bota",
+    "astronauta",
+    "pegada",
+    "lua",
+    "1972"
    ],
-   "nome": "Torneira inox gotejando",
-   "criado": "2026-11-18 09:40",
+   "nome": "Bota de astronauta suspensa sobre a poeira lunar",
+   "criado": "2026-11-22 22:29",
    "animacoes": [
     "balancar",
     "flutuar",
-    "gotejar",
     "parado",
     "piscar",
     "pulsar",
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "neon_escuro"
   },
-  "estacao_bombeamento": {
-   "arquivo": "recursos/objeto/estacao_bombeamento.v1.json",
+  "poeira_lunar_em_suspensao": {
+   "arquivo": "recursos/objeto/poeira_lunar_em_suspensao.v1.json",
    "tipo": "objeto",
-   "hash": "fcf3333cc87eb0d3",
+   "hash": "e649943a5d6c80b9",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "bomba",
-    "agua",
+    "poeira",
+    "lua",
+    "solo",
+    "pegada",
+    "lunar"
+   ],
+   "nome": "Poeira lunar levantada pela bota",
+   "criado": "2026-11-22 22:30",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "modulo_lunar_apollo": {
+   "arquivo": "recursos/objeto/modulo_lunar_apollo.v1.json",
+   "tipo": "objeto",
+   "hash": "b2a44ee63f62d24c",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "Apollo",
+    "modulo lunar",
+    "nave",
+    "pouso",
+    "Lua",
+    "modulo",
+    "lunar"
+   ],
+   "nome": "Módulo lunar Apollo na superfície",
+   "criado": "2026-11-22 22:30",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "bandeira_missao_apollo": {
+   "arquivo": "recursos/objeto/bandeira_missao_apollo.v1.json",
+   "tipo": "objeto",
+   "hash": "bad9b322ba54f73d",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "bandeira",
+    "Apollo",
+    "Lua",
+    "missao",
+    "dos"
+   ],
+   "nome": "Bandeira dos Estados Unidos fincada na Lua",
+   "criado": "2026-11-22 22:31",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "seis_trilhas_pousos_apollo": {
+   "arquivo": "recursos/objeto/seis_trilhas_pousos_apollo.v1.json",
+   "tipo": "objeto",
+   "hash": "01ca9759439f0672",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "pegadas",
+    "seis pousos",
+    "Apollo",
+    "Lua",
+    "trilhas",
+    "seis"
+   ],
+   "nome": "Seis trilhas de pegadas cruzando a planície lunar",
+   "criado": "2026-11-22 22:31",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "escritorio_missoes_nasa_neon__neon_escuro": {
+   "arquivo": "recursos/cenario/escritorio_missoes_nasa_neon__neon_escuro.v1.json",
+   "tipo": "cenario",
+   "hash": "32285f9a40a8ddb2",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "escritorio",
+    "planejamento",
+    "NASA",
+    "orcamento",
+    "missoes"
+   ],
+   "nome": "Escritório de planejamento de missões espaciais",
+   "criado": "2026-11-22 22:33",
+   "animacoes": [],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "plano_missao_lunar_cancelado": {
+   "arquivo": "recursos/objeto/plano_missao_lunar_cancelado.v1.json",
+   "tipo": "objeto",
+   "hash": "58b861ee9c187c8c",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "plano",
+    "missao lunar",
+    "cancelamento",
+    "orcamento",
+    "papel",
+    "missao"
+   ],
+   "nome": "Plano de missão lunar riscado sobre a mesa",
+   "criado": "2026-11-22 22:33",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "calculadora_orcamento_missoes": {
+   "arquivo": "recursos/objeto/calculadora_orcamento_missoes.v1.json",
+   "tipo": "objeto",
+   "hash": "fea2d241fa1c2766",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "orcamento",
+    "calculadora",
+    "planilha",
+    "custo",
+    "missao"
+   ],
+   "nome": "Calculadora e planilha de orçamento de missões",
+   "criado": "2026-11-22 22:34",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "bancada_engenharia_espacial_neon__neon_escuro": {
+   "arquivo": "recursos/cenario/bancada_engenharia_espacial_neon__neon_escuro.v1.json",
+   "tipo": "cenario",
+   "hash": "ca297ead467ed3aa",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "bancada",
+    "engenharia",
+    "oficina",
+    "modelos espaciais",
+    "Skylab"
+   ],
+   "nome": "Bancada de engenharia de projetos espaciais",
+   "criado": "2026-11-22 22:35",
+   "animacoes": [],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "modelo_estacao_skylab": {
+   "arquivo": "recursos/objeto/modelo_estacao_skylab.v1.json",
+   "tipo": "objeto",
+   "hash": "b2d92cad0bbb04fc",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "Skylab",
+    "estacao espacial",
+    "NASA",
+    "orbita",
+    "projeto",
+    "modelo",
+    "detalhado"
+   ],
+   "nome": "Modelo detalhado da estação espacial Skylab",
+   "criado": "2026-11-22 22:35",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "procedural",
+   "tema": "neon_escuro"
+  },
+  "maquete_foguete_lunar": {
+   "arquivo": "recursos/objeto/maquete_foguete_lunar.v1.json",
+   "tipo": "objeto",
+   "hash": "dad7e48ec84ae3db",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "foguete",
+    "Lua",
+    "maquete",
+    "Apollo",
+    "projeto espacial",
+    "missil",
+    "misseis",
+    "projetil"
+   ],
+   "nome": "Maquete de foguete lunar ao lado do Skylab",
+   "criado": "2026-11-22 22:35",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer",
+    "voar"
+   ],
+   "motivo": "",
+   "origem": "procedural",
+   "tema": "neon_escuro"
+  },
+  "desenho_tecnico_skylab": {
+   "arquivo": "recursos/objeto/desenho_tecnico_skylab.v1.json",
+   "tipo": "objeto",
+   "hash": "3d5f5be71dd34ede",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "desenho tecnico",
+    "projetos",
+    "NASA",
     "estacao",
-    "hidraulica"
+    "foguete",
+    "prancha",
+    "tecnica"
    ],
-   "nome": "Bomba hidraulica inativa",
-   "criado": "2026-11-18 09:41",
+   "nome": "Prancha técnica de projetos espaciais concorrentes",
+   "criado": "2026-11-22 22:36",
    "animacoes": [
     "balancar",
     "flutuar",
-    "inativo",
     "parado",
     "piscar",
     "pulsar",
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "neon_escuro"
   },
-  "supermercado_escuro": {
-   "arquivo": "recursos/cenario/supermercado_escuro.v1.json",
+  "hangar_montagem_lunar_neon__neon_escuro": {
+   "arquivo": "recursos/cenario/hangar_montagem_lunar_neon__neon_escuro.v1.json",
    "tipo": "cenario",
-   "hash": "d37c962cc750e29b",
+   "hash": "2fb5b39def18ac0c",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "supermercado",
-    "corredor",
-    "escuro",
-    "corredores"
+    "hangar",
+    "montagem",
+    "engenharia",
+    "nave lunar",
+    "instalacao espacial",
+    "industrial"
    ],
-   "nome": "Corredores de supermercado no escuro",
-   "criado": "2026-11-18 09:42",
+   "nome": "Hangar industrial de montagem lunar",
+   "criado": "2026-11-22 22:37",
    "animacoes": [],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "neon_escuro"
   },
-  "prateleira_vazia": {
-   "arquivo": "recursos/objeto/prateleira_vazia.v1.json",
+  "sistema_pouso_humano_lunar": {
+   "arquivo": "recursos/objeto/sistema_pouso_humano_lunar.v1.json",
    "tipo": "objeto",
-   "hash": "995a2409a7751a2e",
+   "hash": "0a3d7e279e2caa3f",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "prateleira",
-    "comida",
-    "vazio",
-    "prateleiras",
-    "desabastecidas"
+    "modulo lunar",
+    "sistema de pouso",
+    "lander",
+    "Artemis",
+    "Lua",
+    "engenharia",
+    "sistema",
+    "pouso",
+    "tanque",
+    "blindado",
+    "veiculo",
+    "combate"
    ],
-   "nome": "Prateleiras desabastecidas",
-   "criado": "2026-11-18 09:44",
+   "nome": "Sistema de pouso lunar humano em montagem",
+   "criado": "2026-11-22 22:37",
    "animacoes": [
+    "atirar",
     "balancar",
-    "desolacao",
     "flutuar",
     "parado",
     "piscar",
     "pulsar",
+    "rodar",
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "procedural",
+   "tema": "neon_escuro"
   },
-  "carrinho_compras": {
-   "arquivo": "recursos/objeto/carrinho_compras.v1.json",
-   "tipo": "objeto",
-   "hash": "52fb0c12f1fdb411",
-   "versao": 1,
-   "status": "aprovado",
-   "tags": [
-    "carrinho",
-    "compras"
-   ],
-   "nome": "Carrinho de compras abandonado",
-   "criado": "2026-11-18 09:45",
-   "animacoes": [
-    "balancar",
-    "flutuar",
-    "impacto_inicial",
-    "parado",
-    "piscar",
-    "pulsar",
-    "tremer"
-   ],
-   "motivo": "",
-   "origem": "ia"
-  },
-  "cozinha_industrial": {
-   "arquivo": "recursos/cenario/cozinha_industrial.v1.json",
+  "orbita_lunar_neon__neon_escuro": {
+   "arquivo": "recursos/cenario/orbita_lunar_neon__neon_escuro.v1.json",
    "tipo": "cenario",
-   "hash": "a5b62cf7db546609",
+   "hash": "d16afa0da52179d2",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "camara fria",
-    "refrigerador",
-    "comercio",
-    "camara",
-    "fria"
+    "orbita lunar",
+    "Lua",
+    "nave",
+    "espaco",
+    "horizonte",
+    "orbita",
+    "baixa"
    ],
-   "nome": "Camara fria comercial",
-   "criado": "2026-11-18 09:47",
+   "nome": "Órbita baixa sobre o horizonte lunar",
+   "criado": "2026-11-22 22:38",
    "animacoes": [],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "neon_escuro"
   },
-  "refrigerador_comercial": {
-   "arquivo": "recursos/objeto/refrigerador_comercial.v1.json",
+  "capsula_tripulada_orion": {
+   "arquivo": "recursos/objeto/capsula_tripulada_orion.v1.json",
    "tipo": "objeto",
-   "hash": "69fbf7dbda332b0a",
+   "hash": "dc06adf3313d8a44",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "refrigerador",
-    "geladeira",
-    "alimentos",
-    "comercial"
+    "capsula",
+    "tripulada",
+    "Orion",
+    "orbita lunar",
+    "retorno"
    ],
-   "nome": "Refrigerador comercial com porta aberta",
-   "criado": "2026-11-18 09:48",
+   "nome": "Cápsula tripulada em órbita lunar",
+   "criado": "2026-11-22 22:38",
    "animacoes": [
     "balancar",
     "flutuar",
@@ -642,25 +1034,28 @@
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "neon_escuro"
   },
-  "bomba_posto": {
-   "arquivo": "recursos/objeto/bomba_posto.v1.json",
+  "escudo_termico_capsula": {
+   "arquivo": "recursos/objeto/escudo_termico_capsula.v1.json",
    "tipo": "objeto",
-   "hash": "7ab95d544d859cbb",
+   "hash": "e78466b6001d3644",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "posto",
-    "gasolina",
-    "bomba",
-    "combustivel"
+    "escudo termico",
+    "retorno",
+    "capsula",
+    "tripulacao",
+    "reentrada",
+    "escudo",
+    "termico"
    ],
-   "nome": "Bomba de combustivel travada",
-   "criado": "2026-11-18 09:51",
+   "nome": "Escudo térmico de retorno da cápsula",
+   "criado": "2026-11-22 22:42",
    "animacoes": [
     "balancar",
-    "balanco_leve",
     "flutuar",
     "parado",
     "piscar",
@@ -668,66 +1063,175 @@
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "procedural",
+   "tema": "neon_escuro"
   },
-  "subestacao_eletrica": {
-   "arquivo": "recursos/cenario/subestacao_eletrica.v1.json",
+  "plataforma_lancamento_artemis_neon__neon_escuro": {
+   "arquivo": "recursos/cenario/plataforma_lancamento_artemis_neon__neon_escuro.v1.json",
    "tipo": "cenario",
-   "hash": "b58727e88c3a71c4",
+   "hash": "c25112318a94d4d8",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "subestacao",
+    "plataforma",
+    "lancamento",
+    "foguete",
+    "Artemis",
+    "espacoporto"
+   ],
+   "nome": "Plataforma de lançamento antes do amanhecer",
+   "criado": "2026-11-22 22:42",
+   "animacoes": [],
+   "motivo": "",
+   "origem": "procedural",
+   "tema": "neon_escuro"
+  },
+  "superficie_lunar_intocada": {
+   "arquivo": "recursos/objeto/superficie_lunar_intocada.v1.json",
+   "tipo": "objeto",
+   "hash": "eb37a4d76395e8e1",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "Lua",
+    "crateras",
+    "superficie",
+    "intocada",
+    "sobrevoo",
+    "lunares"
+   ],
+   "nome": "Crateras lunares intocadas vistas de cima",
+   "criado": "2026-11-22 22:45",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "polo_sul_lunar_neon__neon_escuro": {
+   "arquivo": "recursos/cenario/polo_sul_lunar_neon__neon_escuro.v1.json",
+   "tipo": "cenario",
+   "hash": "e62639ca2086926f",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "polo sul",
+    "Lua",
+    "cratera",
+    "pouso",
+    "Artemis",
+    "terreno",
+    "acidentado"
+   ],
+   "nome": "Terreno acidentado do polo sul lunar",
+   "criado": "2026-11-22 22:49",
+   "animacoes": [],
+   "motivo": "",
+   "origem": "procedural",
+   "tema": "neon_escuro"
+  },
+  "marcador_zona_pouso_sul_lunar": {
+   "arquivo": "recursos/objeto/marcador_zona_pouso_sul_lunar.v1.json",
+   "tipo": "objeto",
+   "hash": "d6a470bbeb014dfb",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "polo sul",
+    "zona de pouso",
+    "marcador",
+    "Artemis",
+    "Lua",
+    "zona",
+    "demarcada"
+   ],
+   "nome": "Zona demarcada para pouso perto do polo sul lunar",
+   "criado": "2026-11-22 22:50",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "base_lunar_amanhecer_neon__neon_escuro": {
+   "arquivo": "recursos/cenario/base_lunar_amanhecer_neon__neon_escuro.v1.json",
+   "tipo": "cenario",
+   "hash": "15be0bb649aab2f7",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "habitat lunar",
+    "base",
+    "Lua",
+    "presenca sustentavel",
+    "Terra",
+    "local",
+    "futura"
+   ],
+   "nome": "Local de futura presença humana na Lua",
+   "criado": "2026-11-22 22:50",
+   "animacoes": [],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "habitat_lunar_modular": {
+   "arquivo": "recursos/objeto/habitat_lunar_modular.v1.json",
+   "tipo": "objeto",
+   "hash": "a59812f4068dcb69",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "habitat",
+    "base lunar",
+    "presenca sustentavel",
+    "astronautas",
+    "Lua",
+    "lunar"
+   ],
+   "nome": "Habitat lunar modular para permanência humana",
+   "criado": "2026-11-22 22:50",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "neon_escuro"
+  },
+  "painel_solar_base_lunar": {
+   "arquivo": "recursos/objeto/painel_solar_base_lunar.v1.json",
+   "tipo": "objeto",
+   "hash": "81f848de8274228f",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "painel solar",
     "energia",
-    "campo",
-    "eletrica"
+    "habitat",
+    "base lunar",
+    "sustentavel",
+    "paineis",
+    "solares"
    ],
-   "nome": "Subestacao eletrica ao anoitecer",
-   "criado": "2026-11-18 09:52",
-   "animacoes": [],
-   "motivo": "",
-   "origem": "ia"
-  },
-  "transformador_potencia": {
-   "arquivo": "recursos/objeto/transformador_potencia.v1.json",
-   "tipo": "objeto",
-   "hash": "5b47ccb3077e63ca",
-   "versao": 1,
-   "status": "aprovado",
-   "tags": [
-    "transformador",
-    "energia",
-    "subestacao",
-    "alta"
-   ],
-   "nome": "Transformador de alta tensao",
-   "criado": "2026-11-18 09:54",
-   "animacoes": [
-    "balancar",
-    "flutuar",
-    "operacao",
-    "parado",
-    "piscar",
-    "pulsar",
-    "tremer"
-   ],
-   "motivo": "",
-   "origem": "ia"
-  },
-  "torre_transmissao": {
-   "arquivo": "recursos/objeto/torre_transmissao.v1.json",
-   "tipo": "objeto",
-   "hash": "66b9c2c962360b2b",
-   "versao": 1,
-   "status": "aprovado",
-   "tags": [
-    "torre",
-    "linhas",
-    "energia",
-    "alta"
-   ],
-   "nome": "Torre de alta tensao",
-   "criado": "2026-11-18 09:55",
+   "nome": "Painéis solares ao lado do habitat lunar",
+   "criado": "2026-11-22 22:50",
    "animacoes": [
     "balancar",
     "flutuar",
@@ -737,130 +1241,152 @@
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "ia",
+   "tema": "neon_escuro"
   },
-  "sala_controle_usina": {
-   "arquivo": "recursos/cenario/sala_controle_usina.v1.json",
+  "cenario_cidade_dia__natureza_dia": {
+   "arquivo": "recursos/cenario/cenario_cidade_dia__natureza_dia.v1.json",
    "tipo": "cenario",
-   "hash": "eab7e63e28b9f792",
+   "hash": "c1d3721dff85b740",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "usina",
-    "painel",
-    "controle",
-    "sala"
+    "cidade",
+    "dia",
+    "cenario"
    ],
-   "nome": "Sala de controle de usina eletrica",
-   "criado": "2026-11-18 09:56",
+   "nome": "Cenario cidade",
+   "criado": "2026-11-23 10:46",
    "animacoes": [],
    "motivo": "",
-   "origem": "ia"
+   "origem": "procedural",
+   "tema": "natureza_dia"
   },
-  "painel_disjuntores": {
-   "arquivo": "recursos/objeto/painel_disjuntores.v1.json",
+  "radar": {
+   "arquivo": "recursos/objeto/radar.v1.json",
    "tipo": "objeto",
-   "hash": "6411f665036fdc08",
+   "hash": "9571158319f7aec7",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "painel",
-    "disjuntor",
-    "religamento",
-    "chaves"
+    "satelites",
+    "radar",
+    "defesa",
+    "satelite",
+    "monitoramento",
+    "vigilancia"
    ],
-   "nome": "Painel de chaves e disjuntores",
-   "criado": "2026-11-18 10:06",
+   "nome": "Radar",
+   "criado": "2026-11-23 10:46",
    "animacoes": [
     "balancar",
     "flutuar",
-    "monitorar",
     "parado",
     "piscar",
     "pulsar",
-    "religar",
+    "tremer",
+    "varrer"
+   ],
+   "motivo": "",
+   "origem": "procedural",
+   "tema": "natureza_dia"
+  },
+  "aviao": {
+   "arquivo": "recursos/objeto/aviao.v1.json",
+   "tipo": "objeto",
+   "hash": "66aa734897c3ed69",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "avioes",
+    "aviao",
+    "caca",
+    "aeronave",
+    "aereo",
+    "aerea",
+    "combate"
+   ],
+   "nome": "Caca de combate",
+   "criado": "2026-11-23 10:46",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer",
+    "voar"
+   ],
+   "motivo": "",
+   "origem": "procedural",
+   "tema": "natureza_dia"
+  },
+  "navio": {
+   "arquivo": "recursos/objeto/navio.v1.json",
+   "tipo": "objeto",
+   "hash": "ca60069e17dfbf7a",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "navios",
+    "navio",
+    "marinha",
+    "naval",
+    "fragata",
+    "guerra"
+   ],
+   "nome": "Navio de guerra",
+   "criado": "2026-11-23 10:46",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "procedural",
+   "tema": "natureza_dia"
   },
-  "montanhas_linhas": {
-   "arquivo": "recursos/cenario/montanhas_linhas.v1.json",
-   "tipo": "cenario",
-   "hash": "3c6a593bf51d449f",
-   "versao": 1,
-   "status": "aprovado",
-   "tags": [
-    "montanhas",
-    "linhas",
-    "noite",
-    "vale"
-   ],
-   "nome": "Vale de montanhas com linhas de transmissao",
-   "criado": "2026-11-18 10:10",
-   "animacoes": [],
-   "motivo": "",
-   "origem": "ia"
-  },
-  "linha_transmissao_rede": {
-   "arquivo": "recursos/objeto/linha_transmissao_rede.v1.json",
+  "sinal": {
+   "arquivo": "recursos/objeto/sinal.v1.json",
    "tipo": "objeto",
-   "hash": "f4ba1d36eb695b2a",
+   "hash": "8947adb14bdf10db",
    "versao": 1,
    "status": "aprovado",
    "tags": [
+    "redes",
     "rede",
-    "linhas",
-    "energia",
-    "linha",
-    "transmissao"
+    "sinal"
    ],
-   "nome": "Linha de transmissao acendendo",
-   "criado": "2026-11-18 10:11",
+   "nome": "Sinal",
+   "criado": "2026-11-23 10:46",
    "animacoes": [
     "balancar",
     "flutuar",
     "parado",
     "piscar",
     "pulsar",
-    "reacender",
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "procedural",
+   "tema": "natureza_dia"
   },
-  "laboratorio_global": {
-   "arquivo": "recursos/cenario/laboratorio_global.v1.json",
-   "tipo": "cenario",
-   "hash": "31646caad2bdee71",
-   "versao": 1,
-   "status": "aprovado",
-   "tags": [
-    "laboratorio",
-    "globo",
-    "futuro",
-    "infraestrutura"
-   ],
-   "nome": "Laboratorio de infraestrutura global",
-   "criado": "2026-11-18 10:12",
-   "animacoes": [],
-   "motivo": "",
-   "origem": "ia"
-  },
-  "globo_rede_eletrica": {
-   "arquivo": "recursos/objeto/globo_rede_eletrica.v1.json",
+  "cadeado": {
+   "arquivo": "recursos/objeto/cadeado.v1.json",
    "tipo": "objeto",
-   "hash": "a964467be1d6de98",
+   "hash": "cb53d539c8918519",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "globo",
-    "mapa",
-    "rede",
-    "terrestre"
+    "bancos",
+    "banco",
+    "cadeado"
    ],
-   "nome": "Globo terrestre holografico com rede eletrica",
-   "criado": "2026-11-18 10:13",
+   "nome": "Cadeado",
+   "criado": "2026-11-23 10:46",
    "animacoes": [
     "balancar",
     "flutuar",
@@ -870,33 +1396,33 @@
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "procedural",
+   "tema": "natureza_dia"
   },
-  "vela_acesa": {
-   "arquivo": "recursos/objeto/vela_acesa.v1.json",
+  "energia": {
+   "arquivo": "recursos/objeto/energia.v1.json",
    "tipo": "objeto",
-   "hash": "4515bbf943f51dcc",
+   "hash": "1a23f27e22d3e41c",
    "versao": 1,
    "status": "aprovado",
    "tags": [
-    "vela",
-    "fogo",
-    "luz",
-    "acesa"
+    "eletricas",
+    "eletric",
+    "energia"
    ],
-   "nome": "Vela acesa com chama oscilante",
-   "criado": "2026-11-18 10:14",
+   "nome": "Energia",
+   "criado": "2026-11-23 10:46",
    "animacoes": [
     "balancar",
     "flutuar",
-    "oscilar",
     "parado",
     "piscar",
     "pulsar",
     "tremer"
    ],
    "motivo": "",
-   "origem": "ia"
+   "origem": "procedural",
+   "tema": "natureza_dia"
   }
  }
 }

@@ -6,7 +6,7 @@ Um comando faz tudo:
 
 Etapas (cada uma salva seu resultado e pula o que ja existe, entao
 se algo falhar voce roda o MESMO comando de novo e ele continua de onde parou):
-    1. roteiro   -> IA (Gemini, plano gratuito) escreve roteiro, prompts de imagem e metadados
+    1. roteiro   -> MyHub Bridge ou Gemini (seleção por etapa no config.json)
                     (ou voce usa o roteiro feito no My Hub: veja --so-prompt e --roteiro)
     2. voz       -> narracao de cada cena com Kokoro (gratuito, roda no seu PC)
     3. imagens   -> Gemini (Nano Banana) ou, se falhar, banco gratuito Pexels
@@ -109,8 +109,15 @@ PADROES = {
     "modelo_cloudflare": "@cf/black-forest-labs/flux-1-schnell",
     "cloudflare_steps": 4,
     "provedores_imagem": ["cloudflare", "gemini", "pixabay", "pexels"],
-    "modelo_texto": "gemini-3.6-flash",
-    "modelos_texto_fallback": ["gemini-3.5-flash-lite"],
+    "modelo_texto": "gemini-3.8-flash",
+    "modelos_texto_fallback": ["gemini-3.6-flash", "gemini-3.5-flash-lite"],
+    # Provedor por etapa: "auto" = MyHub se o Bridge estiver instalado (C:/myhub-bridge ou MYHUB_BRIDGE_DIR), senão Gemini. Pode fixar "myhub" ou "gemini".
+    "provedor_planejamento_narrativa": "auto",
+    "provedor_geracao_roteiro": "auto",
+    "provedor_refino_roteiro": "auto",
+    "m1_diretor_padrao": "auto",
+    "myhub_timeout_seconds": 900,
+    "myhub_model": None,
     "modelo_imagem": "gemini-3.1-flash-lite-image",
     "imagem_ia": False,          # True = tenta gerar imagens com o Gemini (pode exigir plano pago)
     "pausa_entre_imagens": 4,
@@ -197,8 +204,8 @@ def gerar_conteudo_texto_com_fallback(cliente, cfg, contents, generation_config,
     A ordem padrao e gemini-3.8-flash -> gemini-3.6-flash -> gemini-3.5-flash-lite.
     Alterna apos esgotar tentativas curtas do modelo atual, para 429/5xx/UNAVAILABLE/DEADLINE_EXCEEDED.
     """
-    principal = str(cfg.get("modelo_texto") or "gemini-3.6-flash").strip()
-    alternativas = cfg.get("modelos_texto_fallback", ["gemini-3.5-flash-lite"])
+    principal = str(cfg.get("modelo_texto") or "gemini-3.8-flash").strip()
+    alternativas = cfg.get("modelos_texto_fallback", ["gemini-3.6-flash", "gemini-3.5-flash-lite"])
     if isinstance(alternativas, str):
         alternativas = [x.strip() for x in alternativas.split(",") if x.strip()]
     if not isinstance(alternativas, (list, tuple)):
@@ -491,58 +498,109 @@ def _parse_json(texto):
 
 
 
-def gerar_roteiro_gemini(canal, tema, duracao, anteriores, cfg, categoria="curiosidades", perfil=None):
-    if not cfg["gemini_api_key"]:
-        erro("falta a chave do Gemini. Veja o passo a passo (aistudio.google.com) e coloque em config.json.")
-    from google import genai
-    from google.genai import types
-    cliente = genai.Client(api_key=cfg["gemini_api_key"],
-                           http_options=types.HttpOptions(timeout=300000))
+def _provedor_texto_etapa(cfg, operacao):
+    """Resolve provedor independente para cada fase do roteiro."""
+    if operacao == "planejamento":
+        key = "provedor_planejamento_narrativa"
+    elif operacao == "roteiro":
+        key = "provedor_geracao_roteiro"
+    else:
+        key = "provedor_refino_roteiro"
+    provedor = str(cfg.get(key) or cfg.get("provedor_texto") or "auto").strip().lower()
+    if provedor not in ("myhub", "gemini", "auto"):
+        raise ValueError(
+            f"Provedor inválido em {key}: {provedor!r}. Use 'myhub', 'gemini' ou 'auto'."
+        )
+    if provedor == "auto":
+        try:
+            from myhub_llm import bridge_disponivel
+            provedor = "myhub" if bridge_disponivel(cfg, RAIZ) else "gemini"
+        except Exception:  # noqa
+            provedor = "gemini"
+    return provedor
 
-    def _ia(p, op="planejamento"):
-        r = gerar_conteudo_texto_com_fallback(
-            cliente, cfg, p,
-            types.GenerateContentConfig(response_mime_type="application/json", temperature=0.5),
-            operacao=op)
-        return r.text or ""
 
+def gerar_roteiro(canal, tema, duracao, anteriores, cfg, categoria="curiosidades", perfil=None, chat_scope=None):
+    """Gera roteiro com provedor selecionável por etapa (planejamento, roteiro e refino).
+
+    MyHub é o padrão para o fluxo atualizado. Gemini continua disponível de forma
+    independente em cada etapa pelo config.json. Nenhum fallback silencioso troca
+    o provedor escolhido pelo usuário.
+    """
     resolucao = resolver_nucleo(canal, categoria, tema, perfil)
     n_cenas = max(3, round(duracao / canal["segundos_por_imagem"]))
     fech = closing_instruction(categoria)
 
+    gemini_cliente = None
+    gemini_types = None
+    myhub_callbacks = {}
+
+    def _gerar_texto(prompt, op="planejamento", temperature=0.5):
+        nonlocal gemini_cliente, gemini_types
+        provedor = _provedor_texto_etapa(cfg, op)
+        if provedor == "myhub":
+            if op not in myhub_callbacks:
+                from myhub_llm import criar_llm_myhub
+                myhub_callbacks[op] = criar_llm_myhub(
+                    cfg, RAIZ, info, purpose=op, expected_outputs=["json"], chat_scope=chat_scope
+                )
+            info(f"   etapa {op}: MyHub Bridge")
+            return myhub_callbacks[op](prompt, True)
+
+        if not cfg.get("gemini_api_key"):
+            raise RuntimeError(
+                f"A etapa '{op}' está configurada para Gemini, mas falta gemini_api_key."
+            )
+        if gemini_cliente is None:
+            from google import genai
+            from google.genai import types
+            gemini_types = types
+            gemini_cliente = genai.Client(
+                api_key=cfg["gemini_api_key"],
+                http_options=types.HttpOptions(timeout=300000),
+            )
+        response = gerar_conteudo_texto_com_fallback(
+            gemini_cliente, cfg, prompt,
+            gemini_types.GenerateContentConfig(
+                response_mime_type="application/json", temperature=temperature
+            ),
+            operacao=op,
+        )
+        return response.text or ""
+
     info("   planejando a narrativa...")
-    plano_narr = planejar_narrativa(tema, resolucao, n_cenas, duracao, _ia)
+    plano_narr = planejar_narrativa(
+        tema, resolucao, n_cenas, duracao,
+        lambda p: _gerar_texto(p, "planejamento", 0.5),
+    )
+    provedor_roteiro = _provedor_texto_etapa(cfg, "roteiro")
+    prompt = montar_prompt_roteiro(
+        canal, tema, duracao, anteriores, categoria,
+        perfil=perfil, resolucao=resolucao, plano_narrativo=plano_narr,
+    )
 
-    prompt = montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria,
-                                   perfil=perfil, resolucao=resolucao, plano_narrativo=plano_narr)
-
-    info("   pedindo o roteiro ao Gemini...")
+    info(f"   pedindo o roteiro via {'MyHub Bridge' if provedor_roteiro == 'myhub' else 'Gemini'}...")
     roteiro = None
     for tentativa in range(1, 4):
         try:
-            resp = gerar_conteudo_texto_com_fallback(
-                cliente, cfg, prompt,
-                types.GenerateContentConfig(response_mime_type="application/json", temperature=0.9),
-                operacao="roteiro",
-            )
+            bruto = _gerar_texto(prompt, "roteiro", 0.9)
         except Exception as e:  # noqa
             msg = str(e)
-            print(f"\nO Gemini recusou o pedido:\n{msg[:600]}\n")
-            if "404" in msg or "NOT_FOUND" in msg or "no longer available" in msg:
-                erro(f"o modelo '{cfg['modelo_texto']}' nao esta disponivel para a sua chave. "
-                     "Troque 'modelo_texto' no config.json pelo nome que a mensagem acima sugere.")
-            if "API key" in msg or "API_KEY" in msg or "401" in msg or "403" in msg or "PERMISSION" in msg:
+            provedor_msg = "MyHub Bridge" if provedor_roteiro == "myhub" else "Gemini"
+            print(f"\nFalha ao solicitar o roteiro ao {provedor_msg}:\n{msg[:900]}\n")
+            if provedor_roteiro == "gemini" and ("404" in msg or "NOT_FOUND" in msg or "no longer available" in msg):
+                erro(f"o modelo '{cfg['modelo_texto']}' nao esta disponivel para a sua chave. Troque 'modelo_texto' no config.json.")
+            if provedor_roteiro == "gemini" and any(x in msg for x in ("API key", "API_KEY", "401", "403", "PERMISSION")):
                 erro("problema com a chave do Gemini. Confira o config.json (sem espacos, entre aspas).")
-            erro("nao foi possivel gerar o roteiro. Leia a mensagem acima e, se nao entender, me envie.")
-        bruto = resp.text or ""
+            erro(f"nao foi possivel gerar o roteiro com {provedor_msg}. Leia a mensagem acima e verifique o Bridge/provedor configurado.")
         try:
             roteiro = _parse_json(bruto)
             break
         except json.JSONDecodeError:
             Path("roteiro_bruto.txt").write_text(bruto, encoding="utf-8")
-            info(f"   JSON invalido (tentativa {tentativa}/3), pedindo de novo...")
+            info(f"   JSON invalido (tentativa {tentativa}/3), pedindo novamente...")
     if roteiro is None:
-        erro("o Gemini nao devolveu um JSON valido em 3 tentativas. Veja roteiro_bruto.txt.")
+        erro("a IA nao devolveu um JSON valido em 3 tentativas. Veja roteiro_bruto.txt.")
 
     esc = (roteiro.get("gancho_escolhido") or {}).get("texto", "").strip()
     if esc and roteiro.get("cenas"):
@@ -552,7 +610,10 @@ def gerar_roteiro_gemini(canal, tema, duracao, anteriores, cfg, categoria="curio
 
     def _avaliar(r):
         a = avaliar_roteiro(r, plano)
-        ruins_ = perguntas_sem_resposta([c["narracao"] for c in r["cenas"]], lambda p: _ia(p, "checagem"))
+        ruins_ = perguntas_sem_resposta(
+            [c["narracao"] for c in r["cenas"]],
+            lambda p: _gerar_texto(p, "checagem", 0.3),
+        )
         a["perguntas_sem_resposta"] = ruins_
         a["score"] = max(0, a["score"] - 10 * len(ruins_))
         return a, ruins_
@@ -561,13 +622,18 @@ def gerar_roteiro_gemini(canal, tema, duracao, anteriores, cfg, categoria="curio
     if cfg.get("otimizar_roteiro"):
         info("   otimizando o roteiro (limpeza + ganchos)...")
         roteiro, rel = otimizar_roteiro_completo(
-            roteiro, plano, _avaliar, ruins, lambda p: _ia(p, "otimizacao"), plano_narr)
+            roteiro, plano, _avaliar, ruins,
+            lambda p: _gerar_texto(p, "otimizacao", 0.5), plano_narr,
+        )
         if rel["aplicado"]:
             aval, _ = _avaliar(roteiro)
         aval["otimizacao"] = rel
     if cfg.get("refinar_roteiro", True):
+        info("   refinando o roteiro...")
         otim = aval.get("otimizacao")
-        roteiro, rel3 = refinar_roteiro(roteiro, plano, lambda p: _ia(p, "refino"))
+        roteiro, rel3 = refinar_roteiro(
+            roteiro, plano, lambda p: _gerar_texto(p, "refino", 0.5)
+        )
         if rel3["aplicado"]:
             aval, _ = _avaliar(roteiro)
             if otim:
@@ -579,7 +645,18 @@ def gerar_roteiro_gemini(canal, tema, duracao, anteriores, cfg, categoria="curio
     if resolucao["modo"] == "nucleo":
         roteiro["nucleo_editorial"] = resolucao
     roteiro["plano_narrativo"] = plano_narr
+    roteiro["provedores_ia"] = {
+        "planejamento": _provedor_texto_etapa(cfg, "planejamento"),
+        "roteiro": provedor_roteiro,
+        "refino": _provedor_texto_etapa(cfg, "refino"),
+    }
     return roteiro
+
+
+# Compatibilidade com chamadas antigas; o nome antigo continua funcionando,
+# mas agora respeita os provedores escolhidos por etapa.
+def gerar_roteiro_gemini(canal, tema, duracao, anteriores, cfg, categoria="curiosidades", perfil=None):
+    return gerar_roteiro(canal, tema, duracao, anteriores, cfg, categoria, perfil)
 
 
 def validar_roteiro(r):
@@ -633,6 +710,8 @@ def gerar_voz(roteiro, pasta, canal, simular):
     pasta_audio = pasta / "audio"
     pasta_audio.mkdir(exist_ok=True)
     kokoro = None
+    usar_voicebox = str((canal.get("tts") or {}).get("motor", "kokoro")).lower() == "voicebox" and not simular
+    voicebox_ok = 0
     wavs = []
     for i, c in enumerate(roteiro["cenas"], 1):
         wav = pasta_audio / f"{i:02d}.wav"
@@ -644,12 +723,30 @@ def gerar_voz(roteiro, pasta, canal, simular):
             wav_simulado(wav, max(2.0, len(c["narracao"].split()) / PALAVRAS_POR_SEGUNDO),
                          PAUSA_GANCHO if i == 1 else None)
             continue
-        if kokoro is None:
-            kokoro = carregar_kokoro()
         import numpy as np
         import soundfile as sf
-        vel = float(canal["velocidade"]) * (float(canal["velocidade_gancho"]) if i == 1 else 1.0)
-        amostras, taxa = kokoro.create(c["narracao"], voice=canal["voz"], speed=vel, lang=canal["idioma_tts"])
+        try:        # silabada (Pyphen, opcional) so no texto enviado a voz; as legendas usam a fala original
+            from pronuncia_pt import preparar_para_voz
+            texto_voz = preparar_para_voz(c["narracao"], canal)
+        except Exception:  # noqa
+            texto_voz = c["narracao"]
+        amostras = None
+        if usar_voicebox:
+            # Voicebox (opcional, canal.json -> "tts": {"motor": "voicebox", ...}); se falhar na 1a cena, o video inteiro usa Kokoro
+            try:
+                import tts_voicebox
+                amostras, taxa = tts_voicebox.narrar(texto_voz, canal, i == 1, info)
+                voicebox_ok += 1
+            except Exception as e:  # noqa
+                if voicebox_ok > 0 or not (canal.get("tts") or {}).get("fallback_kokoro", True):
+                    raise RuntimeError(f"Voicebox falhou na cena {i}: {e}. As cenas ja geradas ficam salvas; abra o Voicebox e rode de novo para continuar.")
+                info(f"   Voicebox indisponivel ({str(e)[:160]}); usando Kokoro em todo o video.")
+                usar_voicebox = False
+        if amostras is None:
+            if kokoro is None:
+                kokoro = carregar_kokoro()
+            vel = float(canal["velocidade"]) * (float(canal["velocidade_gancho"]) if i == 1 else 1.0)
+            amostras, taxa = kokoro.create(texto_voz, voice=canal["voz"], speed=vel, lang=canal["idioma_tts"])
         pad = np.zeros(int(taxa * (PAUSA_GANCHO if i == 1 else PAUSA_CENA)), dtype=amostras.dtype)
         pad_ini = np.zeros(int(taxa * 0.15), dtype=amostras.dtype)
         sf.write(str(wav), np.concatenate([pad_ini, amostras, pad]), taxa)
@@ -1615,8 +1712,8 @@ def main():
                          {"narracao": "E esta e a cena final. Fim do teste.", "imagem": "x", "busca_stock": "x"}]}
             salvar_json(arq_roteiro, falso)
         else:
-            roteiro = gerar_roteiro_gemini(canal, a.tema, duracao, titulos_anteriores(a.canal, pasta),
-                               cfg, a.categoria, a.perfil)
+            roteiro = gerar_roteiro(canal, a.tema, duracao, titulos_anteriores(a.canal, pasta),
+                               cfg, a.categoria, a.perfil, chat_scope=f"{a.canal}_{pasta.name}")
             salvar_json(arq_roteiro, roteiro)
 
     else:

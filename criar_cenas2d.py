@@ -61,14 +61,15 @@ def _aprovado(status):
     return str(status or "").lower().startswith("aprov")
 
 
-def montar_cenas(roteiro, hashes, duracoes, bib, arq, modo="local", cfg=None):
+def montar_cenas(roteiro, hashes, duracoes, bib, arq, modo="local", cfg=None, categoria=None, canal=None, chat_scope=None):
     """Diretor: roteiro -> cenas M1. Reaproveita cenas ja montadas (cache por narracao+duracao+diretor)."""
     antigo = cv.ler_json(arq).get("cenas", []) if arq.exists() else []
     saida = []
-    chaves = [_sha([h, round(d, 1), modo]) for h, d in zip(hashes, duracoes)]
+    chave_tema = [categoria, (canal or {}).get("tema_fixo"), (canal or {}).get("tema_acento")]
+    chaves = [_sha([h, round(d, 1), modo, chave_tema]) for h, d in zip(hashes, duracoes)]
     if len(antigo) == len(chaves) and all(a.get("chave") == k for a, k in zip(antigo, chaves)):
         return [a["cena"] for a in antigo]
-    cenas = diretor_m1.dirigir(roteiro, duracoes, bib, modo=modo, cfg=cfg, cv=cv, log=cv.info)
+    cenas = diretor_m1.dirigir(roteiro, duracoes, bib, modo=modo, cfg=cfg, cv=cv, log=cv.info, categoria=categoria, canal=canal, chat_scope=chat_scope)
     for k, h, c in zip(chaves, hashes, cenas):
         saida.append({"chave": k, "hash_narracao": h, "cena": c})
     cv.salvar_json(arq, {"versao": 2, "cenas": saida})
@@ -261,9 +262,10 @@ def montar_final(nome, segdir, narracao, musica, duracoes, canal, pasta, titulo_
         audio = (f"[1:a]afade=t=in:st=0:d={cv.FADE},afade=t=out:st={fim}:d={cv.FADE}[n];"
                  f"[2:a]volume={float(canal['volume_musica'])},afade=t=in:st=0:d=1.5,"
                  f"afade=t=out:st={fim}:d={cv.FADE}[m];"
-                 "[n][m]amix=inputs=2:duration=first:dropout_transition=0,volume=2,alimiter=limit=0.95[a]")
+                 "[n][m]amix=inputs=2:duration=first:dropout_transition=0,volume=2,"
+                 "loudnorm=I=-14:TP=-1.5:LRA=9,alimiter=limit=0.95[a]")
     else:
-        audio = f"[1:a]afade=t=in:st=0:d={cv.FADE},afade=t=out:st={fim}:d={cv.FADE}[a]"
+        audio = f"[1:a]afade=t=in:st=0:d={cv.FADE},afade=t=out:st={fim}:d={cv.FADE},loudnorm=I=-14:TP=-1.5:LRA=9[a]"
     cmd += ["-filter_complex", audio, "-map", "0:v", "-map", "[a]", "-c:v", "copy",
             "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.2f}", "-movflags", "+faststart",
             str(parcial.resolve())]
@@ -302,7 +304,8 @@ def main():
     ap.add_argument("--simular", action="store_true")
     ap.add_argument("--formatos", default="9x16")
     ap.add_argument("--perfil", default=None)
-    ap.add_argument("--diretor", choices=["auto", "local", "gemini"], default="auto")
+    ap.add_argument("--diretor", choices=["auto", "local", "gemini", "myhub"], default=None,
+                    help="IA da direcao de arte (padrao: config.json -> m1_diretor_padrao; auto = MyHub se instalado, senao Gemini, senao local)")
     a = ap.parse_args()
 
     for prog in ("ffmpeg", "ffprobe"):
@@ -348,8 +351,9 @@ def main():
         if a.simular:
             cv.salvar_json(arq_roteiro, roteiro_falso(a.tema))
         else:
-            cv.salvar_json(arq_roteiro, cv.gerar_roteiro_gemini(
-                canal, a.tema, duracao, cv.titulos_anteriores(a.canal, pasta), cfg, a.categoria, a.perfil))
+            cv.salvar_json(arq_roteiro, cv.gerar_roteiro(
+                canal, a.tema, duracao, cv.titulos_anteriores(a.canal, pasta), cfg, a.categoria, a.perfil,
+                chat_scope=f"{a.canal}_{pasta.name}"))
     else:
         cv.info("   roteiro.json ja existe, usando.")
     roteiro = cv.validar_roteiro(cv.ler_json(arq_roteiro))
@@ -369,8 +373,11 @@ def main():
     # 3. cenas
     cv.info("\n[3/5] Cenas (direcao de arte + recursos)")
     bib = Biblioteca(RAIZ / "biblioteca_m1", bloquear_pendentes=True)
+    modo_diretor = str(a.diretor or cfg.get("m1_diretor_padrao") or "auto").strip().lower()
+    if modo_diretor not in ("myhub", "gemini", "local", "auto"):
+        cv.erro(f"m1_diretor_padrao invalido: {modo_diretor!r}. Use myhub, gemini, local ou auto.")
     cenas = montar_cenas(roteiro, hashes, duracoes, bib, pasta / "cenas2d.json",
-                         "local" if a.simular else a.diretor, cfg)
+                         "local" if a.simular else modo_diretor, cfg, a.categoria, canal, chat_scope=f"{a.canal}_{pasta.name}")
     preverificar(cenas, bib)
 
     # 4. render + montagem

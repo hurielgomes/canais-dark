@@ -1,0 +1,10 @@
+{
+  "myhub_bridge_dir": "C:\\myhub-bridge",
+  "provedor_planejamento_narrativa": "myhub",
+  "provedor_geracao_roteiro": "myhub",
+  "provedor_refino_roteiro": "myhub",
+  "m1_diretor_padrao": "myhub",
+  "myhub_timeout_seconds": 900,
+  "m1_myhub_timeout_seconds": 900,
+  "myhub_model": null
+}
