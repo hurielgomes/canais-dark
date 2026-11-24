@@ -103,11 +103,15 @@ def montar_prompt(canal, tema, duracao, estilo, anteriores, categoria="curiosida
     n_cenas = max(4, round(duracao / 9))
     ant = "\n".join(f"- {t}" for t in anteriores) or "(nenhum ainda)"
     regras = "\n".join(f"- {r}" for r in canal.get("regras", []))
-    fechamento = perfil_categoria(categoria).get(
-        "closing_instruction": "Termine com UMA pergunta específica sobre o ponto mais marcante deste vídeo, que só faça sentido para este tema. Não use \"já conhecia esse fato\", \"o que mais te surpreendeu\" nem \"conta nos comentários\".")
-    return f"""Você é roteirista de vídeos animados explicativos para um canal do YouTube sem apresentador, especialista em retenção de audiência.
-Escreva o roteiro completo de UM vídeo, dividido em cenas. Cada cena tem a narração (voz) e o que aparece na tela.
 
+    fechamento = perfil_categoria(categoria).get(
+        "closing_instruction",
+        "Termine com UMA pergunta específica sobre o ponto mais marcante deste vídeo, "
+        "que só faça sentido para este tema. Não use perguntas genéricas como "
+        "'já conhecia esse fato', 'o que mais te surpreendeu' ou 'conta nos comentários'."
+    )
+
+    return f"""
 CANAL: {canal.get('nome', '')}
 NICHO: {canal.get('nicho', '')}
 PÚBLICO: {canal.get('publico', '')}
@@ -147,7 +151,8 @@ Responda SOMENTE com JSON válido, sem comentários e sem blocos de código, nes
   "cenas": [
     {{"tipo": "um dos tipos acima", "narracao": "texto exato que será falado", ...campos do tipo...}}
   ]
-}}"""
+}}
+"""
 
 
 def gerar_roteiro_gemini(canal, tema, duracao, estilo, anteriores, cfg, categoria="curiosidades"):

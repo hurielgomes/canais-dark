@@ -1,0 +1,21 @@
+--- a/editorial_rules.py
++++ b/editorial_rules.py
+@@ -5,1 +5,6 @@
+ ROOT = Path(__file__).resolve().parent
++
++INSTRUCAO_FECHAMENTO_PADRAO = (
++    "Termine com UMA pergunta específica sobre o ponto mais marcante deste vídeo, "
++    "que só faça sentido para este tema. Não use perguntas genéricas como "
++    "'já conhecia esse fato', 'o que mais te surpreendeu' ou 'conta nos comentários'."
++)
+--- a/criar_animado.py
++++ b/criar_animado.py
+@@ -95,2 +95,6 @@
+-    fechamento = perfil_categoria(categoria).get(
+-        "closing_instruction": "Termine com UMA pergunta específica sobre o ponto mais marcante deste vídeo, que só faça sentido para este tema. Não use \"já conhecia esse fato\", \"o que mais te surpreendeu\" nem \"conta nos comentários\".)
++    fechamento = perfil_categoria(categoria).get(
++        "closing_instruction",
++        "Termine com UMA pergunta específica sobre o ponto mais marcante deste vídeo, "
++        "que só faça sentido para este tema. Não use perguntas genéricas como "
++        "'já conhecia esse fato', 'o que mais te surpreendeu' ou 'conta nos comentários'."
++    )

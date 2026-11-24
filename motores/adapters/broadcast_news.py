@@ -24,10 +24,17 @@ class BroadcastNewsEngine(VisualEngine):
     def build_command(self, job: dict[str, Any], root: Path, python_executable: str) -> list[str]:
         self.validate_job(job)
         command = [
-            python_executable, "-u", str(root / "motores" / "broadcast_news.py"),
-            job["canal"], job["tema"],
-            "--categoria", str(job.get("categoria") or "noticias"),
-            "--formatos", str(job.get("formatos") or "16x9"),
+            python_executable,
+            "-u",
+            str(root / "motores" / "myhub_script_runner.py"),
+            "--engine",
+            "broadcast_news",
+            job["canal"],
+            job["tema"],
+            "--categoria",
+            str(job.get("categoria") or "noticias"),
+            "--formatos",
+            str(job.get("formatos") or "16x9"),
         ]
         if int(job.get("duracao") or 0):
             command += ["--duracao", str(int(job["duracao"]))]
@@ -52,6 +59,8 @@ class BroadcastNewsEngine(VisualEngine):
             "local_rendering": True,
             "requires_research_grounding": False,
             "uses_google_search": False,
-            "factual_mode": "conhecimento consolidado do Gemini; nao declarar atualidade sem fonte fornecida",
-            "visual_components": ["headlines", "data_cards", "timelines", "flows", "comparisons", "charts", "source_strips"],
+            "factual_mode": "conhecimento consolidado do modelo; nao declarar atualidade sem fonte fornecida",
+            "visual_components": [
+                "headlines", "data_cards", "timelines", "flows", "comparisons", "charts", "source_strips"
+            ],
         }

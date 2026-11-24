@@ -16,11 +16,13 @@ class BroadcastMotionEngine(BroadcastNewsEngine):
 
     def build_command(self, job: dict[str, Any], root: Path, python_executable: str) -> list[str]:
         command = super().build_command(job, root, python_executable)
-        command[2] = str(root / "motores" / "broadcast_motion.py")
+        engine_flag = command.index("--engine")
+        command[engine_flag + 1] = "broadcast_motion"
         return command
 
     def capabilities(self) -> dict[str, Any]:
         caps = super().capabilities()
         caps["visual_components"] = caps.get("visual_components", []) + [
-            "animated_icons", "animated_diagrams", "counters", "bar_line_donut_charts", "media_backgrounds"]
+            "animated_icons", "animated_diagrams", "counters", "bar_line_donut_charts", "media_backgrounds"
+        ]
         return caps

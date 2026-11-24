@@ -4,6 +4,11 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+INSTRUCAO_FECHAMENTO_PADRAO = (
+    "Termine com UMA pergunta específica sobre o ponto mais marcante deste vídeo, "
+    "que só faça sentido para este tema. Não use perguntas genéricas como "
+    "'já conhecia esse fato', 'o que mais te surpreendeu' ou 'conta nos comentários'."
+)
 
 def get_category(category_id: str | None) -> dict:
     try:
