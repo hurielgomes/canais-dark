@@ -21,15 +21,25 @@ class _AnimadoBase(VisualEngine):
 
     @staticmethod
     def _formato(job):
-        return job.get("entrega_format") or (str(job.get("formatos") or "16x9").split(",")[0].strip())
+        return job.get("entrega_format") or (
+            str(job.get("formatos") or "16x9").split(",")[0].strip()
+        )
 
     def build_command(self, job, root, python_executable):
         root = Path(root)
-        cmd = [python_executable, "-u", str(root / "criar_animado.py"),
-               job["canal"], job["tema"],
-               "--estilo", self.ESTILO,
-               "--categoria", job.get("categoria") or "curiosidades",
-               "--formatos", self._formato(job)]
+        cmd = [
+            python_executable,
+            "-u",
+            str(root / "criar_animado.py"),
+            job["canal"],
+            job["tema"],
+            "--estilo",
+            self.ESTILO,
+            "--categoria",
+            job.get("categoria") or "curiosidades",
+            "--formatos",
+            self._formato(job),
+        ]
         if job.get("duracao"):
             cmd += ["--duracao", str(int(job["duracao"]))]
         if job.get("revisar"):
@@ -39,8 +49,11 @@ class _AnimadoBase(VisualEngine):
         return cmd
 
     def capabilities(self):
-        return {"formats": list(self.FORMATOS), "supports_independent_deliverables": True,
-                "estilo": self.ESTILO}
+        return {
+            "formats": list(self.FORMATOS),
+            "supports_independent_deliverables": True,
+            "estilo": self.ESTILO,
+        }
 
 
 class WhiteboardEngine(_AnimadoBase):
@@ -49,3 +62,9 @@ class WhiteboardEngine(_AnimadoBase):
 
 class TelejornalAnimadoEngine(_AnimadoBase):
     ESTILO = "telejornal"
+
+    def build_command(self, job, root, python_executable):
+        cmd = super().build_command(job, root, python_executable)
+        cmd[2] = str(Path(root) / "motores" / "myhub_script_runner.py")
+        cmd[3:3] = ["--engine", "telejornal"]
+        return cmd

@@ -11,6 +11,7 @@ import json
 import os
 import re
 import subprocess
+import shutil
 import sys
 import time
 import unicodedata
@@ -232,6 +233,93 @@ class _BridgeClient:
 
 
 
+def bridge_disponivel(
+    cfg: dict | str | Path | None = None,
+    fabrica_root: str | Path | dict | None = None,
+    log: Callable[[str], None] = print,
+    *,
+    iniciar: bool = False,
+) -> bool:
+    """Verifica se o MyHub Bridge está instalado e utilizável pela Fábrica.
+
+    API de compatibilidade pública usada por módulos do pipeline:
+        bridge_disponivel()
+        bridge_disponivel(cfg, fabrica_root)
+        bridge_disponivel(fabrica_root)
+
+    Por padrão verifica somente se a instalação está presente (main.py e
+    config.json). Isso é intencional: o pipeline consulta esta função para
+    escolher entre MyHub e Gemini, inclusive ao montar o painel de status.
+    O serviço é iniciado por ``_BridgeClient.submit`` quando um job real é
+    enviado. Use ``iniciar=True`` apenas quando quiser forçar a checagem de
+    saúde e iniciar o serviço, se necessário.
+    Nunca altera config, perfil do navegador ou dados do Bridge.
+    """
+    # Aceita também bridge_disponivel(CAMINHO_DA_FABRICA) e a ordem
+    # bridge_disponivel(CAMINHO_DA_FABRICA, cfg), por compatibilidade.
+    if isinstance(cfg, (str, Path)):
+        if isinstance(fabrica_root, dict):
+            cfg, fabrica_root = fabrica_root, cfg
+        elif fabrica_root is None:
+            fabrica_root, cfg = cfg, None
+
+    settings: dict = dict(cfg) if isinstance(cfg, dict) else {}
+    root = Path(fabrica_root or Path(__file__).resolve().parent).expanduser().resolve()
+
+    # Quando a chamada antiga não passa cfg, tenta carregar apenas a
+    # configuração local da Fábrica; se não existir, usa os defaults seguros.
+    if not settings:
+        for candidate in (root / "config.json", root / "configuracao.json"):
+            try:
+                if candidate.is_file():
+                    loaded = json.loads(candidate.read_text(encoding="utf-8-sig"))
+                    if isinstance(loaded, dict):
+                        settings = loaded
+                        break
+            except Exception:
+                continue
+
+    try:
+        bridge_root = _bridge_root(settings, root)
+        if not (bridge_root / "main.py").is_file():
+            return False
+        if not (bridge_root / "config.json").is_file():
+            return False
+
+        host = str(settings.get("myhub_bridge_host", "127.0.0.1"))
+        try:
+            port = int(settings.get("myhub_bridge_port", 8766))
+        except (TypeError, ValueError):
+            port = 8766
+        base = f"http://{host}:{port}"
+
+        def health_ok() -> bool:
+            try:
+                with urllib.request.urlopen(base + "/health", timeout=1.5) as response:
+                    data = json.loads(response.read().decode("utf-8"))
+                    return bool(data.get("ok"))
+            except Exception:
+                return False
+
+        if not iniciar:
+            # Os chamadores atuais usam a função para detectar uma instalação
+            # configurada, não para iniciar Chromium durante a consulta.
+            return True
+        if health_ok():
+            return True
+
+        timeout = max(45, int(settings.get("m1_myhub_timeout_seconds", 900)))
+        client = _BridgeClient(bridge_root, _python_executable(bridge_root), settings, log, timeout)
+        client.ensure_running()
+        return health_ok()
+    except Exception as exc:
+        try:
+            log(f"   MyHub Bridge indisponível: {exc}")
+        except Exception:
+            pass
+        return False
+
+
 def _prefer_json_artifact(response: str, artifacts: list[dict], json_mode: bool, outputs: Iterable[str], log: Callable[[str], None]) -> str:
     """Quando o MyHub abre JSON no code pane lateral, usa o artefato validado.
 
@@ -246,7 +334,7 @@ def _prefer_json_artifact(response: str, artifacts: list[dict], json_mode: bool,
         return response
     content = str(item.get("content", "")).strip()
     if content:
-        log("   MyHub Bridge: JSON estruturado recuperado do painel de código.")
+        log("   MyHub Bridge: JSON estruturado recuperado como artefato validado.")
         return content
     return response
 
@@ -311,10 +399,33 @@ def criar_llm_myhub(
 
     def submit_svg_with_refusal_retry(prompt: str, *, stage: str, chat: str, outputs: list[str],
                                       model: str, capture_all_downloads: bool = False):
-        """Tenta uma vez no mesmo chat e, se persistir a recusa, em chat novo."""
+        """Tenta uma vez no mesmo chat e, se persistir a recusa, em chat novo.
+
+        Quando uma tentativa recusada é superada, move seu diretório de resultado
+        para results/_tentativas_recusadas, preservando os logs sem deixar pastas
+        sem SVG misturadas aos resultados finais do pipeline.
+        """
         attempts = [(chat, "tentativa inicial"), (chat, "repetição no mesmo chat")]
         attempts.append((_fresh_chat_key(chat, prompt), "repetição em conversa nova"))
         last = None
+        refused_dirs: list[Path] = []
+
+        def archive_refused_dirs(keep_last: bool = False) -> None:
+            pending = refused_dirs[:-1] if keep_last and refused_dirs else list(refused_dirs)
+            for rejected_dir in pending:
+                try:
+                    if not rejected_dir.is_dir():
+                        continue
+                    archive_root = rejected_dir.parent / "_tentativas_recusadas"
+                    archive_root.mkdir(parents=True, exist_ok=True)
+                    destination = archive_root / rejected_dir.name
+                    if destination.exists():
+                        destination = archive_root / f"{rejected_dir.name}_{time.time_ns() % 10**9:09d}"
+                    shutil.move(str(rejected_dir), str(destination))
+                    log(f"   MyHub Bridge: tentativa recusada arquivada em {destination.name}.")
+                except Exception as exc:
+                    log(f"   MyHub Bridge: não foi possível arquivar tentativa recusada: {exc}")
+
         for number, (attempt_chat, label) in enumerate(attempts, start=1):
             result_dir, meta = submit(
                 prompt, stage=stage, chat=attempt_chat, outputs=outputs, model=model,
@@ -324,13 +435,16 @@ def criar_llm_myhub(
             found_artifacts = _artifact_contents(result_dir, meta)
             last = (result_dir, meta, response_text, found_artifacts)
             if not _is_svg_generation_refusal(response_text, meta, found_artifacts):
+                archive_refused_dirs()
                 return last
+            refused_dirs.append(result_dir)
             if number == 1:
                 log("   MyHub Bridge: o MyHub recusou o SVG e abriu/indicou Geração de Imagens; repetindo no mesmo chat.")
             elif number == 2:
                 log("   MyHub Bridge: a recusa persistiu; abrindo uma conversa nova e repetindo uma última vez.")
             else:
                 log("   MyHub Bridge: recusa persistente também na conversa nova; recurso será ignorado e seguirá o fallback procedural.")
+                archive_refused_dirs(keep_last=True)
         return last
 
     def llm(prompt: str, json_mode: bool = True) -> str:

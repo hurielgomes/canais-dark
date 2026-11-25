@@ -40,7 +40,7 @@
   "proporcao_video": 0.5,
   "duracao_plano_video": 4.0,
   "tts": {
-    "motor": "voicebox",
+    "motor": "kokoro",
     "engine": "qwen",
     "perfil": "Nicoly",
     "idioma": "pt",
