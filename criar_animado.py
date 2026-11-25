@@ -156,14 +156,26 @@ Responda SOMENTE com JSON válido, sem comentários e sem blocos de código, nes
 
 
 def gerar_roteiro_gemini(canal, tema, duracao, estilo, anteriores, cfg, categoria="curiosidades"):
-    if not cfg["gemini_api_key"]:
+    prompt = montar_prompt(canal, tema, duracao, estilo, anteriores, categoria)
+    provedor = cv._provedor_texto_etapa(cfg, "roteiro")
+    if provedor == "myhub":
+        cv.info("   pedindo o roteiro via MyHub Bridge...")
+        try:
+            from myhub_llm import criar_llm_myhub
+            llm = criar_llm_myhub(cfg, RAIZ, cv.info, purpose="roteiro", expected_outputs=["json"],
+                                chat_scope=f"whiteboard_{estilo}_{categoria}")
+            texto = llm(prompt, True)
+            return cv._parse_json(texto)
+        except Exception as e:  # noqa
+            cv.erro(f"falha ao gerar roteiro via MyHub Bridge: {str(e)[:600]}")
+
+    if not cfg.get("gemini_api_key"):
         cv.erro("falta a chave do Gemini no config.json ou no .env.")
     from google import genai
     from google.genai import types
     cliente = genai.Client(api_key=cfg["gemini_api_key"], http_options=types.HttpOptions(timeout=120000))
-    prompt = montar_prompt(canal, tema, duracao, estilo, anteriores, categoria)
     gen_cfg = types.GenerateContentConfig(response_mime_type="application/json", temperature=0.9)
-    cv.info("   pedindo o roteiro ao Gemini...")
+    cv.info("   pedindo o roteiro ao Gemini (provedor configurado)...")
     try:
         if hasattr(cv, "gerar_conteudo_texto_com_fallback"):
             resp = cv.gerar_conteudo_texto_com_fallback(cliente, cfg, prompt, gen_cfg, operacao="roteiro animado")
@@ -172,7 +184,7 @@ def gerar_roteiro_gemini(canal, tema, duracao, estilo, anteriores, cfg, categori
                 model=cfg["modelo_texto"], contents=prompt, config=gen_cfg))
     except Exception as e:  # noqa
         msg = str(e)
-        print(f"\nO Gemini recusou o pedido:\n{msg[:600]}\n")
+        print(f"\nFalha ao solicitar roteiro ao Gemini:\n{msg[:600]}\n")
         if "404" in msg or "NOT_FOUND" in msg or "no longer available" in msg:
             cv.erro(f"o modelo '{cfg.get('modelo_texto')}' nao esta disponivel para a sua chave. Ajuste 'modelo_texto' no config.json.")
         if "API key" in msg or "API_KEY" in msg or "401" in msg or "403" in msg or "PERMISSION" in msg:
@@ -182,7 +194,7 @@ def gerar_roteiro_gemini(canal, tema, duracao, estilo, anteriores, cfg, categori
     try:
         return json.loads(texto)
     except json.JSONDecodeError:
-        cv.erro("o Gemini nao devolveu um JSON valido. Rode o mesmo comando de novo.")
+        cv.erro("a IA nao devolveu um JSON valido. Rode o mesmo comando de novo.")
 
 
 from editorial_rules import ensure_closing_question

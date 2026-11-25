@@ -1,0 +1,90 @@
+{
+  "nome": "Minuto Antigo",
+  "idioma": "português do Brasil",
+  "nicho": "história, documentários, curiosidades históricas, civilizações, arqueologia, invenções e acontecimentos marcantes",
+  "publico": "público curioso por história e cultura",
+  "publico_livre": "público curioso por história e cultura",
+  "tom": "narrativo, intrigante, documental e preciso",
+  "estrutura": [
+    "Gancho surpreendente sem entregar a resposta.",
+    "Contextualizar época, local e personagens.",
+    "Desenvolver em sequência com descobertas/viradas.",
+    "Explicar consequências ou legado.",
+    "Fechar retomando a questão central."
+  ],
+  "regras_globais": [
+    "Distinguir fatos, hipóteses, lendas e reconstruções.",
+    "Não inventar diálogos, datas ou citações.",
+    "Evitar listas superficiais e pautas genéricas.",
+    "Priorizar temas verificáveis e visualmente ilustráveis."
+  ],
+  "estilo_visual": "Adaptar o visual ao tema e motor escolhido; cenas variadas, pertinência visual e legibilidade; evitar repetição perceptível.",
+  "duracao_alvo_segundos": 60,
+  "segundos_por_imagem": 5,
+  "otimizar_roteiro": true,
+  "duracao_plano": 2.8,
+  "gancho_segundos": 2.6,
+  "voz": "pf_dora",
+  "idioma_tts": "pt-br",
+  "velocidade": 1.08,
+  "pausa_entre_cenas": 0.2,
+  "legenda_fonte": "Arial Black",
+  "legenda_maiusculas": false,
+  "legenda_palavras": 4,
+  "saturacao": 1.12,
+  "contraste": 1.06,
+  "nitidez": 0.6,
+  "vinheta": true,
+  "escala_interna": 1.5,
+  "musica": "",
+  "usar_video_stock": true,
+  "proporcao_video": 0.5,
+  "duracao_plano_video": 4.0,
+  "tts": {
+    "motor": "kokoro",
+    "engine": "qwen",
+    "perfil": "Nicoly",
+    "idioma": "pt",
+    "velocidade": 1.0,
+    "velocidade_gancho": 1.0,
+    "fallback_kokoro": true
+  },
+  "identidade": {
+    "nome_exibicao": "Minuto Antigo",
+    "logo_arquivo": "identidade/logo.png",
+    "marca_dagua": {
+      "ativa": true,
+      "opacidade": 0.22,
+      "posicao": "inferior_direita",
+      "largura_percentual": 10
+    },
+    "intro": {
+      "ativa": false,
+      "arquivo": "identidade/intro.mp4"
+    },
+    "thumbnail": {
+      "incluir_logo": true
+    }
+  },
+  "categoria_padrao": "historia",
+  "motores_preferidos": [
+    "classico",
+    "character_2_5d"
+  ],
+  "formatos_recomendados": {
+    "vertical_9x16": "Vídeo curto 30–90 s; composição mobile dedicada.",
+    "youtube_16x9": "Vídeo longo 5–10 min; aprofundamento real, roteiro e composição horizontal próprios."
+  },
+  "diretrizes_multiformato": [
+    "Vertical 9:16 com composição para celular e áreas seguras.",
+    "Horizontal 16:9 com composição própria; não esticar nem apenas recortar o vertical.",
+    "Vídeos longos aprofundam contexto, etapas e exemplos, sem alongamento artificial.",
+    "Adaptar roteiro, ritmo, cenas e enquadramento por formato."
+  ],
+  "regras_motor": [
+    "Usar a identidade deste canal, nunca a de outro.",
+    "Não reutilizar roteiro entre canais apenas trocando nome, voz ou motor.",
+    "Associar imagens e cenas ao trecho narrado.",
+    "Variar ganchos, desenvolvimento, cenas e encerramentos."
+  ]
+}

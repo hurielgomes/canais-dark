@@ -1524,6 +1524,23 @@ Critérios:
 {ant}
 
 Responda SOMENTE com JSON válido neste formato: {{"ideias": ["tema 1", "tema 2"]}}"""
+    # Usar o mesmo provedor configurado para a geração de roteiros.
+    # Em "auto", MyHub Bridge tem prioridade quando instalado; Gemini só é usado
+    # quando o Bridge não está disponível. Provedor explícito não sofre fallback.
+    provedor = _provedor_texto_etapa(cfg, "roteiro")
+    if provedor == "myhub":
+        info("   pedindo ideias via MyHub Bridge...")
+        try:
+            from myhub_llm import criar_llm_myhub
+            llm = criar_llm_myhub(cfg, RAIZ, info, purpose="sugestoes de temas", expected_outputs=["json"])
+            ideias = _parse_ideias(llm(prompt, True))
+            if ideias:
+                info("   temas recebidos via MyHub Bridge")
+                return ideias
+            erro("MyHub Bridge retornou uma lista de temas vazia ou inválida.")
+        except Exception as e:  # noqa
+            erro(f"nao consegui gerar ideias via MyHub Bridge: {str(e)[:400]}")
+
     erro_gemini = "sem chave"
     if cfg.get("gemini_api_key"):
         try:
@@ -1544,9 +1561,9 @@ Responda SOMENTE com JSON válido neste formato: {{"ideias": ["tema 1", "tema 2"
             erro_gemini = str(e)[:150]
     info(f"   Gemini indisponivel ({erro_gemini}); tentando outros provedores...")
     try:
-        texto, provedor = texto_via_fallback(prompt, cfg)
+        texto, provedor_fallback = texto_via_fallback(prompt, cfg)
         ideias = _parse_ideias(texto)
-        info(f"   ideias geradas via {provedor}")
+        info(f"   ideias geradas via {provedor_fallback}")
         return ideias
     except Exception as e:  # noqa
         erro(f"nao consegui gerar ideias: Gemini ({erro_gemini}) / fallback ({str(e)[:300]})")
