@@ -869,7 +869,7 @@
    ],
    "motivo": "",
    "origem": "procedural",
-   "tema": "neon_escuro"
+   "tema": "historia_pergaminho"
   },
   "maquete_foguete_lunar": {
    "arquivo": "recursos/objeto/maquete_foguete_lunar.v1.json",
@@ -1423,6 +1423,571 @@
    "motivo": "",
    "origem": "procedural",
    "tema": "natureza_dia"
+  },
+  "deputado_frances_1789": {
+   "arquivo": "recursos/personagem/deputado_frances_1789.v1.json",
+   "tipo": "personagem",
+   "hash": "ba6e2f0e5dbd73da",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "deputado",
+    "França",
+    "assembleia",
+    "1789",
+    "político",
+    "frances"
+   ],
+   "nome": "Deputado francês da Assembleia",
+   "criado": "2026-11-23 16:05",
+   "animacoes": [
+    "apontar",
+    "balancar",
+    "caminhar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "assembleia_francesa_1789__historia_pergaminho": {
+   "arquivo": "recursos/cenario/assembleia_francesa_1789__historia_pergaminho.v1.json",
+   "tipo": "cenario",
+   "hash": "6ff84b2641408810",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "assembleia",
+    "França",
+    "1789",
+    "salão",
+    "revolução",
+    "constituinte"
+   ],
+   "nome": "Assembleia Constituinte francesa",
+   "criado": "2026-11-23 16:06",
+   "animacoes": [],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "duas_cadeiras_assembleia": {
+   "arquivo": "recursos/objeto/duas_cadeiras_assembleia.v1.json",
+   "tipo": "objeto",
+   "hash": "ac4b165819708416",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "cadeiras",
+    "assentos",
+    "lados",
+    "assembleia",
+    "direita",
+    "esquerda",
+    "duas"
+   ],
+   "nome": "Duas cadeiras opostas da Assembleia",
+   "criado": "2026-11-23 16:06",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "coroa_real_francesa": {
+   "arquivo": "recursos/objeto/coroa_real_francesa.v1.json",
+   "tipo": "objeto",
+   "hash": "b5a78d6615f498d2",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "coroa",
+    "rei",
+    "monarquia",
+    "França",
+    "real"
+   ],
+   "nome": "Coroa real francesa",
+   "criado": "2026-11-23 16:08",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "paris_revolucionaria_1789__historia_pergaminho": {
+   "arquivo": "recursos/cenario/paris_revolucionaria_1789__historia_pergaminho.v1.json",
+   "tipo": "cenario",
+   "hash": "550982d90f42913c",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "Paris",
+    "França",
+    "Revolução Francesa",
+    "telhados",
+    "cidade",
+    "paris"
+   ],
+   "nome": "Telhados de Paris em 1789",
+   "criado": "2026-11-23 16:08",
+   "animacoes": [],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "edificio_assembleia_constituinte": {
+   "arquivo": "recursos/objeto/edificio_assembleia_constituinte.v1.json",
+   "tipo": "objeto",
+   "hash": "699e804955195569",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "edifício",
+    "assembleia",
+    "França",
+    "1789",
+    "palácio",
+    "edificio"
+   ],
+   "nome": "Edifício da Assembleia Constituinte",
+   "criado": "2026-11-23 16:09",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "mapa_paris_1789": {
+   "arquivo": "recursos/objeto/mapa_paris_1789.v1.json",
+   "tipo": "objeto",
+   "hash": "00ccf4d4f8b3f404",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "mapa",
+    "Paris",
+    "França",
+    "1789",
+    "cidade",
+    "ilustrado"
+   ],
+   "nome": "Mapa ilustrado de Paris revolucionária",
+   "criado": "2026-11-23 16:09",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "decreto_real_fechado": {
+   "arquivo": "recursos/objeto/decreto_real_fechado.v1.json",
+   "tipo": "objeto",
+   "hash": "343af826b60e3a8b",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "decreto",
+    "rei",
+    "poder real",
+    "documento",
+    "veto",
+    "real"
+   ],
+   "nome": "Decreto real ainda fechado",
+   "criado": "2026-11-23 16:10",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "porta_real_bloqueando_debate": {
+   "arquivo": "recursos/objeto/porta_real_bloqueando_debate.v1.json",
+   "tipo": "objeto",
+   "hash": "c9f14a5762f575e4",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "porta",
+    "bloqueio",
+    "rei",
+    "poder",
+    "decisão",
+    "pesada"
+   ],
+   "nome": "Porta pesada bloqueando documentos",
+   "criado": "2026-11-23 16:10",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "decreto_veto_real": {
+   "arquivo": "recursos/objeto/decreto_veto_real.v1.json",
+   "tipo": "objeto",
+   "hash": "5068d33c711d4c40",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "veto",
+    "decreto",
+    "rei",
+    "bloquear decisão",
+    "Assembleia"
+   ],
+   "nome": "Decreto de veto real",
+   "criado": "2026-11-23 16:12",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "deputados_separando_lados": {
+   "arquivo": "recursos/objeto/deputados_separando_lados.v1.json",
+   "tipo": "objeto",
+   "hash": "eca6e8f041858e56",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "deputados",
+    "grupos",
+    "lados",
+    "assembleia",
+    "assentos",
+    "ocupando"
+   ],
+   "nome": "Deputados ocupando lados opostos",
+   "criado": "2026-11-23 16:12",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "cadeira_presidencial_assembleia": {
+   "arquivo": "recursos/objeto/cadeira_presidencial_assembleia.v1.json",
+   "tipo": "objeto",
+   "hash": "488b01557a81bdba",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "cadeira",
+    "presidente",
+    "presidência",
+    "assembleia",
+    "referência",
+    "quem"
+   ],
+   "nome": "Cadeira de quem presidia a Assembleia",
+   "criado": "2026-11-23 16:13",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "deputados_favoraveis_veto": {
+   "arquivo": "recursos/objeto/deputados_favoraveis_veto.v1.json",
+   "tipo": "objeto",
+   "hash": "48fdc784aa345eb5",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "deputados",
+    "direita",
+    "favoráveis ao veto",
+    "assembleia",
+    "favoraveis"
+   ],
+   "nome": "Deputados favoráveis ao veto à direita",
+   "criado": "2026-11-23 16:13",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "deputados_contrarios_veto": {
+   "arquivo": "recursos/objeto/deputados_contrarios_veto.v1.json",
+   "tipo": "objeto",
+   "hash": "b0544dfbb8449417",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "deputados",
+    "esquerda",
+    "contrários ao veto",
+    "assembleia",
+    "contrarios"
+   ],
+   "nome": "Deputados contrários ao veto à esquerda",
+   "criado": "2026-11-23 16:14",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "cadeiras_e_panfletos_politicos": {
+   "arquivo": "recursos/objeto/cadeiras_e_panfletos_politicos.v1.json",
+   "tipo": "objeto",
+   "hash": "76ba45e39d7aa5db",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "cadeiras",
+    "assentos",
+    "política",
+    "panfletos",
+    "direita",
+    "esquerda",
+    "junto"
+   ],
+   "nome": "Cadeiras junto a novos panfletos políticos",
+   "criado": "2026-11-23 16:14",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "rua_europeia_antiga__historia_pergaminho": {
+   "arquivo": "recursos/cenario/rua_europeia_antiga__historia_pergaminho.v1.json",
+   "tipo": "cenario",
+   "hash": "b12c660e5e87bc73",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "Europa",
+    "cidade",
+    "rua",
+    "pedra",
+    "viagem",
+    "uma"
+   ],
+   "nome": "Rua de uma cidade europeia antiga",
+   "criado": "2026-11-23 16:15",
+   "animacoes": [],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "mapa_europeu_propagacao_ideias": {
+   "arquivo": "recursos/objeto/mapa_europeu_propagacao_ideias.v1.json",
+   "tipo": "objeto",
+   "hash": "aa3fac836fc22292",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "mapa",
+    "Europa",
+    "países",
+    "propagação",
+    "política",
+    "europa"
+   ],
+   "nome": "Mapa da Europa com ideias se espalhando",
+   "criado": "2026-11-23 16:15",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "calendarios_epocas_diferentes": {
+   "arquivo": "recursos/objeto/calendarios_epocas_diferentes.v1.json",
+   "tipo": "objeto",
+   "hash": "a0201fb79eb97291",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "calendário",
+    "épocas",
+    "tempo",
+    "história",
+    "mudança",
+    "calendarios",
+    "epocas"
+   ],
+   "nome": "Calendários de épocas diferentes",
+   "criado": "2026-11-23 16:17",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "camara_antiga_e_debate_moderno__historia_pergaminho": {
+   "arquivo": "recursos/cenario/camara_antiga_e_debate_moderno__historia_pergaminho.v1.json",
+   "tipo": "cenario",
+   "hash": "d80f9194bee11bd8",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "passado",
+    "presente",
+    "assembleia",
+    "debate",
+    "mudança",
+    "comparacao",
+    "entre"
+   ],
+   "nome": "Comparação entre assembleia antiga e debate atual",
+   "criado": "2026-11-23 16:17",
+   "animacoes": [],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
+  },
+  "urna_votacao_atual": {
+   "arquivo": "recursos/objeto/urna_votacao_atual.v1.json",
+   "tipo": "objeto",
+   "hash": "a2f0def14e265466",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "urna",
+    "votação",
+    "política atual",
+    "eleição",
+    "votacao",
+    "bandeira",
+    "brasil",
+    "nacional",
+    "pais"
+   ],
+   "nome": "Urna de votação contemporânea",
+   "criado": "2026-11-23 16:19",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "ondular",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "procedural",
+   "tema": "historia_pergaminho"
+  },
+  "panfleto_memoria_politica": {
+   "arquivo": "recursos/objeto/panfleto_memoria_politica.v1.json",
+   "tipo": "objeto",
+   "hash": "474b79ca56ea7dd7",
+   "versao": 1,
+   "status": "aprovado",
+   "tags": [
+    "panfleto",
+    "memória",
+    "política",
+    "história",
+    "sobre"
+   ],
+   "nome": "Panfleto sobre a memória política",
+   "criado": "2026-11-23 16:19",
+   "animacoes": [
+    "balancar",
+    "flutuar",
+    "parado",
+    "piscar",
+    "pulsar",
+    "tremer"
+   ],
+   "motivo": "",
+   "origem": "ia",
+   "tema": "historia_pergaminho"
   }
  }
 }

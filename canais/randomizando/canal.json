@@ -1,0 +1,90 @@
+{
+  "nome": "Randomizando",
+  "idioma": "português do Brasil",
+  "nicho": "humor cotidiano, situações absurdas, trabalho, vida adulta, relacionamentos e expectativa versus realidade",
+  "publico": "jovens adultos e adultos que gostam de humor identificável",
+  "publico_livre": "jovens adultos e adultos que gostam de humor identificável",
+  "tom": "espontâneo, irreverente, leve, rápido e observacional",
+  "estrutura": [
+    "Situação familiar ou absurda.",
+    "Expectativa ou problema rapidamente estabelecido.",
+    "Escalada com complicações cômicas.",
+    "Virada inesperada e coerente.",
+    "Punchline forte, sem explicá-la."
+  ],
+  "regras_globais": [
+    "Humor compreensível sem contexto.",
+    "Sem preconceito, humilhação ou crueldade.",
+    "Não apresentar ficção como fato real.",
+    "Variar personagens, cenários e ritmo; evitar fórmula repetida."
+  ],
+  "estilo_visual": "Adaptar o visual ao tema e motor escolhido; cenas variadas, pertinência visual e legibilidade; evitar repetição perceptível.",
+  "duracao_alvo_segundos": 60,
+  "segundos_por_imagem": 5,
+  "otimizar_roteiro": true,
+  "duracao_plano": 2.8,
+  "gancho_segundos": 2.6,
+  "voz": "pf_dora",
+  "idioma_tts": "pt-br",
+  "velocidade": 1.08,
+  "pausa_entre_cenas": 0.2,
+  "legenda_fonte": "Arial Black",
+  "legenda_maiusculas": false,
+  "legenda_palavras": 4,
+  "saturacao": 1.12,
+  "contraste": 1.06,
+  "nitidez": 0.6,
+  "vinheta": true,
+  "escala_interna": 1.5,
+  "musica": "",
+  "usar_video_stock": true,
+  "proporcao_video": 0.5,
+  "duracao_plano_video": 4.0,
+  "tts": {
+    "motor": "kokoro",
+    "engine": "qwen",
+    "perfil": "Nicoly",
+    "idioma": "pt",
+    "velocidade": 1.0,
+    "velocidade_gancho": 1.0,
+    "fallback_kokoro": true
+  },
+  "identidade": {
+    "nome_exibicao": "Randomizando",
+    "logo_arquivo": "identidade/logo.png",
+    "marca_dagua": {
+      "ativa": true,
+      "opacidade": 0.22,
+      "posicao": "inferior_direita",
+      "largura_percentual": 10
+    },
+    "intro": {
+      "ativa": false,
+      "arquivo": "identidade/intro.mp4"
+    },
+    "thumbnail": {
+      "incluir_logo": true
+    }
+  },
+  "categoria_padrao": "humor",
+  "motores_preferidos": [
+    "character_2_5d",
+    "classico"
+  ],
+  "formatos_recomendados": {
+    "vertical_9x16": "Vídeo curto 30–90 s; composição mobile dedicada.",
+    "youtube_16x9": "Vídeo longo 5–10 min; aprofundamento real, roteiro e composição horizontal próprios."
+  },
+  "diretrizes_multiformato": [
+    "Vertical 9:16 com composição para celular e áreas seguras.",
+    "Horizontal 16:9 com composição própria; não esticar nem apenas recortar o vertical.",
+    "Vídeos longos aprofundam contexto, etapas e exemplos, sem alongamento artificial.",
+    "Adaptar roteiro, ritmo, cenas e enquadramento por formato."
+  ],
+  "regras_motor": [
+    "Usar a identidade deste canal, nunca a de outro.",
+    "Não reutilizar roteiro entre canais apenas trocando nome, voz ou motor.",
+    "Associar imagens e cenas ao trecho narrado.",
+    "Variar ganchos, desenvolvimento, cenas e encerramentos."
+  ]
+}

@@ -1,0 +1,22 @@
+FASE 1 — PATCH DE ROTEIROS
+
+Arquivo substituído: criar_video.py
+
+Mudanças:
+- A abertura prioriza uma informação intrigante, consequência, contradição ou descoberta concreta, em vez de pergunta genérica/suspense vazio.
+- O modelo escolhe internamente entre 3 opções de abertura (não precisa expor a avaliação no JSON).
+- Removidas do prompt as exigências rígidas de que a primeira cena seja sempre uma pergunta sem contexto.
+- Encerramento orienta pergunta contextual, sem perguntas retóricas ou CTA genérico; respeita assinatura fixa se definida nas regras do canal.
+- O planejamento narrativo passa a usar o plano local de reserva, evitando uma chamada extra de IA antes da geração do roteiro.
+- Refinamento automático desativado por padrão; pode ser reativado no config.json com "refinar_roteiro": true.
+- Mantida a estrutura de JSON e compatibilidade com o fluxo existente de geração/renderização.
+
+
+INSTALAÇÃO
+1. Faça backup do criar_video.py atual.
+2. Extraia o ZIP na raiz do projeto canais-dark, substituindo criar_video.py.
+3. Não substitui app.py, criar_animado.py, motores, UI, renderização ou TTS.
+
+VALIDAÇÃO
+- criar_video.py passou em python -m py_compile.
+- O teste tests/test_backend.py não pôde ser coletado neste ambiente: erro de importação de job_store (ambiente/caminho de teste), não relacionado à sintaxe do arquivo alterado.
