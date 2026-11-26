@@ -110,7 +110,8 @@ def montar_prompt(canal, tema, duracao, estilo, anteriores, categoria="curiosida
         "que só faça sentido para este tema. Não use perguntas genéricas como "
         "'já conhecia esse fato', 'o que mais te surpreendeu' ou 'conta nos comentários'."
     )
-
+    assinatura = cv.assinatura_canal(canal) if hasattr(cv, "assinatura_canal") else f"Siga {canal.get('nome', 'o canal')} para mais conteúdos como este."
+    religion_script_guidance = ("DIRETRIZ — RELIGIÃO / PÚBLICO GERAL: o título e a história devem conversar com qualquer pessoa, inclusive quem não é religioso. Use a passagem bíblica como base para uma narrativa que explore uma situação humana reconhecível (medo, culpa, cansaço, injustiça, perda, solidão, recomeço, esperança ou decisão). O título pode ser emocional/universal e não precisa citar Deus, Bíblia ou personagem; evite resumos literais como 'Elias venceu no Carmelo. Por que depois quis morrer?' ou títulos de aula/sermão. Conte a história de forma conectada, com progressão e payoff, explicando como ela ilumina a questão do título sem moralismo ou promessa simplista. NÃO use perguntas retóricas, mini-ganchos em forma de pergunta, perguntas-ponte ou pergunta-e-resposta no fim de cada cena. Use transições afirmativas e naturais; reserve pergunta somente para o gancho inicial se fizer sentido e para UMA pergunta curta no encerramento, antes da assinatura fixa do canal. Não invente falas, acontecimentos, versículos, interpretações ou promessas materiais.") if categoria == "religiao" else ""
     return f"""
 CANAL: {canal.get('nome', '')}
 NICHO: {canal.get('nicho', '')}
@@ -122,6 +123,7 @@ TEMA: {tema}
 ESTILO VISUAL: {info['nome']}
 
 {bloco_categoria(categoria)}
+{religion_script_guidance}
 
 TAMANHO: cerca de {int(duracao * 2.5)} palavras de narração no total, em {n_cenas} cenas de 15 a 35 palavras cada.
 
@@ -131,11 +133,12 @@ TIPOS DE CENA DISPONÍVEIS (o programa posiciona tudo sozinho; escreva só o con
 
 REGRAS DA NARRAÇÃO:
 - A cena 1 é só o gancho: UMA frase curta (até 16 palavras), uma pergunta direta ou afirmação intrigante que NÃO conta a história. A explicação começa na cena 2 e responde à pergunta. Proibido: "Neste vídeo", "Você sabia", "Hoje vamos falar".
-- Frases curtas e linguagem falada. Uma ideia nova por cena; a cada 2 ou 3 cenas, um mini-gancho que puxe para a próxima.
+- Frases curtas e linguagem falada. Uma ideia nova por cena. Para RELIGIÃO, narração contínua, com transições afirmativas: proibido terminar cenas intermediárias com perguntas, criar perguntas-ponte, mini-ganchos interrogativos ou sequências de pergunta-e-resposta. Reserve pergunta para o gancho inicial se fizer sentido e UMA pergunta curta contextualizada no final. Nos demais casos, mini-gancho a cada 2 ou 3 cenas pode ser usado com moderação.
 - Use apenas fatos verdadeiros e verificáveis. Se não tiver certeza de um dado, não o inclua. Explique com suas palavras, sem copiar textos de terceiros.
-- A última cena retoma a pergunta do início, fecha com uma ideia marcante E termina com uma pergunta específica para estimular comentários.
-- PERGUNTA FINAL ADEQUADA À CATEGORIA: {fechamento}
-- Evite CTA genérico ("curta e inscreva-se").
+- A última cena fecha com uma conclusão marcante, seguida por EXATAMENTE uma pergunta curta e contextualizada sobre o tema.
+- Depois da pergunta, inclua a assinatura fixa do canal, literalmente: "{assinatura}". A narração da última cena deve terminar com ela; não omita nem reformule.
+- No campo "pergunta_final", coloque somente a pergunta contextual, sem a assinatura.
+- Evite CTAs genéricos e pedidos múltiplos de engajamento.
 - O texto da tela resume a narração (não é cópia dela). Sem emojis.
 - Varie em relação aos vídeos anteriores do canal:
 {ant}
@@ -339,10 +342,13 @@ def main():
         else:
             r = gerar_roteiro_gemini(canal, a.tema, duracao, a.estilo,
                                      cv.titulos_anteriores(a.canal, pasta), cfg, a.categoria)
-        cv.salvar_json(arq, validar(r, a.estilo, a.categoria))
+        r = validar(r, a.estilo, a.categoria)
+        r = cv.garantir_assinatura_final(r, canal)
+        cv.salvar_json(arq, r)
     else:
         cv.info("   roteiro.json ja existe, usando.")
     roteiro = validar(cv.ler_json(arq), a.estilo, a.categoria)
+    roteiro = cv.garantir_assinatura_final(roteiro, canal)
     cv.salvar_json(arq, roteiro)
     cv.info(f"   titulo: {roteiro['titulo']} ({len(roteiro['cenas'])} cenas)")
     if a.revisar:

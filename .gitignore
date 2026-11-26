@@ -36,3 +36,4 @@ Thumbs.db
 # Ambiente adicional e configuracao local
 .venv312/
 /config.jsonconfig.json.backup_provedores 
+config.json

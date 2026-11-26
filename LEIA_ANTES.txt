@@ -1,0 +1,12 @@
+PATCH — MINUTO DE FÉ / PÚBLICO GERAL
+
+Arquivos: criar_video.py, criar_animado.py, motores/categorias.json e canais/minuto-de-fe/canal.json. Faça backup e extraia na raiz do projeto, mantendo os caminhos.
+
+- Categoria Religião adicionada.
+- Minuto de Fé passa a usar religião como categoria padrão.
+- Temas devem atrair público geral com títulos humanos, intrigantes, emocionais, motivacionais ou de curiosidade; não títulos de estudo/aula.
+- Roteiros Clássico e Whiteboard contam uma história bíblica que cumpre o título e conecta a mensagem a uma emoção, dilema ou situação humana de forma natural.
+- Fidelidade ao texto bíblico, sem invenções ou promessa material.
+- Não altera interface, renderização, motores visuais ou TTS.
+
+Validado: sintaxe Python dos scripts e JSON. Não foi feita geração real pelo MyHub nesta validação.

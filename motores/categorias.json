@@ -5,7 +5,11 @@
       "id": "curiosidades",
       "name": "Curiosidades",
       "icon": "💡",
-      "recommended_engines": ["classico", "character_2_5d", "stickman"],
+      "recommended_engines": [
+        "classico",
+        "character_2_5d",
+        "stickman"
+      ],
       "description": "Fatos surpreendentes, perguntas específicas e descobertas verificáveis sobre o mundo.",
       "editorial_profile": {
         "objective": "Transformar fatos pouco conhecidos em histórias fáceis de entender e compartilhar.",
@@ -28,7 +32,10 @@
       "id": "historia",
       "name": "História e curiosidades antigas",
       "icon": "🏺",
-      "recommended_engines": ["classico", "character_2_5d"],
+      "recommended_engines": [
+        "classico",
+        "character_2_5d"
+      ],
       "description": "Histórias antigas, civilizações, descobertas arqueológicas, personagens históricos e acontecimentos documentados.",
       "editorial_profile": {
         "objective": "Contar episódios históricos com contexto, cronologia e explicação do que é comprovado.",
@@ -51,7 +58,9 @@
       "id": "esportes",
       "name": "Esportes",
       "icon": "⚽",
-      "recommended_engines": ["classico"],
+      "recommended_engines": [
+        "classico"
+      ],
       "description": "Regras, táticas, recordes, histórias, partidas e curiosidades esportivas.",
       "editorial_profile": {
         "objective": "Explicar acontecimentos e conceitos esportivos com ritmo, contexto e dados verificáveis.",
@@ -74,7 +83,10 @@
       "id": "celebridades",
       "name": "Famosos e cultura pop",
       "icon": "⭐",
-      "recommended_engines": ["classico", "character_2_5d"],
+      "recommended_engines": [
+        "classico",
+        "character_2_5d"
+      ],
       "description": "Carreiras, obras, marcos culturais e fatos públicos verificáveis sobre pessoas conhecidas.",
       "editorial_profile": {
         "objective": "Contextualizar trajetórias e fenômenos culturais sem boatos ou invasão de privacidade.",
@@ -97,7 +109,10 @@
       "id": "what_if",
       "name": "E se...?",
       "icon": "🧪",
-      "recommended_engines": ["stickman", "character_2_5d"],
+      "recommended_engines": [
+        "stickman",
+        "character_2_5d"
+      ],
       "description": "Cenários hipotéticos, experiências mentais e consequências progressivas apoiadas em ciência quando aplicável.",
       "editorial_profile": {
         "objective": "Explorar uma hipótese por etapas, mostrando consequências plausíveis, limites e surpresas.",
@@ -120,7 +135,11 @@
       "id": "como_funciona",
       "name": "Como funciona...?",
       "icon": "⚙️",
-      "recommended_engines": ["isometric", "blueprint", "classico"],
+      "recommended_engines": [
+        "isometric",
+        "blueprint",
+        "classico"
+      ],
       "description": "Explicações passo a passo sobre objetos, serviços, sistemas e processos do cotidiano.",
       "editorial_profile": {
         "objective": "Tornar visível um mecanismo ou processo que normalmente fica escondido.",
@@ -143,7 +162,11 @@
       "id": "educacao",
       "name": "Educação e ciência",
       "icon": "🔬",
-      "recommended_engines": ["isometric", "classico", "character_2_5d"],
+      "recommended_engines": [
+        "isometric",
+        "classico",
+        "character_2_5d"
+      ],
       "description": "Conceitos científicos e educacionais explicados com exemplos, analogias e demonstrações.",
       "editorial_profile": {
         "objective": "Ensinar um conceito com clareza, exemplos e progressão lógica.",
@@ -166,7 +189,10 @@
       "id": "noticias",
       "name": "Notícias e atualidades",
       "icon": "📰",
-      "recommended_engines": ["broadcast_news", "classico"],
+      "recommended_engines": [
+        "broadcast_news",
+        "classico"
+      ],
       "description": "Explicadores sobre acontecimentos públicos e assuntos recentes, com datas e ressalvas sobre informações que mudam.",
       "editorial_profile": {
         "objective": "Explicar o que aconteceu, o contexto e por que o assunto importa.",
@@ -189,7 +215,10 @@
       "id": "economia",
       "name": "Economia e negócios",
       "icon": "📊",
-      "recommended_engines": ["broadcast_news", "classico"],
+      "recommended_engines": [
+        "broadcast_news",
+        "classico"
+      ],
       "description": "Conceitos econômicos, tributos, negócios, meios de pagamento e impactos na vida cotidiana.",
       "editorial_profile": {
         "objective": "Explicar mecanismos econômicos e seus possíveis efeitos sem recomendar decisões financeiras.",
@@ -212,7 +241,10 @@
       "id": "politica_institucional",
       "name": "Política institucional e funcionamento do Estado",
       "icon": "🏛️",
-      "recommended_engines": ["broadcast_news", "classico"],
+      "recommended_engines": [
+        "broadcast_news",
+        "classico"
+      ],
       "description": "Instituições, regras constitucionais, eleições internas, processos legislativos e funcionamento do poder público.",
       "editorial_profile": {
         "objective": "Explicar procedimentos e competências institucionais com neutralidade e contexto.",
@@ -235,7 +267,10 @@
       "id": "documentario",
       "name": "Documentários e explicadores",
       "icon": "🎥",
-      "recommended_engines": ["broadcast_news", "classico"],
+      "recommended_engines": [
+        "broadcast_news",
+        "classico"
+      ],
       "description": "Narrativas documentais sobre processos, lugares, acontecimentos e temas de relevância pública.",
       "editorial_profile": {
         "objective": "Construir uma narrativa factual com contexto, evidências, personagens públicos ou processos e consequências.",
@@ -258,7 +293,10 @@
       "id": "engenharia",
       "name": "Engenharia e construção",
       "icon": "📐",
-      "recommended_engines": ["blueprint", "isometric"],
+      "recommended_engines": [
+        "blueprint",
+        "isometric"
+      ],
       "description": "Estruturas, máquinas, obras, materiais, projetos e princípios de engenharia.",
       "editorial_profile": {
         "objective": "Mostrar como algo é projetado, dimensionado, construído ou funciona.",
@@ -281,7 +319,10 @@
       "id": "humor",
       "name": "Humor e histórias",
       "icon": "😂",
-      "recommended_engines": ["stickman", "character_2_5d"],
+      "recommended_engines": [
+        "stickman",
+        "character_2_5d"
+      ],
       "description": "Histórias engraçadas, situações cotidianas, ironias e narrativas leves.",
       "editorial_profile": {
         "objective": "Criar uma situação clara, escalada cômica, surpresa e fechamento com personalidade.",
@@ -304,7 +345,11 @@
       "id": "tecnologia",
       "name": "Tecnologia",
       "icon": "💻",
-      "recommended_engines": ["blueprint", "isometric", "broadcast_news"],
+      "recommended_engines": [
+        "blueprint",
+        "isometric",
+        "broadcast_news"
+      ],
       "description": "Produtos, sistemas digitais, infraestrutura, inteligência artificial e tendências tecnológicas.",
       "editorial_profile": {
         "objective": "Explicar o que a tecnologia faz, como funciona e quais são suas limitações e impactos.",
@@ -321,6 +366,33 @@
         "visual_guidance": "Diagramas, interfaces ilustrativas, fluxos de dados, componentes e cenários técnicos.",
         "closing_instruction": "Termine com UMA pergunta sobre a aplicação ou o limite mais relevante da tecnologia explicada, sem hype e sem prometer resultados. Uma única frase. Proibido: \"já conhecia\", \"o que mais te surpreendeu\", \"conta nos comentários\".",
         "closing_question": "Em qual situação do seu dia a dia essa tecnologia faria mais diferença?"
+      }
+    },
+    {
+      "id": "religiao",
+      "name": "Religião",
+      "icon": "🙏",
+      "recommended_engines": [
+        "classico",
+        "character_2_5d",
+        "whiteboard"
+      ],
+      "description": "Histórias, personagens, ensinamentos e temas bíblicos transformados em vídeos envolventes, emocionais e relevantes para o público geral.",
+      "editorial_profile": {
+        "objective": "Usar histórias e passagens bíblicas como ponto de partida para vídeos que despertem curiosidade, identificação emocional, reflexão, esperança ou debate em qualquer pessoa, inclusive quem não é religioso.",
+        "tone": "envolvente, humano, emocional, intrigante, acessível e respeitoso; evitar tom de aula, sermão ou escola dominical",
+        "structure": [
+          "gancho humano ou emocional que cumpra o título",
+          "introduzir a história ou passagem bíblica que sustenta o tema",
+          "desenvolver o conflito, decisão, sofrimento, surpresa ou transformação da narrativa",
+          "conectar a história à pergunta ou experiência humana proposta, sem forçar aplicação",
+          "conclusão memorável, pergunta contextual e assinatura do canal"
+        ],
+        "fact_policy": "Basear a narrativa em passagem bíblica identificável e fiel ao texto. Não inventar eventos, falas, versículos ou promessas. Distinguir texto bíblico, contexto histórico e interpretação quando relevante. Aplicações atuais são reflexão, não garantia divina.",
+        "avoid": "Títulos com aparência de aula, estudo bíblico, devocional tradicional ou documentário religioso, salvo se o ângulo for realmente irresistível. Evitar ficar preso a arqueologia/contexto histórico, títulos genéricos, sermão, culpa, medo, ataques religiosos, promessa de prosperidade garantida ou alegar que Deus garantirá resultados materiais.",
+        "visual_guidance": "Narrativa cinematográfica e emocional; mostrar situações, conflitos, símbolos, ambientes e momentos bíblicos que sustentem a história e sua mensagem; evitar estética de apresentação escolar ou slides de sermão.",
+        "closing_instruction": "Termine com uma pergunta curta, humana e contextual que convide identificação ou reflexão, sem múltiplas solicitações. Depois, incluir a assinatura fixa do canal.",
+        "closing_question": "Essa história se conecta a alguma situação que você já viveu?"
       }
     }
   ]

@@ -366,6 +366,35 @@ def resolver_nucleo(canal, categoria, tema, perfil=None):
         erro(str(e))
 
 
+
+
+ASSINATURAS_CANAIS = {
+    "minuto antigo": "Siga o Minuto Antigo para descobrir histórias que o tempo não apagou.",
+    "randomizando": "Siga o Randomizando para mais situações que só poderiam acontecer com a gente.",
+    "papo de dinheiro": "Siga o Papo de Dinheiro para entender melhor o mundo do dinheiro.",
+    "minuto ciência": "Siga o Minuto Ciência para continuar aprendendo em 1 minuto.",
+    "minuto ciencia": "Siga o Minuto Ciência para continuar aprendendo em 1 minuto.",
+    "arquivo secreto": "Siga o Arquivo Secreto para desvendar outras histórias intrigantes.",
+    "minuto de fé": "Siga o Minuto de Fé para mais reflexões sobre a Palavra.",
+}
+
+def assinatura_canal(canal):
+    nome = str(canal.get("nome", "")).strip().lower()
+    return ASSINATURAS_CANAIS.get(nome, f"Siga {canal.get('nome', 'o canal')} para mais conteúdos como este.")
+
+
+def garantir_assinatura_final(roteiro, canal):
+    """Garante que a última narração termina com a assinatura fixa do canal."""
+    cenas = roteiro.get("cenas") if isinstance(roteiro, dict) else None
+    if not isinstance(cenas, list) or not cenas or not isinstance(cenas[-1], dict):
+        return roteiro
+    assinatura = assinatura_canal(canal).strip()
+    narracao = str(cenas[-1].get("narracao", "")).strip()
+    if assinatura and assinatura.lower() not in narracao.lower():
+        cenas[-1]["narracao"] = (narracao.rstrip(" .!?") + ". " + assinatura).strip()
+    return roteiro
+
+
 def montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria="curiosidades", perfil=None, resolucao=None, plano_narrativo=None):
     resolucao = resolucao or resolver_nucleo(canal, categoria, tema, perfil)
     canal = aplicar_modo_tema(canal, categoria)
@@ -390,16 +419,25 @@ def montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria="curiosida
         f"DIRECAO VISUAL: {perfil_categoria.get('visual_guidance','')}",
     ])
     fechamento_categoria = closing_instruction(categoria)
+    assinatura = assinatura_canal(canal)
     plano = construir_plano(tema, n_cenas, duracao, fechamento_categoria,
                             formato=canal.get("_formato"), resolucao=resolucao)
     _baixa = plano["retencao"]["tensao"].startswith("baix")
-    linha_ritmo = (
-        "Mantenha o interesse pela clareza: uma ideia nova por cena, exemplos concretos "
-        "e transições naturais. NÃO crie suspense nem perguntas retóricas no fim das cenas."
-        if _baixa else
-        f"A cada {plano['retencao']['intervalo_mini_gancho']} cenas, um mini-gancho que puxe "
-        "para a próxima parte (varie a fórmula, não repita a mesma frase)."
-    )
+    if categoria == "religiao":
+        linha_ritmo = (
+            "NARRATIVA CONTÍNUA: não use perguntas retóricas, perguntas-ponte ou mini-ganchos interrogativos "
+            "no final das cenas intermediárias. Cada cena deve avançar a história com fatos, ações, consequências, "
+            "detalhes ou mudança emocional; conecte as cenas com transições naturais e afirmativas. Reserve perguntas "
+            "para o gancho inicial, se fizer sentido, e uma pergunta contextual no encerramento."
+        )
+    else:
+        linha_ritmo = (
+            "Mantenha o interesse pela clareza: uma ideia nova por cena, exemplos concretos "
+            "e transições naturais. NÃO crie suspense nem perguntas retóricas no fim das cenas."
+            if _baixa else
+            f"A cada {plano['retencao']['intervalo_mini_gancho']} cenas, um mini-gancho que puxe "
+            "para a próxima parte (varie a fórmula, não repita a mesma frase)."
+        )
     bloco_retencao = bloco_prompt(plano)
     bloco_plano = bloco_narrativo(plano_narrativo)
     if canal.get("_usa_video"):
@@ -442,9 +480,11 @@ RITMO E RETENÇÃO:
 - {linha_ritmo}
 - Seja específico: nomes, lugares, números e datas, mas SOMENTE se tiver certeza. Se não tiver certeza de um dado, não o inclua.
 - Escreva com suas palavras, com ponto de vista e explicação, não apenas uma lista de fatos. Não copie textos de terceiros.
-- A última cena retoma a pergunta do início, fecha com uma ideia marcante E termina com uma pergunta específica para estimular comentários.
-- PERGUNTA FINAL ADEQUADA À CATEGORIA: Termine com UMA pergunta específica sobre o ponto mais marcante deste vídeo, que só faça sentido para este tema. Não use "já conhecia esse fato", "o que mais te surpreendeu" nem "conta nos comentários".
-- A pergunta deve combinar com o tom do canal e do assunto: humor para conteúdo descontraído; pergunta séria para conteúdo sério. Evite CTA genérico.
+- A última cena encerra a explicação com uma conclusão marcante e, em seguida, contém EXATAMENTE uma pergunta curta e contextualizada sobre o tema.
+- Depois dessa pergunta, inclua a assinatura fixa do canal, literalmente: "{assinatura}".
+- A narração da última cena deve terminar com a assinatura do canal. Não omita, reformule, substitua nem deixe a assinatura para fora da narração.
+- A pergunta deve ser curta, natural e específica ao assunto; evite perguntas genéricas ou vários pedidos de engajamento.
+- No campo "pergunta_final", coloque somente a pergunta contextual, sem a assinatura do canal.
 - Sem emojis nem marcações como "[cena]".
 
 ESTRUTURA (siga a ordem):
@@ -464,6 +504,7 @@ IMAGENS (o programa já acrescenta automaticamente o estilo visual do canal, ent
 {bloco_plano}
 {bloco_retencao}
 {bloco_editorial}
+{("DIRETRIZ DE NARRATIVA — RELIGIÃO / PÚBLICO GERAL:\n- O título deve falar com uma situação humana e atrair até quem não é religioso; a Bíblia é a fonte da história, não o requisito para clicar.\n- Não transforme o tema em resumo literal do episódio bíblico nem em título de aula. Explore a emoção/dilema (cansaço, culpa, injustiça, solidão, medo, recomeço, esperança, decisão) que a passagem sustenta.\n- Conte uma história real do texto bíblico com contexto mínimo, conflito, progressão, consequência e payoff. Conecte à vida do espectador com naturalidade, sem sermão ou moralismo.\n- NÃO faça pergunta retórica, pergunta-ponte, mini-gancho interrogativo ou pergunta-e-resposta no fim de cenas intermediárias. Use transições afirmativas.\n- Reserve pergunta para o gancho inicial se fizer sentido e UMA pergunta contextual no final, seguida da assinatura fixa. Não invente fala, evento, versículo, interpretação ou promessa material.") if categoria == "religiao" else ""}
 
 Responda SOMENTE com JSON válido, neste formato ("ganchos_candidatos" deve ter 5 itens):
 {{
@@ -568,11 +609,15 @@ def gerar_roteiro(canal, tema, duracao, anteriores, cfg, categoria="curiosidades
         )
         return response.text or ""
 
-    info("   planejando a narrativa...")
-    plano_narr = planejar_narrativa(
-        tema, resolucao, n_cenas, duracao,
-        lambda p: _gerar_texto(p, "planejamento", 0.5),
-    )
+    if categoria == "religiao":
+        info("   narrativa bíblica em fluxo direto (sem plano de perguntas-ponte)...")
+        plano_narr = None
+    else:
+        info("   planejando a narrativa...")
+        plano_narr = planejar_narrativa(
+            tema, resolucao, n_cenas, duracao,
+            lambda p: _gerar_texto(p, "planejamento", 0.5),
+        )
     provedor_roteiro = _provedor_texto_etapa(cfg, "roteiro")
     prompt = montar_prompt_roteiro(
         canal, tema, duracao, anteriores, categoria,
@@ -610,7 +655,7 @@ def gerar_roteiro(canal, tema, duracao, anteriores, cfg, categoria="curiosidades
 
     def _avaliar(r):
         a = avaliar_roteiro(r, plano)
-        ruins_ = perguntas_sem_resposta(
+        ruins_ = [] if categoria == "religiao" else perguntas_sem_resposta(
             [c["narracao"] for c in r["cenas"]],
             lambda p: _gerar_texto(p, "checagem", 0.3),
         )
@@ -619,7 +664,7 @@ def gerar_roteiro(canal, tema, duracao, anteriores, cfg, categoria="curiosidades
         return a, ruins_
 
     aval, ruins = _avaliar(roteiro)
-    if cfg.get("otimizar_roteiro"):
+    if cfg.get("otimizar_roteiro") and categoria != "religiao":
         info("   otimizando o roteiro (limpeza + ganchos)...")
         roteiro, rel = otimizar_roteiro_completo(
             roteiro, plano, _avaliar, ruins,
@@ -628,7 +673,7 @@ def gerar_roteiro(canal, tema, duracao, anteriores, cfg, categoria="curiosidades
         if rel["aplicado"]:
             aval, _ = _avaliar(roteiro)
         aval["otimizacao"] = rel
-    if cfg.get("refinar_roteiro", True):
+    if cfg.get("refinar_roteiro", True) and categoria != "religiao":
         info("   refinando o roteiro...")
         otim = aval.get("otimizacao")
         roteiro, rel3 = refinar_roteiro(
@@ -1495,13 +1540,14 @@ def sugerir_ideias(canal, nome_canal, n, cfg, categoria=None, motor="classico"):
         regras_categoria = "- Priorize mecanismos, etapas, componentes, comparações e explicações de funcionamento.\n- Os temas devem permitir demonstração visual concreta, não apenas definições abstratas."
     elif categoria_id in ("what_if", "humor"):
         regras_categoria = "- Priorize hipóteses interessantes, consequências progressivas, conflito e viradas narrativas.\n- Diferencie claramente ciência conhecida de especulação hipotética."
-    elif categoria_id == "esportes":
-        regras_categoria = "- Priorize regras, táticas, recordes, histórias e fatos esportivos verificáveis.\n- Evite alegações não comprovadas sobre atletas."
+    elif categoria_id == "religiao":
+        regras_categoria = "- Pense como estrategista de entretenimento e storytelling para público geral, não como professor de escola dominical.\n- Use uma história/passagem/personagem bíblico para abordar emoção, dilema, curiosidade, conflito, esperança, motivação ou pergunta universal.\n- Títulos devem provocar clique mesmo de quem não frequenta igreja: curtos, marcantes, humanos e intrigantes; evite títulos acadêmicos, cronológicos ou descritivos como 'A história de...' e 'O que aconteceu com...'.\n- O título pode partir de uma situação humana atual e a narrativa deve conectá-la a uma passagem real, sem fabricar fatos.\n- Não transforme todos os temas em arqueologia, profecia, mistério ou sofrimento. Não invente promessas ou interpretações para tornar o título viral."
     else:
         regras_categoria = "- Priorize fatos verificáveis, ângulos pouco conhecidos e perguntas específicas.\n- Evite sensacionalismo falso, discurso de ódio e conselhos de saúde, direito ou finanças."
     regras_motor = ""
     if motor == "broadcast_news":
         regras_motor = "\nMOTOR BROADCAST NEWS (SEM GOOGLE SEARCH): sugira assuntos explicaveis com conhecimento consolidado, mecanismos estaveis, fatos historicos bem documentados ou conceitos estabelecidos. Nao dependa de manchetes do dia, cotacoes, aliquotas vigentes, resultados recentes ou cargos atuais. Nao exija token, cota ou ferramenta de Google Search. Se o tema tiver algum detalhe que possa mudar, formule o tema para explicar o conceito geral e indique conferencia manual antes da publicacao."
+    religion_theme_guidance = ("DIRETRIZ ESPECIAL — RELIGIÃO / PÚBLICO GERAL:\n- O objetivo é atrair qualquer pessoa, inclusive quem não é religioso; a Bíblia é a fonte da história, não uma exigência de interesse religioso para clicar.\n- Priorize títulos emocionalmente fortes, identificáveis e intrigantes, que pareçam falar diretamente com uma situação humana: sentir-se esquecido, cansado, culpado, injustiçado, perdido, rejeitado, sem saída, ter medo de recomeçar ou ver tudo dar errado apesar de fazer o bem.\n- O título NÃO precisa mencionar Deus, Bíblia, personagem ou episódio. Pode partir de uma pergunta universal ou frase de impacto e a história bíblica escolhida deve sustentar e responder essa promessa.\n- Use como referência de estilo, sem copiar: 'Você está cansado de ser forte o tempo inteiro?', 'E se o silêncio de Deus não significasse abandono?', 'Por que você continua se culpando por algo que já passou?', 'Talvez você esteja tentando florescer no lugar errado', 'Você pode recomeçar mesmo depois de ter feito tudo errado'.\n- Evite transformar títulos em resumos literais de episódios ('Elias venceu no Carmelo. Por que depois quis morrer?'), títulos acadêmicos, nomes de personagens como requisito, arqueologia e cronologia seca. Prefira ângulo emocional/curiosidade; use nome do personagem só quando aumentar o clique.\n- Varie entre identificação, curiosidade, conflito, dilema, esperança, motivação e perspectiva. Não use sempre perguntas nem frases motivacionais genéricas.\n- Escolha uma passagem/personagem que realmente sustente o título. Não invente eventos, falas, versículos, interpretação, promessa de prosperidade ou solução garantida. O vídeo deve entregar a promessa com uma narrativa bíblica e uma reflexão honesta.") if categoria_id == "religiao" else ""
     prompt = f"""Você é estrategista de conteúdo de um canal de YouTube sem apresentador, focado em curiosidade, clareza e engajamento.
 CANAL: {canal.get('nome', '')}
 NICHO: {canal.get('nicho', '')}
@@ -1520,6 +1566,7 @@ Critérios:
 - O vídeo precisa conseguir cumprir a promessa do título com fatos verificáveis. Não prometa o que o vídeo não pode entregar.
 - {regras_categoria}
 - Varie os ângulos e evite repetir a mesma estrutura de título.
+{religion_theme_guidance}
 - Diferentes dos vídeos que o canal já fez:
 {ant}
 
@@ -1737,6 +1784,7 @@ def main():
         info("   roteiro.json ja existe, usando.")
     roteiro = validar_roteiro(ler_json(arq_roteiro))
     roteiro = ensure_closing_question(roteiro, a.categoria, a.tema, canal.get("tom", ""))
+    roteiro = garantir_assinatura_final(roteiro, canal)
     salvar_json(arq_roteiro, roteiro)
     info(f"   titulo: {roteiro['titulo']} ({len(roteiro['cenas'])} cenas)")
     if a.revisar:

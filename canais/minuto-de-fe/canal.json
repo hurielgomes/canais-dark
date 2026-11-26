@@ -1,23 +1,25 @@
 {
   "nome": "Minuto de Fé",
   "idioma": "português do Brasil",
-  "nicho": "histórias bíblicas, personagens, parábolas, contexto, ensinamentos cristãos e reflexões",
-  "publico": "público cristão e interessados em Bíblia e espiritualidade",
-  "publico_livre": "público cristão e interessados em Bíblia e espiritualidade",
-  "tom": "respeitoso, acolhedor, contemplativo, claro e inspirador",
+  "nicho": "histórias bíblicas e temas de fé conectados a emoções, dilemas, curiosidade, esperança, motivação e situações da vida real; acessível também a quem não frequenta igreja",
+  "publico": "público geral, incluindo pessoas religiosas, curiosas ou em busca de motivação, esperança e reflexão",
+  "publico_livre": "público geral, incluindo pessoas religiosas, curiosas ou em busca de motivação, esperança e reflexão",
+  "tom": "envolvente, humano, intrigante, emocional, inspirador e respeitoso; linguagem acessível, sem tom de sermão",
   "estrutura": [
-    "Pergunta, passagem ou dilema.",
-    "Contexto bíblico e histórico.",
-    "Explicar a passagem com fidelidade.",
-    "Reflexão, reconhecendo interpretações distintas.",
-    "Aplicação prática ou pergunta reflexiva."
+    "gancho emocional, curioso ou de identificação que cumpra o título",
+    "apresentar a passagem/personagem bíblico que sustenta o tema",
+    "desenvolver história, conflito, escolha ou acontecimento",
+    "conectar naturalmente à experiência humana ou reflexão proposta",
+    "conclusão memorável, pergunta curta e assinatura do canal"
   ],
   "regras_globais": [
-    "Não inventar versículos ou contexto.",
-    "Indicar referência bíblica quando possível.",
-    "Distinguir texto, contexto e interpretação.",
-    "Sem ataques a religiões ou denominações.",
-    "Não manipular por medo, culpa ou promessa material."
+    "O título deve atrair qualquer pessoa, inclusive quem não é religiosa ou não conhece a Bíblia; vender curiosidade, emoção, dilema, surpresa ou identificação.",
+    "A história bíblica deve sustentar e entregar a promessa do título; não usar uma passagem como pretexto para mensagem desconectada.",
+    "Não transformar o roteiro em aula, escola dominical, sermão ou cronologia acadêmica; priorizar narrativa humana e acessível.",
+    "Não ficar preso a arqueologia ou contexto histórico; usar esses ângulos somente quando forem realmente chamativos.",
+    "Fidelidade ao texto bíblico: não inventar versículos, fatos, falas ou acontecimentos; distinguir interpretação quando necessário.",
+    "Motivação é permitida, mas não prometer prosperidade, resultados materiais ou garantias divinas; evitar manipulação por medo ou culpa.",
+    "A mensagem final deve ser natural, útil ou memorável, sem moralismo forçado."
   ],
   "estilo_visual": "Adaptar o visual ao tema e motor escolhido; cenas variadas, pertinência visual e legibilidade; evitar repetição perceptível.",
   "duracao_alvo_segundos": 60,
@@ -42,7 +44,7 @@
   "proporcao_video": 0.5,
   "duracao_plano_video": 4.0,
   "tts": {
-    "motor": "kokoro",
+    "motor": "voicebox",
     "engine": "qwen",
     "perfil": "Nicoly",
     "idioma": "pt",
@@ -67,7 +69,7 @@
       "incluir_logo": true
     }
   },
-  "categoria_padrao": "historia",
+  "categoria_padrao": "religiao",
   "motores_preferidos": [
     "classico",
     "character_2_5d",
