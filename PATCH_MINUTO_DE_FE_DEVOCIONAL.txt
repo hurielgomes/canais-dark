@@ -1,0 +1,22 @@
+PATCH — MINUTO DE FÉ: DEVOCIONAL MOTIVACIONAL
+
+Este patch atualiza somente as instruções de criação de temas e roteiros da categoria Religião, nos motores Clássico e Whiteboard.
+
+IDENTIDADE EDITORIAL:
+O Minuto de Fé não deve ser um canal que simplesmente reconta histórias bíblicas. O conteúdo deve partir de uma situação humana com a qual o espectador se identifique, conectar brevemente uma passagem/personagem bíblico e usar essa referência para desenvolver uma reflexão/devocional sobre a vida cotidiana.
+
+ESTRUTURA FLEXÍVEL:
+- Identificação com a situação humana/title.
+- Conexão breve com uma passagem ou personagem bíblico.
+- Comparação explícita com desafios reais.
+- Reflexão de fé/esperança/coragem/perspectiva, empática e natural.
+- Encerramento com pergunta contextual e assinatura do canal.
+A reflexão deve ser o foco. A passagem bíblica não deve virar uma recapitulação extensa. A proporção se adapta à duração do vídeo, sem mudar o foco editorial.
+
+INSTALAÇÃO:
+1. Faça backup dos arquivos atuais.
+2. Copie criar_video.py e criar_animado.py deste patch para a pasta raiz do projeto, substituindo os arquivos atuais.
+3. Este patch não altera renderização, interface ou outras categorias.
+
+VALIDAÇÃO:
+Foi realizada validação sintática com py_compile. Não foi executada geração real de roteiro com o provedor de IA.

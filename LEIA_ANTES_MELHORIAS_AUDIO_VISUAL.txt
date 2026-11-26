@@ -1,0 +1,26 @@
+PATCH — MELHORIAS DE NARRAÇÃO E VISUAL
+
+Inclui:
+- Preparação do texto TTS separada do texto original: pontuação mais natural e substituição de ponto e vírgula por pausa de frase.
+- Correções fonéticas configuráveis no canal.json em tts.correcoes_pronuncia, sem alterar legendas/roteiro.
+- Correções fonéticas padrão para "preferência" e "próximo" (silabadas no texto enviado à voz).
+- Prompt de roteiro reforçado para que imagens e busca stock representem a ação, personagens e contexto narrados, evitando associação por palavra isolada ou paisagem aleatória.
+- Mantém as atualizações narrativas anteriores do Minuto de Fé nos arquivos criar_video.py e criar_animado.py.
+
+
+INSTALAÇÃO
+1. Faça backup dos arquivos atuais.
+2. Extraia este patch na pasta raiz do projeto canais-dark, substituindo os arquivos.
+3. Não é necessário alterar o pipeline de renderização.
+
+
+PERSONALIZAÇÃO DA PRONÚNCIA
+No canal.json, dentro de "tts", você pode adicionar:
+"correcoes_pronuncia": {
+  "termo ou frase": "forma fonética desejada"
+}
+Exemplo contextual para palavras ambíguas: configure uma frase completa, em vez de substituir uma palavra que possa ter vários significados.
+
+
+VALIDAÇÃO
+Os arquivos foram verificados com py_compile. Não foi feita geração real de voz nem consulta aos bancos de imagens neste teste.

@@ -48,7 +48,31 @@ def hifenizar_proparoxitonas(texto: str) -> str:
 
 
 def preparar_para_voz(texto: str, canal=None) -> str:
+    """Prepara exclusivamente o texto TTS: pontuacao, silabas e correcoes configuraveis."""
     cfg = (canal or {}).get("tts") or {}
+    if not texto:
+        return texto
+
+    # Voiceboxes frequentemente ignoram o ponto-e-virgula; converte em pausa clara.
+    texto = re.sub(r"\s*;\s*([a-zà-ÿ])", lambda m: ". " + m.group(1).upper(), texto)
+    texto = re.sub(r"\s*;\s*", ". ", texto)
+    texto = re.sub(r"\s*\.{3,}\s*", ". ", texto)
+    texto = re.sub(r"\s+", " ", texto).strip()
+
+    # Correcoes especificas da voz/canal. Formato: {"palavra/frase": "forma fonetica".
+    # Mantem roteiro, legenda e texto de tela intactos.
+    correcoes_padrao = {
+        "preferência": "pre-fe-rên-cia",
+        "próximo": "pró-xi-mo",
+    }
+    correcoes = {**correcoes_padrao, **(cfg.get("correcoes_pronuncia") or {})}
+    for original, substituto in correcoes.items():
+        if original and substituto:
+            def preservar_maiuscula(match):
+                replacement = str(substituto)
+                return replacement[:1].upper() + replacement[1:] if match.group(0)[:1].isupper() else replacement
+            texto = re.sub(re.escape(str(original)), preservar_maiuscula, texto, flags=re.IGNORECASE)
+
     if cfg.get("hifenizar_proparoxitonas", True) is False:
         return texto
     return hifenizar_proparoxitonas(texto)

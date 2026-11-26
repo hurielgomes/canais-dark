@@ -111,7 +111,12 @@ def montar_prompt(canal, tema, duracao, estilo, anteriores, categoria="curiosida
         "'já conhecia esse fato', 'o que mais te surpreendeu' ou 'conta nos comentários'."
     )
     assinatura = cv.assinatura_canal(canal) if hasattr(cv, "assinatura_canal") else f"Siga {canal.get('nome', 'o canal')} para mais conteúdos como este."
-    religion_script_guidance = ("DIRETRIZ — RELIGIÃO / PÚBLICO GERAL: o título e a história devem conversar com qualquer pessoa, inclusive quem não é religioso. Use a passagem bíblica como base para uma narrativa que explore uma situação humana reconhecível (medo, culpa, cansaço, injustiça, perda, solidão, recomeço, esperança ou decisão). O título pode ser emocional/universal e não precisa citar Deus, Bíblia ou personagem; evite resumos literais como 'Elias venceu no Carmelo. Por que depois quis morrer?' ou títulos de aula/sermão. Conte a história de forma conectada, com progressão e payoff, explicando como ela ilumina a questão do título sem moralismo ou promessa simplista. NÃO use perguntas retóricas, mini-ganchos em forma de pergunta, perguntas-ponte ou pergunta-e-resposta no fim de cada cena. Use transições afirmativas e naturais; reserve pergunta somente para o gancho inicial se fizer sentido e para UMA pergunta curta no encerramento, antes da assinatura fixa do canal. Não invente falas, acontecimentos, versículos, interpretações ou promessas materiais.") if categoria == "religiao" else ""
+    religion_script_guidance = ("DIRETRIZ EDITORIAL — MINUTO DE FÉ / DEVOCIONAL MOTIVACIONAL: não conte a história bíblica como assunto principal e não faça aula/sermão. O foco é comparar uma situação ou ensinamento bíblico com uma experiência real do espectador. Comece com identificação humana ligada ao título; conecte brevemente a passagem/personagem (contexto apenas necessário); faça a comparação explícita com o dia a dia; entregue reflexão/devocional natural, empática e fortalecedora, sem moralismo nem promessas simplistas; conclua com uma pergunta contextual e a assinatura fixa. A reflexão deve ocupar a maior parte do roteiro; a história bíblica é a base, não uma recapitulação. Adapte a profundidade à duração: vídeos mais longos podem aprofundar contexto e reflexão, mas nunca virar resumo bíblico. Escreva como conversa direta, com linguagem simples e calor humano, sem frases genéricas de autoajuda, promessas de vitória garantida ou prosperidade. Não invente fatos, falas ou interpretações. Evite perguntas retóricas, mini-ganchos interrogativos e perguntas-ponte nas cenas intermediárias; prefira transições afirmativas.") if categoria == "religiao" else ""
+    religion_scene1_guidance = (
+        "Para RELIGIÃO, a cena 1 deve abrir com identificação humana ligada ao título; não comece narrando a Bíblia. A partir da cena 2, conecte brevemente à passagem e mantenha a reflexão sobre a vida como foco."
+        if categoria == "religiao" else
+        "A cena 1 é um gancho curto de até 16 palavras; não conte a história e comece a explicação na cena 2."
+    )
     return f"""
 CANAL: {canal.get('nome', '')}
 NICHO: {canal.get('nicho', '')}
@@ -132,7 +137,7 @@ TIPOS DE CENA DISPONÍVEIS (o programa posiciona tudo sozinho; escreva só o con
 {info['extra']}
 
 REGRAS DA NARRAÇÃO:
-- A cena 1 é só o gancho: UMA frase curta (até 16 palavras), uma pergunta direta ou afirmação intrigante que NÃO conta a história. A explicação começa na cena 2 e responde à pergunta. Proibido: "Neste vídeo", "Você sabia", "Hoje vamos falar".
+- {religion_scene1_guidance} Proibido: "Neste vídeo", "Você sabia", "Hoje vamos falar" e introduções genéricas.
 - Frases curtas e linguagem falada. Uma ideia nova por cena. Para RELIGIÃO, narração contínua, com transições afirmativas: proibido terminar cenas intermediárias com perguntas, criar perguntas-ponte, mini-ganchos interrogativos ou sequências de pergunta-e-resposta. Reserve pergunta para o gancho inicial se fizer sentido e UMA pergunta curta contextualizada no final. Nos demais casos, mini-gancho a cada 2 ou 3 cenas pode ser usado com moderação.
 - Use apenas fatos verdadeiros e verificáveis. Se não tiver certeza de um dado, não o inclua. Explique com suas palavras, sem copiar textos de terceiros.
 - A última cena fecha com uma conclusão marcante, seguida por EXATAMENTE uma pergunta curta e contextualizada sobre o tema.

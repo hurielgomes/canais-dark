@@ -444,12 +444,18 @@ def montar_prompt_roteiro(canal, tema, duracao, anteriores, categoria="curiosida
         pct = int(float(canal["proporcao_video"]) * 100)
         bloco_visual = f"""
 TIPO DE VISUAL DE CADA CENA (campo "visual"):
-- "video": cenas de atmosfera, ação ou generalidades (paisagens, mar, deserto, cidade, multidão, natureza, céu, máquinas, mãos trabalhando). Em cenas "video", "busca_stock" deve ter 2 ou 3 palavras em inglês, genéricas e comuns (ex.: "ocean waves", "desert sunrise"), porque bancos de vídeo não têm itens muito específicos.
-- "imagem": objeto, personagem, lugar ou momento específico e único, que só uma imagem gerada por IA consegue mostrar.
+- "video": escolha cenas que representem a ação, os personagens e o contexto narrado, não apenas uma palavra isolada. "busca_stock" deve ser uma busca em inglês concreta, com 3 a 6 palavras (personagem/ação/ambiente quando possível), evitando termos vagos como "river", "grass", "desert" ou paisagem genérica quando a narração descreve um acontecimento específico. Ex.: para José sendo vendido, buscar comerciantes negociando um jovem/prisioneiro em cenário antigo; para José nomeado governador, buscar governante em palácio egípcio ou cena de autoridade, não plantações.
+- Use paisagens e imagens de atmosfera somente quando a narração realmente estiver falando de ambiente, passagem de tempo, sentimento ou ideia abstrata sem ação visual específica.
+- "imagem": descreva uma cena visual que represente fielmente o significado da narração, incluindo sujeito, ação, relação entre personagens, objetos relevantes e ambiente. Evite metáforas visuais aleatórias ou imagens que só compartilhem uma palavra com o texto.
 Cerca de {pct}% das cenas devem ser "video". Preencha SEMPRE "imagem" e "busca_stock" em todas as cenas (a imagem serve de reserva se não houver vídeo)."""
         campo_visual = ', "visual": "video ou imagem"'
     else:
         bloco_visual, campo_visual = "", ""
+    religion_scene1_rules = (
+        "ABERTURA MINUTO DE FÉ: a primeira cena deve começar com identificação humana ligada ao título, falando diretamente com o espectador. Não introduza personagem bíblico nem conte a passagem ainda. A partir da cena 2, conecte brevemente à passagem e mantenha a reflexão sobre a vida como foco."
+        if categoria == "religiao" else
+        "A cena 1 é apenas um gancho de uma frase curta (até 16 palavras), sem contar a história; a explicação começa na cena 2."
+    )
     return f"""Você é roteirista de um canal de YouTube do tipo "dark" (sem apresentador, só narração e imagens), especialista em retenção de audiência.
 Escreva o roteiro completo de UM vídeo.
 
@@ -463,17 +469,13 @@ TEMA DO VÍDEO: {tema}
 
 TAMANHO: cerca de {palavras_total} palavras de narração no total, divididas em {n_cenas} cenas de aproximadamente {palavras_cena} palavras cada.
 
-A CENA 1 É SÓ O GANCHO (regras):
-- A cena 1 tem UMA frase curta (até 16 palavras) que NÃO conta a história: é apenas uma pergunta direta ou uma afirmação intrigante que gera dúvida. Prefira perguntas ("Por que...?", "O que aconteceria se...?", "Quem...?").
-- A explicação só começa na cena 2, que responde ou desenvolve a pergunta da cena 1. Exemplo: cena 1: "Por que milhares de pessoas abandonaram a superfície para viver na escuridão?" / cena 2: "Isso aconteceu porque, em 1963, um homem reformava a casa e achou uma cidade inteira no subsolo."
-- NUNCA coloque na cena 1 data, contexto, fato narrativo ou a resposta. A cena 1 deve fazer sentido sozinha, com uma pausa depois dela.
-- PROIBIDO: "Neste vídeo", "Você sabia", "Aposto que você não sabia", "Hoje vamos falar", saudações, definições de dicionário, introduções genéricas.
-- Você pode prometer um pagamento no final ("o último motivo é o mais estranho") SOMENTE se o vídeo realmente o entregar. Em temas de lista de motivos ou curiosidades, deixe o item mais surpreendente para o fim.
+{religion_scene1_rules}
+- PROIBIDO: "Neste vídeo", "Você sabia", "Hoje vamos falar", saudações e introduções genéricas.
+- Promessas de payoff só podem ser usadas se o roteiro realmente as entregar.
 
 ESCOLHA DO GANCHO (antes de escrever as cenas):
-- Crie 5 ganchos candidatos diferentes para a cena 1, cada um com abordagem distinta (pergunta, contradição, número, mistério, consequência).
-- Avalie cada um de 1 a 5 em curiosidade, clareza, surpresa, retenção e relação com o tema.
-- Escolha o melhor em "gancho_escolhido". O texto dele deve ser IDÊNTICO à narração da cena 1.
+{("MINUTO DE FÉ: crie 5 aberturas candidatas que expressem identificação com a dor, dúvida, situação ou sentimento do espectador; varie pergunta direta, afirmação empática, contraste ou perspectiva. Não use mistério artificial nem comece contando a história bíblica. Avalie curiosidade, identificação, clareza, emoção e relação com o título. Escolha a abertura mais natural, e o texto deve ser IDÊNTICO à narração da cena 1.") if categoria == "religiao" else ("Crie 5 ganchos candidatos diferentes para a cena 1, cada um com abordagem distinta (pergunta, contradição, número, mistério, consequência). Avalie cada um de 1 a 5 em curiosidade, clareza, surpresa, retenção e relação com o tema. Escolha o melhor em gancho_escolhido, idêntico à narração da cena 1.")}
+- Para os campos JSON, mantenha 5 candidatos; em RELIGIÃO, use os critérios de identificação e emoção descritos acima.
 
 RITMO E RETENÇÃO:
 - Frases curtas (6 a 14 palavras) e linguagem falada. Uma ideia nova por cena.
@@ -495,7 +497,9 @@ VARIE EM RELAÇÃO AOS VÍDEOS ANTERIORES DO CANAL (abertura, ritmo e fórmulas)
 {regras}
 
 IMAGENS (o programa já acrescenta automaticamente o estilo visual do canal, então NÃO o repita):
-- Cada prompt de imagem é em INGLÊS e segue o formato: [tipo de plano], [assunto concreto em ação], [ambiente], [iluminação e cores].
+- Cada prompt de imagem é em INGLÊS e descreve a cena específica da narração: [plano], [personagem/objeto correto realizando a ação], [contexto e ambiente coerentes], [iluminação e cores].
+- Antes de escrever o prompt, identifique mentalmente o evento central narrado. Não escolha um elemento de fundo aleatório apenas por associação de palavras.
+- Em cenas históricas ou bíblicas, represente pessoas, ação e ambiente coerentes com o período. Se não houver ação concreta, use visual metafórico somente se ele reforçar claramente a ideia narrada.
 - Varie o tipo de plano entre as cenas (extreme close-up, low angle, aerial wide shot, over-the-shoulder, macro, silhouette, dutch angle...).
 - O assunto deve PREENCHER o quadro e ficar no centro (a imagem também será recortada na vertical). Prefira cores vibrantes, alto contraste e uma única ideia visual forte por cena.
 - NÃO inclua texto, letras, números, logotipos nem pessoas reais identificáveis.
@@ -504,7 +508,7 @@ IMAGENS (o programa já acrescenta automaticamente o estilo visual do canal, ent
 {bloco_plano}
 {bloco_retencao}
 {bloco_editorial}
-{("DIRETRIZ DE NARRATIVA — RELIGIÃO / PÚBLICO GERAL:\n- O título deve falar com uma situação humana e atrair até quem não é religioso; a Bíblia é a fonte da história, não o requisito para clicar.\n- Não transforme o tema em resumo literal do episódio bíblico nem em título de aula. Explore a emoção/dilema (cansaço, culpa, injustiça, solidão, medo, recomeço, esperança, decisão) que a passagem sustenta.\n- Conte uma história real do texto bíblico com contexto mínimo, conflito, progressão, consequência e payoff. Conecte à vida do espectador com naturalidade, sem sermão ou moralismo.\n- NÃO faça pergunta retórica, pergunta-ponte, mini-gancho interrogativo ou pergunta-e-resposta no fim de cenas intermediárias. Use transições afirmativas.\n- Reserve pergunta para o gancho inicial se fizer sentido e UMA pergunta contextual no final, seguida da assinatura fixa. Não invente fala, evento, versículo, interpretação ou promessa material.") if categoria == "religiao" else ""}
+{("DIRETRIZ EDITORIAL — MINUTO DE FÉ / DEVOCIONAL MOTIVACIONAL:\n- O canal NÃO é um canal de contar histórias bíblicas nem uma aula/sermão. É um canal motivacional e reflexivo que compara situações e ensinamentos bíblicos com desafios reais, para gerar identificação, reflexão, compartilhamento e fortalecimento.\n- Comece pela experiência humana prometida pelo título (sentir-se desacreditado, enfrentar algo maior que si, cansaço, injustiça, culpa, espera, medo, perda, recomeço). Não comece narrando nomes, lugares ou cronologia bíblica.\n- Use a passagem/personagem como base. Contextualize brevemente apenas o necessário; NÃO recontar o episódio inteiro nem gastar a maior parte do roteiro com resumo.\n- Estrutura: identificação direta; conexão breve e verdadeira com passagem/personagem; comparação explícita com situações cotidianas; reflexão/devocional com fé, esperança, coragem ou mudança de perspectiva; encerramento emocional com uma pergunta contextual e a assinatura fixa.\n- A reflexão e conexão com a vida devem ser o foco principal em qualquer duração. Em vídeos maiores, aprofunde a reflexão e a aplicação, não transforme o vídeo em recapitulação bíblica.\n- Escreva com empatia, naturalidade e linguagem simples, como uma conversa com uma pessoa. Evite autoajuda genérica, moralismo, promessas de prosperidade, vitória garantida ou soluções mágicas. Não invente fatos, falas ou interpretações.\n- Não use perguntas retóricas, mini-ganchos interrogativos ou perguntas-ponte nas cenas intermediárias. Prefira narração contínua. Reserve pergunta para o gancho inicial, se adequado, e UMA pergunta contextual no encerramento.") if categoria == "religiao" else ""}
 
 Responda SOMENTE com JSON válido, neste formato ("ganchos_candidatos" deve ter 5 itens):
 {{
@@ -1547,7 +1551,7 @@ def sugerir_ideias(canal, nome_canal, n, cfg, categoria=None, motor="classico"):
     regras_motor = ""
     if motor == "broadcast_news":
         regras_motor = "\nMOTOR BROADCAST NEWS (SEM GOOGLE SEARCH): sugira assuntos explicaveis com conhecimento consolidado, mecanismos estaveis, fatos historicos bem documentados ou conceitos estabelecidos. Nao dependa de manchetes do dia, cotacoes, aliquotas vigentes, resultados recentes ou cargos atuais. Nao exija token, cota ou ferramenta de Google Search. Se o tema tiver algum detalhe que possa mudar, formule o tema para explicar o conceito geral e indique conferencia manual antes da publicacao."
-    religion_theme_guidance = ("DIRETRIZ ESPECIAL — RELIGIÃO / PÚBLICO GERAL:\n- O objetivo é atrair qualquer pessoa, inclusive quem não é religioso; a Bíblia é a fonte da história, não uma exigência de interesse religioso para clicar.\n- Priorize títulos emocionalmente fortes, identificáveis e intrigantes, que pareçam falar diretamente com uma situação humana: sentir-se esquecido, cansado, culpado, injustiçado, perdido, rejeitado, sem saída, ter medo de recomeçar ou ver tudo dar errado apesar de fazer o bem.\n- O título NÃO precisa mencionar Deus, Bíblia, personagem ou episódio. Pode partir de uma pergunta universal ou frase de impacto e a história bíblica escolhida deve sustentar e responder essa promessa.\n- Use como referência de estilo, sem copiar: 'Você está cansado de ser forte o tempo inteiro?', 'E se o silêncio de Deus não significasse abandono?', 'Por que você continua se culpando por algo que já passou?', 'Talvez você esteja tentando florescer no lugar errado', 'Você pode recomeçar mesmo depois de ter feito tudo errado'.\n- Evite transformar títulos em resumos literais de episódios ('Elias venceu no Carmelo. Por que depois quis morrer?'), títulos acadêmicos, nomes de personagens como requisito, arqueologia e cronologia seca. Prefira ângulo emocional/curiosidade; use nome do personagem só quando aumentar o clique.\n- Varie entre identificação, curiosidade, conflito, dilema, esperança, motivação e perspectiva. Não use sempre perguntas nem frases motivacionais genéricas.\n- Escolha uma passagem/personagem que realmente sustente o título. Não invente eventos, falas, versículos, interpretação, promessa de prosperidade ou solução garantida. O vídeo deve entregar a promessa com uma narrativa bíblica e uma reflexão honesta.") if categoria_id == "religiao" else ""
+    religion_theme_guidance = ("DIRETRIZ DE TEMAS — MINUTO DE FÉ (DEVOCIONAL MOTIVACIONAL):\n- O canal não é sobre contar episódios bíblicos; é sobre a vida do espectador iluminada por histórias e ensinamentos bíblicos.\n- Gere temas centrados em experiências humanas que incentivem identificação, reflexão e compartilhamento: sentir-se desacreditado, enfrentar um problema maior que suas forças, ansiedade pela espera, injustiça, culpa, cansaço, solidão, perda, coragem, decisões, recomeço, esperança e propósito.\n- O título deve falar primeiro com a pessoa e sua situação; pode não mencionar Bíblia, Deus ou personagem. Evite títulos de resumo/biografia como 'A história de Davi e Golias'.\n- Referências de estilo, sem copiar: 'Já sentiu que as pessoas duvidam de você?', 'Quando o problema parece maior do que você consegue suportar', 'Você não precisa entender tudo para continuar', 'E se essa fase difícil não for o fim?'. Varie perguntas e afirmações.\n- Cada tema deve apontar para uma passagem/personagem que sustente uma conexão breve com o cotidiano e uma reflexão devocional. A Bíblia é a base da mensagem, não o assunto de uma recapitulação. Sem promessas de prosperidade, vitória garantida ou soluções simplistas.") if categoria_id == "religiao" else ""
     prompt = f"""Você é estrategista de conteúdo de um canal de YouTube sem apresentador, focado em curiosidade, clareza e engajamento.
 CANAL: {canal.get('nome', '')}
 NICHO: {canal.get('nicho', '')}
