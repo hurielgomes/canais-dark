@@ -1,8 +1,8 @@
-"""pronuncia_pt.py - ajuda o TTS (Kokoro/Voicebox) com palavras acentuadas, separando as silabas por hifen (Pyphen, opcional).
+"""pronuncia_pt.py - prepara texto para TTS (Kokoro/Voicebox) sem silabacao automatica por padrao.
 
 A regra e a mesma que voce usava no criar_video.py: palavra com acento grafico e 3+ silabas cujo acento NAO esta na ultima
 silaba vira silabada com hifen (ex.: "medico" -> "me-di-co"). So afeta o TEXTO ENVIADO A VOZ; as legendas continuam com a fala original.
-Sem o Pyphen instalado (pip install pyphen) nao faz nada. Desligar: canal.json -> "tts": {"hifenizar_proparoxitonas": false}.
+Sem o Pyphen instalado (pip install pyphen) nao faz nada. Silabacao automatica desligada por padrao. Correcoes foneticas so devem ser adicionadas manualmente no canal.json quando uma palavra apresentar erro comprovado.
 """
 import re
 
@@ -48,7 +48,7 @@ def hifenizar_proparoxitonas(texto: str) -> str:
 
 
 def preparar_para_voz(texto: str, canal=None) -> str:
-    """Prepara exclusivamente o texto TTS: pontuacao, silabas e correcoes configuraveis."""
+    """Prepara exclusivamente o texto TTS: pontuacao e correcoes foneticas opcionais configuraveis. Silabacao automatica desativada por padrao."""
     cfg = (canal or {}).get("tts") or {}
     if not texto:
         return texto
@@ -61,11 +61,7 @@ def preparar_para_voz(texto: str, canal=None) -> str:
 
     # Correcoes especificas da voz/canal. Formato: {"palavra/frase": "forma fonetica".
     # Mantem roteiro, legenda e texto de tela intactos.
-    correcoes_padrao = {
-        "preferência": "pre-fe-rên-cia",
-        "próximo": "pró-xi-mo",
-    }
-    correcoes = {**correcoes_padrao, **(cfg.get("correcoes_pronuncia") or {})}
+    correcoes = cfg.get("correcoes_pronuncia") or {}
     for original, substituto in correcoes.items():
         if original and substituto:
             def preservar_maiuscula(match):
@@ -73,6 +69,6 @@ def preparar_para_voz(texto: str, canal=None) -> str:
                 return replacement[:1].upper() + replacement[1:] if match.group(0)[:1].isupper() else replacement
             texto = re.sub(re.escape(str(original)), preservar_maiuscula, texto, flags=re.IGNORECASE)
 
-    if cfg.get("hifenizar_proparoxitonas", True) is False:
+    if cfg.get("hifenizar_proparoxitonas", False) is False:
         return texto
     return hifenizar_proparoxitonas(texto)
